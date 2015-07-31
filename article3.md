@@ -12,6 +12,8 @@ MEANスタックで今すぐ作る最新ウェブサービス:ジェネレータ
 -->
 <!--div class="paiza-custom-header"-->
 
+<iframe src="https://player.vimeo.com/video/135022783?autoplay=1&loop=1&title=0&byline=0&portrait=0" width="500" height="395" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> <p><a href="https://vimeo.com/135022783">Mean Stack 3 Demo</a> from <a href="https://vimeo.com/user34262363">paiza</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
+
 [f:id:paiza:20140712194904j:plain]こんにちは、吉岡([twitter:@yoshiokatsuneo])です。
 
 MEANスタック(*)は、JavaScriptのみでフロントエンド、データベース、バックエンドの全てを開発できる開発環境です。特にMEANスタックの一つAngularJS Full-Stack generatorでは、ウェブアプリケーション開発のノウハウが詰まっており、先人の知恵を生かすことで、見通しの良いソフトウェアを簡単・迅速に開発できるようになります。  
@@ -19,7 +21,7 @@ MEANスタック(*)は、JavaScriptのみでフロントエンド、データベ
 
 初回の記事ではMEANスタックの説明とインストールについて、２回目ではTwitter風サービスの作り方について紹介しました。
 
-今回は、具体的なウェブサービスとしてQAサービスを構築してみます。プログラミング関係では、Stackoverflow,teratail,Qiitaのようなサービスが思いつきます。さらに、ブログやFacebookのコメント欄のように、トピックごとに参加者がコメント・議論するような機能は、多くのサービスで参加者同士の交流の場として便利に使われており、応用範囲も広いです。
+今回は、具体的なウェブサービスとしてQAサービスを構築してみます。プログラミング関係では、Stack Overflow,teratail,Qiitaのようなサービスが思いつきます。さらに、ブログやFacebookのコメント欄のように、トピックごとに参加者がコメント・議論するような機能は、多くのサービスで参加者同士の交流の場として便利に使われており、応用範囲も広いです。
 
 2回目のTwitter風サービスでは1画面のみでしたが、今回はジェネレータを使って複数画面を構築したり、バリデーションを使ってみたりしてみます。
 
@@ -35,6 +37,9 @@ MEANスタック(*)は、JavaScriptのみでフロントエンド、データベ
 * 質問・回答・コメントに対するお気に入り
 * 全ての質問一覧・自分の質問一覧・お気に入り質問一覧表示
 
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152603.png)
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152617.png)
+
 
 それでは、QAサービスを作ってみましょう。
 
@@ -45,8 +50,8 @@ MEANスタック(*)は、JavaScriptのみでフロントエンド、データベ
 * [MEANスタックのインストール](#install)
 * [プロジェクトの作成](#new_project)
 * [ディレクトリ構成](#structure)
-* [サーバ側の質問コンポーネント(モデル、API等)の雛形自動生成](#generate_server_questions)
-* [クライアント側の質問一覧、作成、表示コンポーネント(コントローラ・HTML等)の雛形自動生成](#generate_client_questions)
+* [サーバ側の質問コンポーネント(モデル、API等)の作成](#generate_server_questions)
+* [クライアント側の質問一覧、作成、表示コンポーネント(コントローラ・HTML等)の作成](#generate_client_questions)
 * [回答の追加](#add_answers)
 * [Markdown表記の対応](#markdown)
 * [質問タグの追加](#tags)
@@ -104,6 +109,10 @@ npmのパッケージが少々古いので最新にしておきます。
 % grunt serve
 ```
 
+ブラウザが起動して http://localhost:9000/ を開き、雛形サービスが動作します。
+
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152623.png)
+
 <div id="structure"></div>
 ディレクトリ構成
 ===================
@@ -152,10 +161,10 @@ npmのパッケージが少々古いので最新にしておきます。
 
 
 <div id="generate_server_questions"></div>
-サーバ側の質問コンポーネント(モデル、API等)の雛形自動生成
+サーバ側の質問コンポーネント(モデル、API等)の作成
 ======================================
 
-今回のQAサービスでは、各質問ごとにドキュメントを作成・保持してみます。
+今回のQAサービスでは、各質問ごとにドキュメントを作成・保持します。
 
 サーバ側で保持する質問データに関連するファイル(DBモデル、サーバ側APIコントローラなど)及び、それらをまとめたディレクトリをgeneratorで作成します。
 
@@ -163,7 +172,8 @@ npmのパッケージが少々古いので最新にしておきます。
 % yo angular-fullstack:endpoint question
 ```
 
-server/api/question ディレクトリに、question.controller.js, question.model.jsなどの雛形が作成されました。
+endpointが聞かれますので、デフォルト(/api/questions)ににします。
+server/api/question ディレクトリに、question.controller.js, question.model.jsなどの雛形が作成され、"/api/questions"がAPIとして利用できます。
 
 DBモデルでは、タイトル、質問内容、回答一覧を保持します。MongoDBでは配列や連想配列を含むJSONオブジェクトをまとめて保持できます。MongoDB自体はスキーマ定義はありませんが、Angular Full-Stack generatorで利用しているmongooseではMongoDB上でスキーマ機能を利用できまるので、質問回答関連の情報をスキーマとして定義します。
 
@@ -177,11 +187,16 @@ var QuestionSchema = new Schema({
 ```
 
 <div id="generate_client_questions"></div>
-クライアント側の質問一覧、作成、表示コンポーネント(コントローラ・HTML等)の雛形自動生成
+クライアント側の質問一覧、作成、表示コンポーネント(コントローラ・HTML等)の作成
 =====================================
 
 
 次に、質問一覧表示、質問作成、質問表示を行うためのファイル(コントローラ・HTML等)を作成します。
+
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152639.png)
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152631.png)
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152705.png)
+
 
 #### 不要なファイルの削除
 まず、不要な雛形を削除します。
@@ -197,7 +212,7 @@ var QuestionSchema = new Schema({
 generatorがルーティングを聞いてきますので、「What will the url of your route be?」で、以下のように設定します。
 * questionsIndex(質問一覧): /
 * questionsCreate(質問作成): /questions/create
-* questionsShow(質問表示): /questions/show
+* questionsShow(質問表示): /questions/show/:id
 
 ```shell
 % yo angular-fullstack:route questionsIndex
@@ -208,7 +223,7 @@ generatorがルーティングを聞いてきますので、「What will the url
 ? What will the url of your route be? /questions/create
 % yo angular-fullstack:route questionsShow
 ? Where would you like to create this route? client/app/
-? What will the url of your route be? /questionsShow
+? What will the url of your route be? /questions/show/:id
 ```
 
 雛形を元に、クライアント側の各コントローラ/HTMLファイルの実装を行います。
@@ -219,7 +234,6 @@ generatorがルーティングを聞いてきますので、「What will the url
 client/app/questionsIndex/questionsIndex.controller.js
 
 ```javascript
-...
   .controller('QuestionsIndexCtrl', function ($scope, $http) {
     $http.get('/api/questions').success(function(questions) {
       $scope.questions = questions;
@@ -333,7 +347,7 @@ client/app/questionsCreate/questionsCreate.html
     <br>
     <h2>Question:</h2>
     <textarea rows=10 cols=80 ng-model="question.content"></textarea>
-    <input type="submit" class="btn btn-primary">Post question</button>
+    <input type="submit" class="btn btn-primary" value="Post question">
   </form>
 </div>
 ```
@@ -351,7 +365,6 @@ client/app/questionsShow/questionsShow.controller.js
       });
     };
     loadQuestions();
-    
   });
 ```
 
@@ -387,10 +400,23 @@ client/app/questionsShow/questionsShow.html
 };
 ```
 
+#### サービスの再起動
+通常は編集後の再起動は必要なくリアルタイムで反映されますが、構成をかなり変更したので
+念のためgruntを再起動して動作を確認します。
+
+```
+% grunt serve
+```
+
+
+
+
 <div id="add_answers"></div>
 回答の追加
 ==============================
 現状、質問のタイトルと内容しか保持していないので、QAサービスなのに質問しかできないサービスになっています。回答内容も保持・表示・追加できるようにします。
+
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152706.png)
 
 #### サーバ側DBモデルの変更
 
@@ -436,14 +462,16 @@ exports.createAnswer = function(req, res) {
 ```
 
 
-#### 質問表示コントローラの変更
+#### クライアント側質問表示コントローラの変更
 
-回答投稿時に呼び出される$scope.submitAnswer()関数では、"POST /api/questions/質問ID/answers" APIを通じて回答をサーバに渡します。投稿後は再度質問全体を取得して表示しなおします。
+回答投稿時に呼び出される$scope.submitAnswer()関数を追加します。"POST /api/questions/質問ID/answers" APIを通じて回答をサーバに渡します。投稿後は再度質問全体を取得して表示しなおします。
 
 
 client/app/questionsShow/questionsShow.controller.js
 
 ```javascript
+    ...
+    loadQuestions();
     $scope.newAnswer = {};
     $scope.submitAnswer = function() {
       $http.post('/api/questions/' + $stateParams.id + '/answers', $scope.newAnswer).success(function(){
@@ -453,7 +481,7 @@ client/app/questionsShow/questionsShow.controller.js
     };
 ```
 
-#### 質問表示HTMLファイルの変更
+#### クライアント側質問表示HTMLファイルの変更
 
 質問オブジェクトに保存されている回答一覧オブジェクトを取得、表示します。また、新規回答を投稿した場合はコントローラの$scope.submitAnswerを呼び出すように、ng-submit属性で指定します。
 
@@ -463,24 +491,41 @@ client/app/questionsShow/questionsShow.html
   ...
   {{question.content}}
   &nbsp;
-  <h3>{{question.answers.length}} Answers</h2>
+  <h3>{{question.answers.length}} Answers</h3>
   <div ng-repeat="answer in question.answers">
     <hr/>
-    {{answer.content}}
+    <div class="answer">
+      {{answer.content}}
+    </div>
   </div>
   <hr/>
-  <h3>Your answer</h2>
+  <h3>Your answer</h3>
   <form name="answerForm" ng-submit="submitAnswer()">
     <textarea rows=10 cols=80 ng-model="newAnswer.content"></textarea>
-    <input type="submit" class="btn btn-primary">Submit your answer</button>
+    <input type="submit" class="btn btn-primary" value="Submit your answer">
   </form>
 </div>
 ```
 
+client/app/questionsShow/questionsShow.css
+
+```css
+...
+#question-show-container .answer{
+  margin-left: 50px;
+};
+```
+
+
+
+
 <div id="markdown"></div>
 Markdown表記の対応
 ==================
-現状、単純なテキストのみが投稿・表示できるようになっていますが、Stackoverflowなどで使われているMarkdown形式に対応してみます。モジュールを追加してタグを書き換えるだけで簡単に対応できます。
+現状、単純なテキストのみが投稿・表示できるようになっていますが、Stack Overflowなどで使われているMarkdown形式に対応してみます。モジュールを追加してタグを書き換えるだけで簡単に対応できます。
+
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152709.png)
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152711.png)
 
 #### モジュールのインストール
 
@@ -529,6 +574,19 @@ Prefix the choice with ! to persist it to bower.json
 % grunt wiredep
 ```
 
+テスト(Karma)で読み込むライブラリにも追加します。
+
+karma.conf.js
+
+```javascript
+    files: [
+      ...
+      'client/bower_components/angular-pagedown/angular-pagedown.js',
+      ...
+    ]
+```
+
+
 #### アプリケーションの依存モジュール追加
 
 モジュールが利用できるように、アプリケーションの依存モジュールに"ui.pagedown"を追加します。
@@ -571,6 +629,9 @@ client/app/questionsShow/questionsShow.html
 ==================
 質問の種類がわかりやすくなるように、質問の種類を表すタグ("Android", "Objective-C"など)を質問に設定できるようにしてみます。
 
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152715.png)
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152716.png)
+
 #### DBモデルの変更
 質問タグ一覧を配列として保持するように質問スキーマを変更します。
 
@@ -593,6 +654,18 @@ var QuestionSchema = new Schema({
 ```shell
 % bower install ng-tags-input --save
 % grunt wiredep
+```
+
+テスト(Karma)で読み込むライブラリにも追加します。
+
+karma.conf.js
+
+```javascript
+    files: [
+      ...
+      'client/bower_components/ng-tags-input/ng-tags-input.min.js',
+      ...
+    ]
 ```
 
 #### アプリケーションの依存モジュールの追加
@@ -640,6 +713,8 @@ client/app/questionsIndex/questionsIndex.html
 #### 質問表示HTMLファイルの変更
 質問表示HTMLファイルでもタグを表示します。
 
+client/app/questionsShow/questionsShow.html
+
 ```html
       <h1>{{question.title}}</h1>
       <span ng-repeat="tag in question.tags">
@@ -653,6 +728,8 @@ client/app/questionsIndex/questionsIndex.html
 ユーザ認証
 ==================
 今までのところ、誰が投稿・回答したのかわからないので、ユーザ認証機能をつけます。また投稿を作成したユーザのみ、投稿の削除・編集ができるようにします。ついでに、投稿・回答日時も保持するようにしておきます。
+
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152718.png)
 
 #### サーバ側DBモデルの変更
 
@@ -877,18 +954,37 @@ client/app/questionsShow/questionsShow.html
   <button type="submit" class="btn btn-primary" ng-click="editting=false;updateQuestion()" ng-show=" editting">Save</button>
   <a ng-click="editting=!editting;" ng-show="isOwner(question) && !editting">Edit</a>
   ...
-    <pagedown-viewer content="answer.content" ng-if="!editting"></pagedown-viewer>
-    <pagedown-editor content="answer.content" ng-if=" editting"></pagedown-editor>
-    <button type="submit" class="btn btn-primary" ng-click="editting=false;updateAnswer(answer)" ng-show=" editting">Save</button>
-    <a ng-click="editting=!editting;" ng-show="isOwner(answer) && !editting">Edit</a>
+    <div class="answer">
+      <pagedown-viewer content="answer.content" ng-if="!editting"></pagedown-viewer>
+      <pagedown-editor content="answer.content" ng-if=" editting"></pagedown-editor>
+      <button type="submit" class="btn btn-primary" ng-click="editting=false;updateAnswer(answer)" ng-show=" editting">Save</button>
+      <a ng-click="editting=!editting;" ng-show="isOwner(answer) && !editting">Edit</a>
+    </div>
     ...
 ```
+
+#### クライアント側質問作成コントローラ変更
+
+認証済みでない場合、ログイン画面に移動します。
+
+client/app/questionsCreate/questionsCreate.controller.js
+
+```javascript
+  .controller('QuestionsCreateCtrl', function ($scope, $http, $location, Auth) {
+    if(! Auth.isLoggedIn()){
+      $location.path('/login');
+      return;
+    }
+    ...
+```
+
 
 <div id="validation"></div>
 入力の検証
 ==============
 現状、質問のタイトル、本文、回答、コメントなど、何も入力しなくても投稿できてしまいます。入力がないと投稿できないようにしてみましょう。
 
+![valication](http://g.recordit.co/Dz6jLIMu4B.gif)
 
 #### モジュールのインストール
 入力検証で利用するngMessagesモジュールをインストールします。
@@ -896,6 +992,18 @@ client/app/questionsShow/questionsShow.html
 ```shell
 % bower install angular-messages --save
 % grunt wiredep
+```
+
+テスト(Karma)で読み込むライブラリにも追加します。
+
+karma.conf.js
+
+```javascript
+    files: [
+      ...
+      'client/bower_components/angular-messages/angular-messages.js',
+      ...
+    ]
 ```
 
 
@@ -933,7 +1041,7 @@ client/app/questionsCreate/questionsCreate.html
     </span>
     <span class="text-success" ng-show="form.question_content.$valid">OK</span>
     ...
-    <button type="submit" class="btn btn-primary" ng-submit="submit()" ng-disabled="form.$invalid">Post question</button>
+    <input type="submit" class="btn btn-primary" ng-disabled="form.$invalid" value="Post question">
   </form>
 ```
 
@@ -949,6 +1057,8 @@ client/app/questionsCreate/questionsShow.html
 時刻表示フィルタ
 ============
 時刻表示がUTC表示ですが、フィルタを作って現在からの時間で表示するようにしてみます。
+
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152721.png)
 
 #### クライアント側ライブラリ、momentjsのインストール
 時刻表示用のライブラリmomentjsをインストールします。
@@ -1046,6 +1156,8 @@ client/app/fromNow/fromNow.filter.spec.js
 コメントの追加
 ================
 質問及び回答に対して、コメントを追加できるようにしてみます。
+
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152722.png)
 
 #### サーバ側DBモデルの変更
 質問スキーマで、質問、回答それぞれの配下にコメントを配列として保持します。各コメントでは、質問や回答と同様に作成時刻(cretedAt)・投稿ユーザ(user)も保持しておきます。
@@ -1273,7 +1385,7 @@ client/app/questionsShow/questionsShow.html
     </form>
   </div>
   ...
-  <h3>{{question.answers.length}} Answers</h2>
+  <h3>{{question.answers.length}} Answers</h3>
   <div ng-repeat="answer in question.answers">
     ...
     <div class="text-right">by {{answer.user.name}} · {{answer.createdAt|fromNow}}</div>
@@ -1302,7 +1414,7 @@ client/app/questionsShow/questionsShow.html
     </div>
   </div>
   <hr/>
-  <h3>Your answer</h2>
+  <h3>Your answer</h3>
   ...
 ```
 
@@ -1321,6 +1433,9 @@ client/app/questionsShow/questionsShow.html
 お気に入りの追加
 ==============
 質問、質問コメント、回答、回答コメントに対してお気に入りできるようにします。
+
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152723.png)
+
 
 #### サーバ側DBモデルの変更
 
@@ -1559,7 +1674,7 @@ client/app/questionsShow/questionsShow.html
       <div>{{answer.stars.length}}</div>
     </div>
 
-    <pagedown-viewer content="answer.content" ng-if="!editting"></pagedown-viewer>
+    <div class="answer">
 ```
 
 ```html
@@ -1584,7 +1699,7 @@ client/app/questionsShow/questionsShow.html
 client/app/questionsIndex/questionsIndex.controller.js
 
 ```javascript
-  .controller('QuestionsIndexCtrl', function ($scope, $http, Auth, $state, $location, query) {
+  .controller('QuestionsIndexCtrl', function ($scope, $http, Auth, $location) {
     ...
     $scope.isStar = function(obj){
       return Auth.isLoggedIn() && obj && obj.stars && obj.stars.indexOf(Auth.getCurrentUser()._id)!==-1;
@@ -1645,6 +1760,9 @@ client/app/questionsIndex/questionsIndex.html
 ===============
 現状、すべての質問が一覧には表示されますが、全ての質問以外に、自分の質問、お気に入りの質問一覧も表示できるようにしてみます。
 
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152724.png)
+
+
 #### クライアント側ルーティングの変更
 
 全ての質問、自分の質問、お気に入りの質問それぞれの一覧表示にURLを対応させます。
@@ -1678,11 +1796,12 @@ client/app/questionsIndex/questionsIndex.js
           query: function($stateParams){
             return {
               $or: [
-                {'stars':                  $stateParams.userId},
-                {'answers.stars':          $stateParams.userId},
-                {'comments.stars':         $stateParams.userId},
-                {'answers.comments.stars': $stateParams.userId}
-            ]};
+                {'stars': $stateParams.userId},
+                {'answers.stars': $stateParams.userId},
+                {'comments.stars': $stateParams.userId},
+                {'answers.comments.stars': $stateParams.userId},
+              ]
+            };
           }
         },
       })
@@ -1703,15 +1822,29 @@ client/app/questionsIndex/questionsIndex.js
 #### クライアント側質問一覧コントローラの変更
 ルーティングで設定したqueryをサーバに渡します。
 
+client/app/questionsIndex/questionsIndex.controller.js
+
 ```javascript
   .controller('QuestionsIndexCtrl', function ($scope, $http, Auth, query) {
     $http.get('/api/questions', {params: {query: query}}).success(function(questions) {
 ```
 
-#### サーバ側コントローラの変更
-受け取ったqueryを用いてDBに問い合わせるようにします。
+#### クライアント側質問一覧コントローラのテストの変更
+テストコードに空のqueryを追加してエラーが起こらないようにします。
 
-/Users/tsuneo/gino/paizaqa/server/api/question/question.controller.js
+client/app/questionsIndex/questionsIndex.controller.spec.js
+
+```javascript
+    QuestionsIndexCtrl = $controller('QuestionsIndexCtrl', {
+      $scope: scope,
+      query: {},
+    });
+```
+
+#### サーバ側コントローラの変更
+受け取ったqueryを用いてDBに問い合わせます。
+
+server/api/question/question.controller.js
 
 ```javascript
 exports.index = function(req, res) {
@@ -1765,6 +1898,7 @@ client/components/navbar/navbar.html
 ============
 MongoDBの全文検索機能を使って、タイトル・質問内容・質問コメント・回答・回答コメントから検索できるようにしてみます。
 
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152725.png)
 
 #### クライアント側Navbar HTMLの変更
 
@@ -1851,6 +1985,7 @@ client/app/questionsIndex/questionsIndex.controller.js
 ==============
 MongoDBの全文検索は、日本語検索に対応していません。日本語検索を行えるように、TinySegmenterで分かち書きを行ってみます。
 
+[http://g.recordit.co/jA3ac2a8dV.gif]
 
 #### クライアント側ライブラリTinySegmenterをインストール
 
@@ -1999,6 +2134,18 @@ exports.updateAnswerComment = function(req, res) {
 % grunt wiredep
 ```
 
+テスト(Karma)で読み込むライブラリにも追加します。
+
+karma.conf.js
+
+```javascript
+    files: [
+      ...
+      'client/bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js',
+      ...
+    ]
+```
+
 #### アプリケーションの依存モジュール追加
 
 ngInfiniteScrollをアプリケーションの依存モジュールに追加して利用できるようにします。
@@ -2059,7 +2206,7 @@ client/app/questionsIndex/questionsIndex.controller.js
 <div id="oauth"></div>
 SNS認証
 =========
-SNS認証(Facebook, Twitter, Google)を利用する場合、APIキーとSECRETキーの登録を行います。登録手順は第一回を参照ください。
+SNS認証(Facebook, Twitter, Google)を利用する場合、APIキーとSECRETキーの登録を行います。登録手順は[第一回の手順](http://paiza.hatenablog.com/entry/2015/07/08/最新・最速！Webサービスが今すぐ作れる！_-_MEANスタッ#sns_link)を参照ください。
 
 また、Facebook認証については、FacebookのAPIが変わった関係で以下のようにprofileFieldsを指定する必要があります。
 
