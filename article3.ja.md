@@ -40,6 +40,11 @@ MEANスタック(*)は、JavaScriptのみでフロントエンド、データベ
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152603.png)
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152617.png)
 
+今回作成するサービスは、以下URLでも試すことができます。
+http://paizaqa.herokuapp.com
+
+ソースコードは以下で取得することができます。
+https://github.com/gi-no/paizaqa
 
 それでは、QAサービスを作ってみましょう。
 
@@ -984,7 +989,7 @@ client/app/questionsCreate/questionsCreate.controller.js
 ==============
 現状、質問のタイトル、本文、回答、コメントなど、何も入力しなくても投稿できてしまいます。入力がないと投稿できないようにしてみましょう。
 
-![valication](http://g.recordit.co/Dz6jLIMu4B.gif)
+![valication](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731160812.gif)
 
 #### モジュールのインストール
 入力検証で利用するngMessagesモジュールをインストールします。
@@ -1985,7 +1990,7 @@ client/app/questionsIndex/questionsIndex.controller.js
 ==============
 MongoDBの全文検索は、日本語検索に対応していません。日本語検索を行えるように、TinySegmenterで分かち書きを行ってみます。
 
-[http://g.recordit.co/jA3ac2a8dV.gif]
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731160824.gif)
 
 #### クライアント側ライブラリTinySegmenterをインストール
 
