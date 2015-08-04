@@ -74,6 +74,7 @@ https://github.com/gi-no/paizaqa
 * [まとめ](#summary)
 
 <div id="install"></div>
+
 MEANスタックのインストール
 ================
 まだインストールしていない場合、MEANスタックの１つ、Angular Full-Stack generatorをインストールします。
@@ -81,6 +82,7 @@ MEANスタックのインストール
 
 
 <div id="new_project"></div>
+
 プロジェクトの作成
 ================
 まず、プロジェクトの雛形を作成します。ここでは、プロジェクト名をpaizaqaとしてみます。雛形作成は、"yo"(Yeoman)で行います。
@@ -119,6 +121,7 @@ npmのパッケージが少々古いので最新にしておきます。
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152623.png)
 
 <div id="structure"></div>
+
 ディレクトリ構成
 ===================
 作成されたプロジェクトのディレクトリ構造は以下のようになります。
@@ -166,6 +169,7 @@ npmのパッケージが少々古いので最新にしておきます。
 
 
 <div id="generate_server_questions"></div>
+
 サーバ側の質問コンポーネント(モデル、API等)の作成
 ======================================
 
@@ -192,6 +196,7 @@ var QuestionSchema = new Schema({
 ```
 
 <div id="generate_client_questions"></div>
+
 クライアント側の質問一覧、作成、表示コンポーネント(コントローラ・HTML等)の作成
 =====================================
 
@@ -247,7 +252,7 @@ client/app/questionsIndex/questionsIndex.controller.js
 ```
 
 #### 一覧表示HTMLファイルの変更
-一覧表示HTMLファイルでは、$scope.questionsをquestionsとして参照します。'ng-repeat="question in questions"'のように属性を記述することで、すべての質問についてタグの内容を繰り返して表示できます。また{{question.title}}のように指定することでスコープ変数を参照できます。
+一覧表示HTMLファイルでは、$scope.questionsをquestionsとして参照します。'ng-repeat="question in questions"'のように属性を記述することで、すべての質問についてタグの内容を繰り返して表示できます。また{&#x7b;question.title&#x7b;}のように指定することでスコープ変数を参照できます。
 
 client/app/questionIndex/questionIndex.html
 
@@ -417,6 +422,7 @@ client/app/questionsShow/questionsShow.html
 
 
 <div id="add_answers"></div>
+
 回答の追加
 ==============================
 現状、質問のタイトルと内容しか保持していないので、QAサービスなのに質問しかできないサービスになっています。回答内容も保持・表示・追加できるようにします。
@@ -525,6 +531,7 @@ client/app/questionsShow/questionsShow.css
 
 
 <div id="markdown"></div>
+
 Markdown表記の対応
 ==================
 現状、単純なテキストのみが投稿・表示できるようになっていますが、Stack Overflowなどで使われているMarkdown形式に対応してみます。モジュールを追加してタグを書き換えるだけで簡単に対応できます。
@@ -607,7 +614,7 @@ angular.module('paizaqaApp', [
 
 #### pagedownタグの利用
 
-入力欄でMarkdown入力できるようにします。textareaタグをpagedown-editorタグに書き換えて、content属性で編集する変数を指定します。表示については"{{}}"で表示していた部分をpagedown-viewerタグに書き換えます。
+入力欄でMarkdown入力できるようにします。textareaタグをpagedown-editorタグに書き換えて、content属性で編集する変数を指定します。表示については"{&#x7b;&#x7d;}"で表示していた部分をpagedown-viewerタグに書き換えます。
 
 client/app/questionsCreate/questionsCreate.html
 
@@ -630,6 +637,7 @@ client/app/questionsShow/questionsShow.html
 ```
 
 <div id="tags"></div>
+
 質問タグの追加
 ==================
 質問の種類がわかりやすくなるように、質問の種類を表すタグ("Android", "Objective-C"など)を質問に設定できるようにしてみます。
@@ -730,6 +738,7 @@ client/app/questionsShow/questionsShow.html
 ```
 
 <div id="user_auth"></div>
+
 ユーザ認証
 ==================
 今までのところ、誰が投稿・回答したのかわからないので、ユーザ認証機能をつけます。また投稿を作成したユーザのみ、投稿の削除・編集ができるようにします。ついでに、投稿・回答日時も保持するようにしておきます。
@@ -985,6 +994,7 @@ client/app/questionsCreate/questionsCreate.controller.js
 
 
 <div id="validation"></div>
+
 入力の検証
 ==============
 現状、質問のタイトル、本文、回答、コメントなど、何も入力しなくても投稿できてしまいます。入力がないと投稿できないようにしてみましょう。
@@ -1059,6 +1069,7 @@ client/app/questionsCreate/questionsShow.html
 
 
 <div id="fromnow_filter"></div>
+
 時刻表示フィルタ
 ============
 時刻表示がUTC表示ですが、フィルタを作って現在からの時間で表示するようにしてみます。
@@ -1110,7 +1121,7 @@ client/app/fromNow/fromNow.filter.js
 
 #### フィルタを使う
 
-作成したフィルタを使って、時刻表示形式を現在からの時間になるようにします。フィルタを利用する場合、"{{式}}"の部分を"{{式|フィルタ名}}とします。ここでは、{{式}}を{{式|fromNow}}に書き換えます。
+作成したフィルタを使って、時刻表示形式を現在からの時間になるようにします。フィルタを利用する場合、"{&#x7b;式&#x7d;}"の部分を"{&#x7b;式|フィルタ名&#x7d;}とします。ここでは、{&#x7b;式&#x7d;}を{&#x7b;式|fromNow&#x7d;}に書き換えます。
 
 client/app/questionsIndex/questionsIndex.html
 
@@ -1158,6 +1169,7 @@ client/app/fromNow/fromNow.filter.spec.js
 ```
 
 <div id="add_comments"></div>
+
 コメントの追加
 ================
 質問及び回答に対して、コメントを追加できるようにしてみます。
@@ -1434,7 +1446,8 @@ client/app/questionsShow/questionsShow.html
 };
 ```
 
-<div id="#stars"></div>
+<div id="stars"></div>
+
 お気に入りの追加
 ==============
 質問、質問コメント、回答、回答コメントに対してお気に入りできるようにします。
@@ -1761,6 +1774,7 @@ client/app/questionsIndex/questionsIndex.html
 ```
 
 <div id="navbar_all_mine_stars"></div>
+
 全ての質問、自分の質問、お気に入りの質問の一覧表示
 ===============
 現状、すべての質問が一覧には表示されますが、全ての質問以外に、自分の質問、お気に入りの質問一覧も表示できるようにしてみます。
@@ -1899,6 +1913,7 @@ client/components/navbar/navbar.html
 ```
 
 <div id="search"></div>
+
 検索
 ============
 MongoDBの全文検索機能を使って、タイトル・質問内容・質問コメント・回答・回答コメントから検索できるようにしてみます。
@@ -1986,6 +2001,7 @@ client/app/questionsIndex/questionsIndex.controller.js
 
 
 <div id="search_japanese"></div>
+
 日本語検索
 ==============
 MongoDBの全文検索は、日本語検索に対応していません。日本語検索を行えるように、TinySegmenterで分かち書きを行ってみます。
@@ -2125,6 +2141,7 @@ exports.updateAnswerComment = function(req, res) {
 ```
 
 <div id="infinite_scroll"></div>
+
 無限スクロール
 ============
 現状、最新20件の質問しか表示することができていませんので、無限スクロールで過去の質問も表示できるようにしてみます。
@@ -2209,6 +2226,7 @@ client/app/questionsIndex/questionsIndex.controller.js
 ```
 
 <div id="oauth"></div>
+
 SNS認証
 =========
 SNS認証(Facebook, Twitter, Google)を利用する場合、APIキーとSECRETキーの登録を行います。登録手順は[第一回の手順](http://paiza.hatenablog.com/entry/2015/07/08/最新・最速！Webサービスが今すぐ作れる！_-_MEANスタッ#sns_link)を参照ください。
@@ -2226,6 +2244,7 @@ exports.setup = function (User, config) {
 ```
 
 <div id="deploy"></div>
+
 デプロイ
 ============
 それではHerokuにデプロイをします。デプロイ設定は"yo angular-fullstack:heroku"コマンドで行います。また、無料プランがあるMongoDBモジュールMongoLabもインストールしておきます。
@@ -2263,6 +2282,7 @@ MONGOLAB_URI: mongodb://ユーザ名:パスワード@ホスト名:ポート番�
 ```
 
 <div id="summary"></div>
+
 まとめ
 ===============
 MEANスタックAngularJS Full-Stack generatorを用いてQAサイトを作成する手順を紹介しました。MEANスタックを使えば、JavaScriptのみでサーバからクライアントまで、見通しの良いサービスを簡単に作ることができます。ジェネレータを使うことで雛形となるコードを自動生成ができますので、変更を加えていくだけでサービスが作れるようになります。特に、スタートアップやプロトタイプで短時間・少ない人数で試行錯誤しながらサービスを作り上げる時には非常に便利です。
