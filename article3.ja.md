@@ -16,7 +16,7 @@ MEANスタックで今すぐ作る最新ウェブサービス:ジェネレータ
 
 [f:id:paiza:20140712194904j:plain]こんにちは、吉岡([twitter:@yoshiokatsuneo])です。
 
-MEANスタック(*)は、JavaScriptのみでフロントエンド、データベース、バックエンドの全てを開発できる開発環境です。特にMEANスタックの一つAngularJS Full-Stack generatorでは、ウェブアプリケーション開発のノウハウが詰まっており、先人の知恵を生かすことで、見通しの良いソフトウェアを簡単・迅速に開発できるようになります。  
+MEANスタック(*)は、JavaScriptのみでフロントエンド、データベース、バックエンドの全てを開発できるWebサービス開発環境です。特にMEANスタックの一つAngularJS Full-Stack generatorでは、ウェブアプリケーション開発のノウハウが詰まっており、先人の知恵を生かすことで、見通しの良いソフトウェアを簡単・迅速に開発できるようになります。  
 ( * ) MEANスタックはMongoDB, Express, AngularJS, Node.jsを組み合わせています。
 
 初回の記事ではMEANスタックの説明とインストールについて、２回目ではTwitter風サービスの作り方について紹介しました。
@@ -33,14 +33,14 @@ MEANスタック(*)は、JavaScriptのみでフロントエンド、データベ
 * 質問・回答に対するコメントの作成・編集・削除
 * 各質問ごとに質問タグを保持
 * Markdown形式による編集
-* 質問・コメントの検索
+* 質問・回答・コメントの検索
 * 質問・回答・コメントに対するお気に入り
 * 全ての質問一覧・自分の質問一覧・お気に入り質問一覧表示
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152603.png)
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152617.png)
 
-今回作成するサービスは、以下URLでも試すことができます。
+今回作成するQAサービスは、以下URLでも試すことができます。
 http://paizaqa.herokuapp.com
 
 ソースコードは以下で取得することができます。
@@ -173,7 +173,7 @@ npmのパッケージが少々古いので最新にしておきます。
 サーバ側の質問コンポーネント(モデル、API等)の作成
 ======================================
 
-今回のQAサービスでは、各質問ごとにドキュメントを作成・保持します。
+今回のQAサービスでは、各質問ごとにドキュメントをデータベースに作成・保持します。
 
 サーバ側で保持する質問データに関連するファイル(DBモデル、サーバ側APIコントローラなど)及び、それらをまとめたディレクトリをgeneratorで作成します。
 
@@ -184,7 +184,7 @@ npmのパッケージが少々古いので最新にしておきます。
 endpointが聞かれますので、デフォルト(/api/questions)ににします。
 server/api/question ディレクトリに、question.controller.js, question.model.jsなどの雛形が作成され、"/api/questions"がAPIとして利用できます。
 
-DBモデルでは、タイトル、質問内容、回答一覧を保持します。MongoDBでは配列や連想配列を含むJSONオブジェクトをまとめて保持できます。MongoDB自体はスキーマ定義はありませんが、Angular Full-Stack generatorで利用しているmongooseではMongoDB上でスキーマ機能を利用できまるので、質問回答関連の情報をスキーマとして定義します。
+DBモデルを編集して、質問タイトル、質問内容、回答一覧を保持します。MongoDBでは配列や連想配列を含むJSONオブジェクトをまとめて保持できます。MongoDB自体はスキーマ定義はありませんが、Angular Full-Stack generatorで利用しているmongooseではMongoDB上でスキーマ機能を利用して保存するフィールドを限定したりデータを検証したりできまるので、質問回答関連の情報をスキーマとして定義します。
 
 server/api/question/question.model.js
 
@@ -217,7 +217,7 @@ var QuestionSchema = new Schema({
 
 #### 雛形作成
 
-そして、質問関連のファイル、及びそれらをまとめたディレクトリgeneratorで作成します。ここでは質問一覧表示、質問作成、質問表示に対応した３つのディレクトリ(questionsIndex, questionCreate, questionsShow)を作成します。
+そして、質問関連のファイル、及びそれらをまとめたディレクトリgeneratorで作成します。ここでは質問一覧表示、質問作成、質問表示に対応した３つのディレクトリ(questionsIndex, questionsCreate, questionsShow)を作成します。
 
 generatorがルーティングを聞いてきますので、「What will the url of your route be?」で、以下のように設定します。
 * questionsIndex(質問一覧): /
@@ -236,10 +236,10 @@ generatorがルーティングを聞いてきますので、「What will the url
 ? What will the url of your route be? /questions/show/:id
 ```
 
-雛形を元に、クライアント側の各コントローラ/HTMLファイルの実装を行います。
+生成された雛形を元に、クライアント側の各コントローラ/HTMLファイルの実装を行います。
 
-#### 一覧表示コントローラの変更
-一覧表示コントローラでは、"GET /api/questions" APIを呼び出して質問一覧を取得します。取得した質問一覧はHTMLで参照できるように$scopeに保持します。$httpサービスを利用するので、コントローラ関数の引数に$httpを追加します。引数の名前に応じたサービスが自動的に引数に割り当てられます。
+#### 質問一覧表示コントローラの変更
+質問一覧表示コントローラでは、"GET /api/questions" APIを呼び出して質問一覧を取得します。取得した質問一覧はHTMLで参照できるように$scopeに保持します。$httpサービスを利用するので、コントローラ関数の引数に$httpを追加します。引数の名前に応じたサービスが自動的に引数に割り当てられます。
 
 client/app/questionsIndex/questionsIndex.controller.js
 
@@ -251,8 +251,8 @@ client/app/questionsIndex/questionsIndex.controller.js
   });
 ```
 
-#### 一覧表示HTMLファイルの変更
-一覧表示HTMLファイルでは、$scope.questionsをquestionsとして参照します。'ng-repeat="question in questions"'のように属性を記述することで、すべての質問についてタグの内容を繰り返して表示できます。また{&#x7b;question.title&#x7b;}のように指定することでスコープ変数を参照できます。
+#### 質問一覧表示HTMLファイルの変更
+質問一覧表示HTMLファイルでは、$scope.questionsをquestionsとして参照します。'ng-repeat="question in questions"'のように属性を記述することで、すべての質問についてタグの内容を繰り返して表示できます。また{&#x7b;question.title&#x7b;}のように指定することでスコープ変数を参照できます。
 
 client/app/questionIndex/questionIndex.html
 
@@ -344,7 +344,7 @@ client/app/questionsCreate/questionsCreate.controller.js
 ```
 
 #### 質問作成HTMLファイルの変更
-質問作成HTMLファイルでは、投稿時にsubmit()関数を呼び出すようにng-submitを実装します。inputタグでng-model="question.title"のように属性を指定することで、スコープ変数のquestion.titleが入力内容と自動的に(双方向に)同期するようになります。
+質問作成HTMLファイルでは、投稿時にsubmit()関数を呼び出すようにng-submit属性を追加します。inputタグでng-model="question.title"のように属性を指定することで、スコープ変数のquestion.titleが入力内容と自動的に(双方向に)同期するようになります。
 
 client/app/questionsCreate/questionsCreate.html
 
@@ -379,7 +379,8 @@ client/app/questionsShow/questionsShow.controller.js
 ```
 
 #### 質問表示HTMLファイルの変更
-コントローラで設定した$scope.questionをquestionとして参照します。また、質問投稿時はコントローラの$sope.submitAnswer()を呼び出すようにng-submit属性を設定します。
+質問表示HTMLファイルでは質問のタイトルと中身を表示します。
+コントローラで設定した$scope.questionをquestionとして参照します。
 
 client/app/questionsShow/questionsShow.html
 
@@ -425,7 +426,7 @@ client/app/questionsShow/questionsShow.html
 
 回答の追加
 ==============================
-現状、質問のタイトルと内容しか保持していないので、QAサービスなのに質問しかできないサービスになっています。回答内容も保持・表示・追加できるようにします。
+現状、質問のタイトルと内容しか保持していないので、QAサービスなのに質問しかできないサービスになっています。回答を作成・表示できるようにします。
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152706.png)
 
@@ -494,7 +495,7 @@ client/app/questionsShow/questionsShow.controller.js
 
 #### クライアント側質問表示HTMLファイルの変更
 
-質問オブジェクトに保存されている回答一覧オブジェクトを取得、表示します。また、新規回答を投稿した場合はコントローラの$scope.submitAnswerを呼び出すように、ng-submit属性で指定します。
+質問オブジェクトに保存されている回答一覧オブジェクトを表示します。また、新規回答を投稿した場合はコントローラの$scope.submitAnswerを呼び出すように、ng-submit属性で指定します。
 
 client/app/questionsShow/questionsShow.html
 
@@ -661,7 +662,7 @@ var QuestionSchema = new Schema({
 });
 ```
 
-#### タグ表示モジュールの追加
+#### タグ編集モジュールの追加
 タグをわかりやすく編集・表示するためのライブラリngTagsInputをインストールします。
 
 ```shell
@@ -783,7 +784,7 @@ var QuestionSchema = new Schema({
 
 #### サーバ側APIルーティングの変更
 
-サーバ側APIルーティング設定で、認証が必要なリソースについてはauth.isAuthenticated()をExpressのミドルウェアとして追加します。これより、サーバ側コントローラではreq.userとしてユーザを取得できます。
+サーバ側APIルーティング設定で、認証が必要なURLリソースについてはauth.isAuthenticated()をExpressのミドルウェアとして追加します。これより、サーバ側コントローラではreq.userとして現在のログインユーザを取得できます。
 また、回答削除用のAPI(DELETE /:id/answers/:answerId)も追加しておきます。
 
 server/api/question/index.js
@@ -804,7 +805,7 @@ router.delete('/:id/answers/:answerId', auth.isAuthenticated(), controller.destr
 ```
 
 #### サーバ側コントローラの変更
-一覧表示APIについては、ユーザIDをユーザオブジェクトに展開するようにpopulate()を呼び出します。populate('user','name')によりユーザオブジェクトのnameフィールドのみ展開されます。また、投稿日時の逆順で最後の20件のみ返すようにします。sort({createdAt: -1})により、createdAtフィールドの逆順で表示します。limit(20)で最新の20件に制限します。クエリが構築できたら、exec()で実行を行い、結果をコールバック関数で受け取ります。
+質問一覧取得APIについては、ユーザIDをユーザオブジェクトに展開するようにpopulate()を呼び出します。populate('user','name')によりユーザオブジェクトのnameフィールドのみ展開されます。また、投稿日時の逆順で最後の20件のみ返すように変更します。sort({createdAt: -1})により、createdAtフィールドの逆順で表示します。limit(20)で最新の20件に制限します。クエリが構築できたら、exec()で実行を行い、結果をコールバック関数で受け取ります。
 
 server/api/question/question.controller.js
 
@@ -814,7 +815,7 @@ exports.index = function(req, res) {
     ...
 ```
 
-質問表示APIについても、ユーザオブジェクトを展開するようにします。
+質問取得APIについても、ユーザオブジェクトを展開するようにします。
 
 server/api/question/question.controller.js
 
@@ -824,7 +825,7 @@ exports.show = function(req, res) {
     ...
 ```
 
-質問作成APIでは、req.userで参照できるユーザを保存内容に追加します。
+質問作成APIでは、質問ユーザを質問の一部として保存します。質問ユーザは、req.userで参照します。
 
 ```javascript
 exports.create = function(req, res) {
@@ -850,7 +851,7 @@ exports.destroy = function(req, res) {
 };
 ```
 
-回答削除APIも実装しておきます。MongoDBの'$pull'オペレータを使うことで、回答一覧配列から指定したID、ユーザの回答を削除します。
+回答削除APIも実装しておきます。MongoDBの'$pull'オペレータを使うことで、回答一覧配列から指定した回答ID、回答ユーザの回答を削除します。
 
 ```javascript
 exports.destroyAnswer = function(req, res) {
@@ -874,7 +875,7 @@ exports.updateAnswer = function(req, res) {
 };
 ```
 
-#### クライアント側一覧表示HTMLの変更
+#### クライアント側質問一覧表示HTMLの変更
 
 質問のユーザ名、作成日時を追加します。
 
