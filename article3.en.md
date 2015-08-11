@@ -21,7 +21,7 @@ MEAN stack(*) is a all-in-one JavaScript based web service development environme
 
 In the first article, I introduced how to install the MEAN stack. In the second article, I introduced how to build Twitter-like web service.
 
-In this article, as a example of more practile web service, I introduce how to build a QA service, like Stack Overflow, Qiita. It can be applied for features like Blog or SNS comments where users can comment, discuss, or communicate each other.
+In this article, as a example of more practile web service, I introduce how to build a QA service, like Stack Overflow, Qiita, or even Reddit or HackerNews. It can be applied for features like Blog or SNS comments where users can comment, discuss, or communicate each other.
 
 In the second article(Twitter-like service), we build a service with one page. In this QA service, we build multilpe pages using generator, input validation using validator.
 
@@ -1024,21 +1024,21 @@ client/app/questionsCreate/questionsCreate.controller.js
 
 <div id="validation"></div>
 
-入力の検証
+Input validation
 ==============
-現状、質問のタイトル、本文、回答、コメントなど、何も入力しなくても投稿できてしまいます。入力がないと投稿できないようにしてみましょう。
+For now, we can submit forms with empty question, empty answer. Let's validate inputs not to submit without filling the field.
 
 ![valication](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731160812.gif)
 
-#### モジュールのインストール
-入力検証で利用するngMessagesモジュールをインストールします。
+#### Install module
+Install ngMessage module for the validation.
 
 ```shell
 % bower install angular-messages --save
 % grunt wiredep
 ```
 
-テスト(Karma)で読み込むライブラリにも追加します。
+Also, add the ngMessage module to test(Karma) libraries.
 
 karma.conf.js
 
@@ -1051,8 +1051,8 @@ karma.conf.js
 ```
 
 
-#### アプリケーション依存モジュールで、ngMessagesを追加
-入力検証に使う、ngMessages(AngularJSモジュール)をアプリケーションの依存モジュールに追加して、アプリケーションから利用できるようにします。
+#### Add module to application
+Add the ngMessage module to the application depending modules to use the module.
 
 client/app/app.js
 
@@ -1063,9 +1063,8 @@ angular.module('paizaqaApp', [
 ])
 ```
 
-#### クライアント側HTMLファイルで、各入力フィールドに検証を追加
-
-入力フォームの各入力フィールドで検証条件(requiredなど)を指定します。また、検証結果を参照できるように、入力フォームに名前(name)を、入力フィールドに名前(name)とモデル(ng-model)を指定します。"フォーム名.フィールド名.$error"に各フィールドの検証結果が保持されますので、ng-messages/ng-messageで検証結果を表示できます。また全体の検証結果は"フォーム名.$invalid"で保持されますので、検証失敗中は送信できないようにします。
+#### On client-side HTML file, add validations to input fields
+Add validations(ex: "required") to input fields. Also, to refer the validation results, add name(with "name" attribute) to the form and add name(with "name" attribute) and model(with "ng-model" attribute) to each input field. The validation result is stored as "FORM-NAME.FIELD-NAME.$error", and output the result using ng-messages/ng-message attributes in which only matching elements are shown. The whole form validation result is stored as "FORM-NAME.$invalid" and we can disable submit button when invalid.
 
 client/app/questionsCreate/questionsCreate.html
 
@@ -1099,21 +1098,21 @@ client/app/questionsCreate/questionsShow.html
 
 <div id="fromnow_filter"></div>
 
-時刻表示フィルタ
+Time formatting filter
 ============
-時刻表示がUTC表示ですが、フィルタを作って現在からの時間で表示するようにしてみます。
+For now, the time format for created time is UTC. Let's change it to show the time from now like Stack Overflow.
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152721.png)
 
-#### クライアント側ライブラリ、momentjsのインストール
-時刻表示用のライブラリmomentjsをインストールします。
+#### Install Moment.js library
+Install Moment.js library for time formatting.
 
 ```shell
 % bower install --save momentjs
 % grunt wiredep
 ```
 
-日本語など、他言語対応できるようにライブラリを追加します。(英語のみなら不要)
+Add a "moment-with-locales.min.js" file for I18N. (no need for English)
 
 client/index.html
 
@@ -1127,18 +1126,18 @@ client/index.html
 <!-- endbuild -->
 ```
 
-#### フィルタの作成
+#### Generate filter
 
-フィルタの雛形を作成します。
+Generate a filter boilerplate.
 
 ```shell
 % yo angular-fullstack:filter fromNow
 % grunt injector
 ```
 
-#### フィルタの実装
+#### Implement filter
 
-momentjsのfromNow関数で時刻表示形式を変換します。locale関数で言語を設定することもできます(英語のみなら不要)。
+Format time using Moment.js's fromNow() function. You can optionally use locale() function to set language.
 
 client/app/fromNow/fromNow.filter.js
 
@@ -1148,9 +1147,9 @@ client/app/fromNow/fromNow.filter.js
     };
 ```
 
-#### フィルタを使う
+#### Use filter
 
-作成したフィルタを使って、時刻表示形式を現在からの時間になるようにします。フィルタを利用する場合、"{&#x7b;式&#x7d;}"の部分を"{&#x7b;式|フィルタ名&#x7d;}とします。ここでは、{&#x7b;式&#x7d;}を{&#x7b;式|fromNow&#x7d;}に書き換えます。
+Change time format from UTC to time from now, using the fromNow filter we created. To use filter, change from "{&#x7b;EXPRESSION&#x7d;}" to "{&#x7b;EXPRESSION|FILTER&#x7d;}". In this case, we change from "{&#x7b;EXPRESSION&#x7d;}"を"{&#x7b;EXPRESSION|fromNow&#x7d;}".
 
 client/app/questionsIndex/questionsIndex.html
 
@@ -1173,9 +1172,11 @@ client/app/questionsCreate/questionsCreate.html
 
 ```
 
-#### テストコードの変更
+#### Change test
 
-テストが失敗していますので修正しておきます。テスト実行時に読み込まれるファイルを変更するため、karma.conf.jsにmoment.jsを追加します。
+Fix the failing test.
+
+To load Moment.js on test, add "moment.js" to karma.conf.js
 
 karma.conf.js
 
@@ -1187,7 +1188,7 @@ karma.conf.js
     ],
 ```
 
-テストコードで現在時刻(Date.now())に対して、フィルタが'a few seconds ago'を返すことを確認します。
+Change test code to test that the fromNow filter with current time(Date.now()) returns 'a few seconds ago'.
 
 client/app/fromNow/fromNow.filter.spec.js
 
@@ -1199,14 +1200,15 @@ client/app/fromNow/fromNow.filter.spec.js
 
 <div id="add_comments"></div>
 
-コメントの追加
+Add comments
 ================
-質問及び回答に対して、コメントを追加できるようにしてみます。
+Now, let's add comment fields for questions and answers.
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152722.png)
 
-#### サーバ側DBモデルの変更
-質問スキーマで、質問、回答それぞれの配下にコメントを配列として保持します。各コメントでは、質問や回答と同様に作成時刻(cretedAt)・投稿ユーザ(user)も保持しておきます。
+#### Edit server-side database model
+On QuestionSchema, store comments as a array inside the each question and answer. Each comment hold created time and submitted user.
+
 
 server/api/question/question.model.js
 
@@ -1242,15 +1244,15 @@ var QuestionSchema = new Schema({
 });
 ```
 
-#### サーバ側ルーティングの変更
-質問コメント、回答コメントの追加・削除・編集に以下のようなAPIを追加します。
+#### Edit server-side routing
+Add the following APIs for create, update, and delete a comment to a question or an answer.
 
-* POST /:id/comments 質問コメント追加
-* PUT /:id/comments/:commentId 質問コメント編集
-* DELETE /:id/comments/:commentId 質問コメント削除
-* POST /:id/answers/:answerId/comments 回答コメント追加
-* PUT /:id/answers/:answerId/comments/:commentId 回答コメント編集
-* DELETE /:id/answers/:answerId/comments/:commentId 回答コメント削除
+* POST /:id/comments Create a comment for a question
+* PUT /:id/comments/:commentId Update a comment for a question
+* DELETE /:id/comments/:commentId Delete a comment for a question
+* POST /:id/answers/:answerId/comments Create a comment for a answer
+* PUT /:id/answers/:answerId/comments/:commentId Update a comment for a answer
+* DELETE /:id/answers/:answerId/comments/:commentId Delete a comment for a answer
 
 /Users/tsuneo/gino/paizaqa2/server/api/question/index.js
 
@@ -1265,9 +1267,9 @@ router.delete('/:id/answers/:answerId/comments/:commentId', auth.isAuthenticated
 ```
 
 
-#### サーバ側コントローラの変更
+#### Edit server-side controller
 
-質問表示APIで、コメントのユーザをユーザIDからユーザオブジェクトにpopulate()で展開します。
+On question listing API, expand a user ID of a comment to a user object using populate().
 
 server/api/question/question.controller.js
 
@@ -1277,7 +1279,8 @@ exports.show = function(req, res) {
     ...
 ```
 
-また、コメントの投稿・削除用・編集のAPIを実装します。投稿ではコメント配列に'$push'オペレータで追加し、削除ではコメント入れtから'$pull'オペレータで削除します。更新時は配列の条件一致インデックスを'$'で参照します。回答コメントの更新では、配列の配列については、'$'を複数使えませんので１つずつ操作します。
+Implement APIs to create, update, or delete a comment. To create a comment, add a comment to the comment array of the question document using '$push' operator. To delete a comment, delete a comment from the comment array of the question document. To update a comment, specify the updating index of the comment array of the question document using '$'. To update a comment for a answer, because we update a item inside a array of a array and only one '$' can be used to specify index, we need to iterate each item for the array.
+
 
 server/api/question/question.controller.js
 
@@ -1323,8 +1326,6 @@ exports.destroyAnswerComment = function(req, res) {
   });
 };
 exports.updateAnswerComment = function(req, res) {
-  console.log("req.params", req.params);
-  console.log("req.body", req.body);
   Question.find({_id: req.params.id}).exec(function(err, questions){
     if(err) { return handleError(res, err); }
     if(questions.length === 0) { return res.send(404); }
@@ -1342,7 +1343,6 @@ exports.updateAnswerComment = function(req, res) {
         /*jshint -W083 */
         Question.update(conditions, doc, function(err, num){
           if(err) { return handleError(res, err); }
-          console.log("UPDATED:num=", num);
           if(num === 0) { return res.send(404); }
           exports.show(req, res);
           return;
@@ -1357,9 +1357,9 @@ exports.updateAnswerComment = function(req, res) {
 ```
 
 
-#### クライアント側コントローラの変更
+#### Edit client-side controller
 
-コメントの追加・削除・更新用の関数を用意しておき、コメントの追加・削除・更新要求をサーバ側に中継します。
+Add functions to add, update, or delete a comment that send the request to the server.
 
 client/app/questionsShow/questionsShow.controller.js
 
@@ -1398,9 +1398,9 @@ client/app/questionsShow/questionsShow.controller.js
     };
 ```
 
-####クライアント側質問表示HTMLの変更
+#### Edit client-side question showing HTML file
 
-質問オブジェクトに含まれる、質問コメント、回答コメントの内容・作成日時・ユーザを表示するようします。また、新しいコメントを追加できるようにします。
+Output comments' content, created time, and user for the question or the answers in the question object. Also, add forms to submit new comments.
 
 
 client/app/questionsShow/questionsShow.html
@@ -1477,16 +1477,16 @@ client/app/questionsShow/questionsShow.html
 
 <div id="stars"></div>
 
-お気に入りの追加
+Adding stars
 ==============
-質問、質問コメント、回答、回答コメントに対してお気に入りできるようにします。
+Adding a feature to star or unstar questions, answers, and comments for questions or answers.
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152723.png)
 
 
-#### サーバ側DBモデルの変更
+#### Edit server-side database model
 
-質問、質問コメント、回答、回答コメントで、お気に入りユーザ一覧をstarsフィールドに保持しておきます。
+Store the list of starring users for a question, a answer, and a comment for a question or answer to a "stars" field of a question document as an array.
 
 server/api/question/question.model.js
 
@@ -1526,20 +1526,20 @@ var QuestionSchema = new Schema({
 });
 ```
 
-#### サーバ側ルーティングの追加
+#### Add server-side routing
 
-質問、質問コメント、回答、回答コメントに対してお気に入りの追加・削除用に以下のようなAPIを追加します。
+Add the following APIs to star or unstar a question, a answer, or a comment for question or answer.
 
-* POST /:id/star 質問のお気に入り追加
-* DELETE /:id/star 質問のお気に入り削除
-* POST /:id/answers/:answerId/star 回答のお気に入り追加
-* DELETE /:id/answers/:answerId/unstar 回答のお気に入り削除
-* POST /:id/comments/:commentId/star 質問コメントのお気に入り追加
-* DELETE /:id/comments/:commentId/unstar 質問コメントのお気に入り削除
-* POST /:id/answers/:answerId/comments/:commentId/star 回答コメントのお気に入り追加
-* DELETE /:id/answers/:answerId/comments/:commentId/star 回答コメントのお気に入り削除
+* POST /:id/star Star a question
+* DELETE /:id/star Unstar a question
+* POST /:id/answers/:answerId/star Star a answer
+* DELETE /:id/answers/:answerId/unstar Unstar a answer
+* POST /:id/comments/:commentId/star Star a comment for a question
+* DELETE /:id/comments/:commentId/unstar Unstar a comment for a question
+* POST /:id/answers/:answerId/comments/:commentId/star Star a comment for a answer
+* DELETE /:id/answers/:answerId/comments/:commentId/star Unstar a comment for a answer
 
-全てユーザに関する操作ですので、auth.isAuthenticated()を呼び出して認証機能を有効にしておきます。
+Because these APIs are related to user, register "auth.isAuthenticate()" to enable authentication.
 
 server/api/question/index.js
 
@@ -1556,10 +1556,10 @@ router.delete('/:id/answers/:answerId/comments/:commentId/star', auth.isAuthenti
 
 
 
-#### サーバ側DBモデルの変更
+#### Edit server-side database model
 
-DBモデルで、質問、質問コメント、回答、回答コメントについて、お気に入りユーザを配列で保持します。配列配下のオブジェクトについては、"$"で配列中の位置を参照できます。
-回答配列の下のコメント配列の下のお気に入りユーザ一覧のような場合、複数の"$"を使うことができませんので、配列を明示的に走査します。
+On database model, for questions, answers, and comments for questions or answers, store the list of starred user as a array.
+On "update()" function, we can refer the matched index of a array using "$". For the list of a starred user of a comment array of a answer array, because we can only use one "$", we need to iterate the array explicitly.
 
 server/api/question/question.controller.js
 
@@ -1647,9 +1647,10 @@ exports.unstarAnswerComment = function(req, res) {
 };
 ```
 
-#### クライアント側質問表示コントローラの変更
+#### Edit client-side question showing controller
 
-質問、質問コメント、回答、回答コメントのお気に入りの確認・追加・削除用に関数を追加します。APIの部分パスを引数にとることで質問・質問コメント・回答・回答コメント用に分けずに共通の関数にしています。
+Add functions to star, unstar, or check staring status for a question, a answer, or a comment for a question or a answer.
+We use sub-pathname parameter to use the common function for questions, answers, or comments.
 
 client/app/questionsShow/questionsShow.controller.js
 
@@ -1671,9 +1672,9 @@ client/app/questionsShow/questionsShow.controller.js
 ```
 
 
-#### クライアント側質問表示HTMLの変更
+#### Edit client-side question showing HTML file
 
-現在の、お気に入り状態を星アイコンで表示します。また、クリックすることでお気に入りの有効・無効を切り替えます。
+Show the staring status as star icon. We can click the star icon to star or unstar.
 
 client/app/questionsShow/questionsShow.html
 
@@ -1739,9 +1740,9 @@ client/app/questionsShow/questionsShow.html
         <pagedown-viewer content="comment.content" ng-if="!editting"></pagedown-viewer>
 ```
 
-#### クライアント側質問一覧コントローラの変更
+#### Edit client-side question listing controller
 
-質問一覧でもお気に入り情報を表示できるように、isStar()関数を追加します。
+Add "isStar()" function to show the staring status on question listing.
 
 client/app/questionsIndex/questionsIndex.controller.js
 
@@ -1753,9 +1754,9 @@ client/app/questionsIndex/questionsIndex.controller.js
     };
 ```
 
-#### クライアント側質問一覧HTMLの変更
+#### Edit client-side question listing HTML file
 
-質問一覧で、お気に入りの数と、回答の数を表示するようにします。
+On question listing, show the number of staring user for the question, and the number of answers.
 
 client/app/questionsIndex/questionsIndex.html
 
@@ -1804,22 +1805,24 @@ client/app/questionsIndex/questionsIndex.html
 
 <div id="navbar_all_mine_stars"></div>
 
-全ての質問、自分の質問、お気に入りの質問の一覧表示
+Question listing for all questions, my questions, and starred questions
 ===============
-現状、すべての質問が一覧には表示されますが、全ての質問以外に、自分の質問、お気に入りの質問一覧も表示できるようにしてみます。
+For now, all questions are always listed. Let's enable to choose from all questions, my questions, and starred questions. 
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152724.png)
 
 
-#### クライアント側ルーティングの変更
+#### Edit client-side routing
 
-全ての質問、自分の質問、お気に入りの質問それぞれの一覧表示にURLを対応させます。
+Assign the following URLs for all questions, my questions, and starred questions.
 
-* / :全ての質問一覧
-* /users/:userId :自分のお気に入り一覧
-* /users/:userId/starred :お気に入りの質問一覧
+* / :All questions
+* /users/:userId :My questions
+* /users/:userId/starred :Starred questions
 
-それぞれのルーティングでは同じコントローラ、テンプレートを利用するようにしてquery変数で検索条件を変えます。自分の質問一覧表示では、質問のユーザIDに自分が含まれているか確認します。お気に入り一覧表示では、質問、質問コメント、回答、回答コメントのいずれかのお気に入りユーザにログインユーザが含まれているか確認します。
+Use the same controller and HTML template and change the searching query by "query" variable.
+For my quetions listing, the query checks whether the user of the question is the same as current login user or not.
+For starred questions listing, the query checks whether the starred user for the question, the answers, or the comments contains current login user or not.
 
 client/app/questionsIndex/questionsIndex.js
 
@@ -1867,8 +1870,8 @@ client/app/questionsIndex/questionsIndex.js
   });
 ```
 
-#### クライアント側質問一覧コントローラの変更
-ルーティングで設定したqueryをサーバに渡します。
+#### Edit client-side question listing controller
+Send the query set on routing to the server.
 
 client/app/questionsIndex/questionsIndex.controller.js
 
@@ -1877,8 +1880,8 @@ client/app/questionsIndex/questionsIndex.controller.js
     $http.get('/api/questions', {params: {query: query}}).success(function(questions) {
 ```
 
-#### クライアント側質問一覧コントローラのテストの変更
-テストコードに空のqueryを追加してエラーが起こらないようにします。
+#### Edit client-side question listing controller test
+Add empty "query" to test code not to cause error.
 
 client/app/questionsIndex/questionsIndex.controller.spec.js
 
@@ -1889,8 +1892,8 @@ client/app/questionsIndex/questionsIndex.controller.spec.js
     });
 ```
 
-#### サーバ側コントローラの変更
-受け取ったqueryを用いてDBに問い合わせます。
+#### Edit server-side controller
+Send the received query to database.
 
 server/api/question/question.controller.js
 
@@ -1900,8 +1903,9 @@ exports.index = function(req, res) {
   Question.find(query).sort(...
 ```
 
-#### クライアント側Navbarコントローラの変更
-Navbarに、全ての質問一覧、自分の質問一覧、お気に入りの一覧表示用のリンクを設定します。URLと表示の有効・無効はログイン前後で変える必要があるので、関数としておきます。
+#### Edit client-side Navbar controller
+On Navbar, add links for all questions, my quetions, starred questions.
+Because we need to change the URL or enable/disable for links before login or logout, use functions instead of variables for those information on menu items.
 
 client/components/navbar/navbar.controller.js
 
@@ -1927,8 +1931,9 @@ client/components/navbar/navbar.controller.js
     ...
 ```
 
-#### クライアント側Navbar HTMLの変更
-リンク先のURLを$scope.item.link()で取得します。また、$scope.item.show()が有効の時のみリンクを表示するようにします。
+#### Edit client-side Navbar HTML
+Retrieve linked URLs using "$scope.item.link()" function.
+Also, show the link only when "$scope.item.show()" returns true.
 
 
 client/components/navbar/navbar.html
@@ -1943,15 +1948,16 @@ client/components/navbar/navbar.html
 
 <div id="search"></div>
 
-検索
+Search
 ============
+With MongoDB's full-text search, let's add a feature to search from question title, contents, comments, or answers.
 MongoDBの全文検索機能を使って、タイトル・質問内容・質問コメント・回答・回答コメントから検索できるようにしてみます。
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152725.png)
 
-#### クライアント側Navbar HTMLの変更
+#### Edit client-side Navbar HTML file
 
-Navbarに検索ボックスを追加します。検索実行時はsearch()関数を呼びます。
+Add serach box to Navbar. Call "search()" function on search.
 
 ```javascript
       <form class="navbar-form navbar-left" role="search" ng-submit="search(keyword)">
@@ -1968,7 +1974,7 @@ Navbarに検索ボックスを追加します。検索実行時はsearch()関数
       <ul class="nav navbar-nav navbar-right">
 ```
 
-#### クライアント側Navbarコントローラの変更
+#### Edit client-side Navbar controller
 
 client/components/navbar/navbar.controller.js
 
@@ -1978,10 +1984,11 @@ client/components/navbar/navbar.controller.js
     };
 ```
 
-#### サーバ側DBモデルの変更
+#### Edit server-side database model
 
-タイトル・質問内容・質問コメント・回答・回答コメントに全文検索用のインデックスを設定するため、QuestionSchema.index()で、検索対象フィールドに'text'を設定します。
-なお、MongoDBは自動的にインデックス名を追加しますが、128文字を越えると正しく動作しなくなりますので、明示的に指定しておきます。(参照:[We need to specify name explicitly for long schema.](
+To add index for full-text search for question titles, question contents, comments, and answers, use "QuestionSchema.index()" function and specify search target fields as 'text'.
+Although MongoDB can automatically set index name, because MongoDB does not work as intended if the length of the name is long and exceeds 128 bytes, let's explicitly specify the index name(ex: 'question_schema_index').
+(Ref: [We need to specify name explicitly for long schema.](
 http://docs.mongodb.org/manual/reference/limits/#Index-Name-Length))
 
 server/api/question/question.model.js
@@ -1998,9 +2005,9 @@ QuestionSchema.index({
 ```
 
 
-#### クライアント側質問表示ルーティングの変更
+#### Edit client-side question listing routing
 
-検索キーワードをURLのkeywordパラメータとして受け取れるように、ルーティング情報のurlに"/?keyword"として設定します。
+To accept search keyword as "keyword" URL parameter, add "/?keyword" to "url" field of the routing information.
 
 client/app/questionsIndex/questionsIndex.js
 
@@ -2010,13 +2017,11 @@ client/app/questionsIndex/questionsIndex.js
         ...
 ```
 
-#### クライアント側質問表示コントローラの変更
-
-MongoDBの'$text'と、'$search'オペレータを使い、keywordパラメータで検索を行うようにクエリを設定します。
+#### Edit client-side question showing controller
+Set the query using MongoDB's '$text' and '$search' parameter to search by 'keyword' parameter.
 
 
 client/app/questionsIndex/questionsIndex.controller.js
-
 
 ```javascript
   .controller('QuestionsIndexCtrl', function ($scope, $http, $location, query) {

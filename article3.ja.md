@@ -998,7 +998,7 @@ client/app/questionsCreate/questionsCreate.controller.js
 
 入力の検証
 ==============
-現状、質問のタイトル、本文、回答、コメントなど、何も入力しなくても投稿できてしまいます。入力がないと投稿できないようにしてみましょう。
+現状、質問のタイトル、本文、回答に何も入力しなくても投稿できてしまいます。入力がないと投稿できないようにしてみましょう。
 
 ![valication](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731160812.gif)
 
@@ -1077,8 +1077,8 @@ client/app/questionsCreate/questionsShow.html
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152721.png)
 
-#### クライアント側ライブラリ、momentjsのインストール
-時刻表示用のライブラリmomentjsをインストールします。
+#### Moment.jsのインストール
+時刻表示用のライブラリMoment.jsをインストールします。
 
 ```shell
 % bower install --save momentjs
@@ -1110,7 +1110,7 @@ client/index.html
 
 #### フィルタの実装
 
-momentjsのfromNow関数で時刻表示形式を変換します。locale関数で言語を設定することもできます(英語のみなら不要)。
+Moment.jsのfromNow()関数で時刻表示形式を変換します。locale()関数で言語を設定することもできます(英語のみなら不要)。
 
 client/app/fromNow/fromNow.filter.js
 
@@ -1147,7 +1147,7 @@ client/app/questionsCreate/questionsCreate.html
 
 #### テストコードの変更
 
-テストが失敗していますので修正しておきます。テスト実行時に読み込まれるファイルを変更するため、karma.conf.jsにmoment.jsを追加します。
+テストが失敗していますので修正しておきます。テスト実行時にもMoment.jsが読み込まれるように、karma.conf.jsにmoment.jsを追加します。
 
 karma.conf.js
 
@@ -1159,7 +1159,7 @@ karma.conf.js
     ],
 ```
 
-テストコードで現在時刻(Date.now())に対して、フィルタが'a few seconds ago'を返すことを確認します。
+テストコードで現在時刻(Date.now())に対して、fromNowフィルタが'a few seconds ago'を返すことを確認します。
 
 client/app/fromNow/fromNow.filter.spec.js
 
@@ -1178,7 +1178,7 @@ client/app/fromNow/fromNow.filter.spec.js
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152722.png)
 
 #### サーバ側DBモデルの変更
-質問スキーマで、質問、回答それぞれの配下にコメントを配列として保持します。各コメントでは、質問や回答と同様に作成時刻(cretedAt)・投稿ユーザ(user)も保持しておきます。
+質問スキーマで、質問、回答それぞれの配下にコメントを配列として保持します。各コメントでは、質問や回答と同様に作成時刻(createdAt)・投稿ユーザ(user)も保持しておきます。
 
 server/api/question/question.model.js
 
@@ -1215,13 +1215,13 @@ var QuestionSchema = new Schema({
 ```
 
 #### サーバ側ルーティングの変更
-質問コメント、回答コメントの追加・削除・編集に以下のようなAPIを追加します。
+質問コメント、回答コメントの追加・削除・更新に以下のようなAPIを追加します。
 
 * POST /:id/comments 質問コメント追加
-* PUT /:id/comments/:commentId 質問コメント編集
+* PUT /:id/comments/:commentId 質問コメント更新
 * DELETE /:id/comments/:commentId 質問コメント削除
 * POST /:id/answers/:answerId/comments 回答コメント追加
-* PUT /:id/answers/:answerId/comments/:commentId 回答コメント編集
+* PUT /:id/answers/:answerId/comments/:commentId 回答コメント更新
 * DELETE /:id/answers/:answerId/comments/:commentId 回答コメント削除
 
 /Users/tsuneo/gino/paizaqa2/server/api/question/index.js
@@ -1249,7 +1249,7 @@ exports.show = function(req, res) {
     ...
 ```
 
-また、コメントの投稿・削除用・編集のAPIを実装します。投稿ではコメント配列に'$push'オペレータで追加し、削除ではコメント入れtから'$pull'オペレータで削除します。更新時は配列の条件一致インデックスを'$'で参照します。回答コメントの更新では、配列の配列については、'$'を複数使えませんので１つずつ操作します。
+また、コメントの投稿・削除用・更新のAPIを実装します。投稿ではコメント配列に'$push'オペレータで追加し、削除ではコメント入れtから'$pull'オペレータで削除します。更新時は配列の条件一致インデックスを'$'で参照します。回答コメントの更新では、配列の配列については、インデックスを指定する'$'を複数使えませんので配列を１つずつ走査します。
 
 server/api/question/question.controller.js
 
@@ -1295,8 +1295,6 @@ exports.destroyAnswerComment = function(req, res) {
   });
 };
 exports.updateAnswerComment = function(req, res) {
-  console.log("req.params", req.params);
-  console.log("req.body", req.body);
   Question.find({_id: req.params.id}).exec(function(err, questions){
     if(err) { return handleError(res, err); }
     if(questions.length === 0) { return res.send(404); }
@@ -1314,7 +1312,6 @@ exports.updateAnswerComment = function(req, res) {
         /*jshint -W083 */
         Question.update(conditions, doc, function(err, num){
           if(err) { return handleError(res, err); }
-          console.log("UPDATED:num=", num);
           if(num === 0) { return res.send(404); }
           exports.show(req, res);
           return;
@@ -1372,7 +1369,7 @@ client/app/questionsShow/questionsShow.controller.js
 
 ####クライアント側質問表示HTMLの変更
 
-質問オブジェクトに含まれる、質問コメント、回答コメントの内容・作成日時・ユーザを表示するようします。また、新しいコメントを追加できるようにします。
+質問オブジェクトに含まれる、質問コメント、回答コメントの内容・作成日時・ユーザを表示するようします。また、新しいコメントを追加できるように入力欄を追加します。
 
 
 client/app/questionsShow/questionsShow.html
@@ -1458,7 +1455,7 @@ client/app/questionsShow/questionsShow.html
 
 #### サーバ側DBモデルの変更
 
-質問、質問コメント、回答、回答コメントで、お気に入りユーザ一覧をstarsフィールドに保持しておきます。
+質問、質問コメント、回答、回答コメントについて、お気に入りユーザ一覧を質問ドキュメントのstarsフィールドに配列として保持しておきます。
 
 server/api/question/question.model.js
 
@@ -1500,15 +1497,15 @@ var QuestionSchema = new Schema({
 
 #### サーバ側ルーティングの追加
 
-質問、質問コメント、回答、回答コメントに対してお気に入りの追加・削除用に以下のようなAPIを追加します。
+質問、質問コメント、回答、回答コメントに対してお気に入りの登録・削除用に以下のようなAPIを追加します。
 
-* POST /:id/star 質問のお気に入り追加
+* POST /:id/star 質問のお気に入り登録
 * DELETE /:id/star 質問のお気に入り削除
-* POST /:id/answers/:answerId/star 回答のお気に入り追加
+* POST /:id/answers/:answerId/star 回答のお気に入り登録
 * DELETE /:id/answers/:answerId/unstar 回答のお気に入り削除
-* POST /:id/comments/:commentId/star 質問コメントのお気に入り追加
+* POST /:id/comments/:commentId/star 質問コメントのお気に入り登録
 * DELETE /:id/comments/:commentId/unstar 質問コメントのお気に入り削除
-* POST /:id/answers/:answerId/comments/:commentId/star 回答コメントのお気に入り追加
+* POST /:id/answers/:answerId/comments/:commentId/star 回答コメントのお気に入り登録
 * DELETE /:id/answers/:answerId/comments/:commentId/star 回答コメントのお気に入り削除
 
 全てユーザに関する操作ですので、auth.isAuthenticated()を呼び出して認証機能を有効にしておきます。
@@ -1531,7 +1528,7 @@ router.delete('/:id/answers/:answerId/comments/:commentId/star', auth.isAuthenti
 #### サーバ側DBモデルの変更
 
 DBモデルで、質問、質問コメント、回答、回答コメントについて、お気に入りユーザを配列で保持します。配列配下のオブジェクトについては、"$"で配列中の位置を参照できます。
-回答配列の下のコメント配列の下のお気に入りユーザ一覧のような場合、複数の"$"を使うことができませんので、配列を明示的に走査します。
+回答配列の下のコメント配列の下のお気に入りユーザ一覧をupdate()で更新する場合、複数の"$"を使うことができませんので、配列を明示的に走査します。
 
 server/api/question/question.controller.js
 
@@ -1791,7 +1788,7 @@ client/app/questionsIndex/questionsIndex.html
 * /users/:userId :自分のお気に入り一覧
 * /users/:userId/starred :お気に入りの質問一覧
 
-それぞれのルーティングでは同じコントローラ、テンプレートを利用するようにしてquery変数で検索条件を変えます。自分の質問一覧表示では、質問のユーザIDに自分が含まれているか確認します。お気に入り一覧表示では、質問、質問コメント、回答、回答コメントのいずれかのお気に入りユーザにログインユーザが含まれているか確認します。
+それぞれのルーティングでは同じコントローラ、テンプレートを利用するようにしてquery変数で検索条件を変えます。自分の質問一覧表示では、質問のユーザIDに自分が含まれているかを確認します。お気に入り一覧表示では、質問、質問コメント、回答、回答コメントのいずれかのお気に入りユーザにログインユーザが含まれているか確認します。
 
 client/app/questionsIndex/questionsIndex.js
 
@@ -1873,7 +1870,7 @@ exports.index = function(req, res) {
 ```
 
 #### クライアント側Navbarコントローラの変更
-Navbarに、全ての質問一覧、自分の質問一覧、お気に入りの一覧表示用のリンクを設定します。URLと表示の有効・無効はログイン前後で変える必要があるので、関数としておきます。
+Navbarに、全ての質問一覧、自分の質問一覧、お気に入りの一覧表示用のリンクを設定します。URLと表示の有効・無効はログイン前後で変える必要があるので、これらはメニュー項目で関数としておきます。
 
 client/components/navbar/navbar.controller.js
 
@@ -1917,7 +1914,7 @@ client/components/navbar/navbar.html
 
 検索
 ============
-MongoDBの全文検索機能を使って、タイトル・質問内容・質問コメント・回答・回答コメントから検索できるようにしてみます。
+MongoDBの全文検索機能を使って、質問タイトル・質問内容・質問コメント・回答・回答コメントから検索できるようにしてみます。
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152725.png)
 
