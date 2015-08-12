@@ -1,4 +1,4 @@
-Building QA service in an hour - with MEAN stack(3)
+Building a QA web service in an hour - with MEAN stack(3)
 <!--
 0:1時間でフルスタックQAサービスを作る！- MEANスタック開発(3)
 MEANスタックで今すぐ作る最新ウェブサービス:ジェネレータを使ってみよう編
@@ -16,21 +16,21 @@ MEANスタックで今すぐ作る最新ウェブサービス:ジェネレータ
 
 [f:id:paiza:20140712194904j:plain]( by Yoshioka Tsuneo ([twitter:@yoshiokatsuneo]))
 
-MEAN stack(*) is a all-in-one JavaScript based web service development environment supporting front-end, back-end, and database development. A MEAN stack environment, AngularJS Full-Stack generator, provides the best practice to develop clean software in a timely manner.
+MEAN stack(*) is an all-in-one JavaScript based web service development environment supporting front-end, back-end, and database development. A MEAN stack environment, AngularJS Full-Stack generator, provides the best practice to develop clean software quickly.
 (*) MEAN stack packs MongoDB, Express, AngularJS, and Node.js.
 
 In the first article, I introduced how to install the MEAN stack. In the second article, I introduced how to build Twitter-like web service.
 
-In this article, as a example of more practical web service, I introduce how to build a QA service, like Stack Overflow, Qiita, or even Reddit or HackerNews. It can be applied for features like Blog or SNS comments where users can comment, discuss, or communicate each other.
+In this article, as an example of more practical web service, I introduce how to build a QA service, like Stack Overflow, Qiita, or even Reddit or HackerNews. It can be applied for features like Blog or SNS comments where users can comment, discuss, or communicate each other.
 
-In the second article (Twitter-like service), we build a service with one page. In this QA service, we build multilpe pages using generator, input validation using validator.
+In the second article (Twitter-like service), we build a service with one page. In this QA service, we will build multiple pages using generator, input validations using validators.
 
 The QA service has the following features:
 
 * Listing questions
 * Create, edit, or delete questions
 * Create, edit, or delete answers for each question
-* Create, edit, or delete comments for each question or answer.
+* Create, edit, or delete comments on each question or answer.
 * Tags for each question
 * Markdown editing
 * Searching questions, answers, or comments.
@@ -56,7 +56,7 @@ Contents
 * [Generating a new project](#new_project)
 * [Directory structure](#structure)
 * [Creating server-side question component(model, API, etc)](#generate_server_questions)
-* [Creating client-side question listing, question creating, and question showing components (controllers, HTMLs, etc)](#generate_client_questions)
+* [Creating client-side question-listing, question-creating, and question-showing components (controllers, HTMLs, etc)](#generate_client_questions)
 * [Creating answer field](#add_answers)
 * [Using Markdown](#markdown)
 * [Adding question tags](#tags)
@@ -117,7 +117,7 @@ Start the project.
 % grunt serve
 ```
 
-Browser will open generated project on http://localhost:9000/ .
+A browser will open generated project on http://localhost:9000/ .
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152623.png)
 
@@ -125,7 +125,7 @@ Browser will open generated project on http://localhost:9000/ .
 
 Directory structure
 ===================
-The generated project have the following structure.
+The generated project has the following structure.
 
 
 ```
@@ -166,7 +166,7 @@ On client directory, each "app/MODULE" directory stores files for each URL routi
 
 On server directory, each "server/api/MODULE" directory stores files for each URL routing as a component. The main files for the directories are Database model, server-side controller. Other files are server-side routing configuration, server-side WebSocket implementation, test codes.
 
-The client and the server send or receive data or events by communicating client-side controllers and server-side contorllers using JSON-based HTTP APIs. From MVC model's perspective, server see client as views, and client see server as models.
+The client and the server send or receive data or events by communicating client-side controllers and server-side controllers using JSON-based HTTP APIs. From MVC model's perspective, server sees client as views, and client sees server as models.
 
 
 <div id="generate_server_questions"></div>
@@ -174,9 +174,9 @@ The client and the server send or receive data or events by communicating client
 Creating server-side question component (model, API, etc)
 ======================================
 
-In this QA service, each question is stores as a document in a database.
+In this QA service, each question is stored as a document in a database.
 
-Generate server-side question-related directory and files (DB mode, server-side controller, etc) using generator.
+Generate server-side question-related directory and files (DB mode, server-side controller, etc) using the generator.
 
 ```shell
 % yo angular-fullstack:endpoint question
@@ -185,7 +185,7 @@ Generate server-side question-related directory and files (DB mode, server-side 
 When prompted endpoint, set default ("/api/questions").
 The generator generate "server/api/question" directory with files such as "question.controller.js", "question.model.js", and "/api/question" API is prepared for use.
 
-We edit database model to store question titles, question contents, and the list of answers. MongoDB can directly store arrays or associated arrays as a part of one JSON object. MongoDB itself is flexible schema and does not require pre-defined schema. But mongoose driver used in Angular Full-Stack generator provide schema as a additional feature to limit or validate fields, we define question related information as a schema.
+We edit database model to store question titles, question contents, and the list of answers. MongoDB can directly store arrays or associated arrays as a part of one JSON object. MongoDB itself is flexible schema and does not require pre-defined schemas. But mongoose driver used in Angular Full-Stack generator provide schema as an additional feature to limit or validate fields, we define question-related information as a schema.
 
 
 server/api/question/question.model.js
@@ -199,10 +199,10 @@ var QuestionSchema = new Schema({
 
 <div id="generate_client_questions"></div>
 
-Creating client-side question listing, question creating, and question showing components (controllers, HTMLs, etc)
+Creating client-side question-listing, question-creating, and question-showing components (controllers, HTMLs, etc)
 =====================================
 
-Now, we create files for question listing, question creating, and question showing components (controllers, HTMLs)
+Now, we create files for question-listing, question-creating, and question-showing components (controllers, HTMLs)
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152639.png)
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152631.png)
@@ -218,7 +218,7 @@ Remove needless files from the project.
 
 #### Generating components
 
-Generate question related directories and files. Now, we create three directories (questionsIndex, questionsCreate, and questionsShow) for question listing, question creating, and question showing.
+Generate question-related directories and files. Now, we create three directories (questionsIndex, questionsCreate, and questionsShow) for question listing, question-creating, and question showing.
 
 
 When generator prompted URL routing as "What will the url of your route be?", type the following URLs.
@@ -241,9 +241,9 @@ When generator prompted URL routing as "What will the url of your route be?", ty
 
 Directories and files are generated. Now, we implement client-side controllers and HTMLs by editing the files.
 
-#### Editing question listing controller
-On the question listing controller, we retrieve question listing using "GET /api/questions" API.
-Store the retrieved question to $scope variable so that we can refer from HTML file. Because we use "$http" service, add "$http" to the controller function parameters. The service based on the parameter variable name is assigned to the parameter.
+#### Editing question-listing controller
+On the question-listing controller, we retrieve question listing using "GET /api/questions" API.
+Store the retrieved question to $scope variable so that we can refer from the HTML file. Because we use "$http" service, add "$http" to the controller function parameters. The service based on the parameter variable name is assigned to the parameter.
 
 client/app/questionsIndex/questionsIndex.controller.js
 
@@ -255,8 +255,8 @@ client/app/questionsIndex/questionsIndex.controller.js
   });
 ```
 
-#### Editing question listing HTML file
-On question listing HTML file, we can refer "$scope.question" as "questions". By writing a attribute as 'ng-repeat="question in questions"', we can repeatedly output the elements for each question.
+#### Editing question-listing HTML file
+On question-listing HTML file, we can refer "$scope.question" as "questions". By writing an attribute as 'ng-repeat="question in questions"', we can repeatedly output the elements for each question.
 Also, we can refer "$scope" variable such as "{&#x7b;question.title&#x7b;}".
 
 client/app/questionIndex/questionIndex.html
@@ -334,7 +334,7 @@ client/app/questionIndex/questionIndex.scss
 
 #### Editing question crating controller
 Implement "$scope.submit()" function called when questions are submitted.
-The function stores the submitted question ($scope.question) to server using "POST /api/questions" API.
+The function stores the submitted question ($scope.question) to the server using "POST /api/questions" API.
 After the submission, move to submission listing page using "$location.path('/questions')".
 
 
@@ -351,8 +351,8 @@ client/app/questionsCreate/questionsCreate.controller.js
   });
 ```
 
-#### Editing question creating HTML file
-On question creating HTML file, add "ng-submit" attribute to call "submit()" on submissions. Add 'ng-model="question.title"' attribute to input tag to synchronize between input tag and "question.title" variable bi-directionally.
+#### Editing question-creating HTML file
+On question-creating HTML file, add "ng-submit" attribute to call "submit()" on submissions. Add 'ng-model="question.title"' attribute to input tag to synchronize between input tag and "question.title" variable bi-directionally.
 
 client/app/questionsCreate/questionsCreate.html
 
@@ -370,8 +370,8 @@ client/app/questionsCreate/questionsCreate.html
 </div>
 ```
 
-#### Editing question showing controller
-On question showing controller, retrieve question contents and show it.
+#### Editing question-showing controller
+On question-showing controller, retrieve question contents and show it.
 Question ID can be retrieved from URL("/question/show/:id") by referring ":id" part as "$stateParams.id".
 
 client/app/questionsShow/questionsShow.controller.js
@@ -387,8 +387,8 @@ client/app/questionsShow/questionsShow.controller.js
   });
 ```
 
-#### Editing question showing HTML file
-On question showing HTML file, output question title and contents.
+#### Editing question-showing HTML file
+On question-showing HTML file, output question title and contents.
 We refer "$scope.question" variable set on controller as "question".
 
 
@@ -471,7 +471,7 @@ router.post('/:id/answers', controller.createAnswer);
 
 #### Editing server-side controller
 
-Implement answer submission API. We can add a value to a array by using MongoDB's '$push' operator.
+Implement answer submission API. We can add a value to an array by using MongoDB's '$push' operator.
 
 server/api/question/question.controller.js
 
@@ -486,9 +486,9 @@ exports.createAnswer = function(req, res) {
 ```
 
 
-#### Editing client-side question showing controller
+#### Editing client-side question-showing controller
 
-Add "$scope.submitAnswer()" function called on answer submission. The function send the answer to server using "POST /api/questions/QUESTION-ID/answers" API. Reload whole question after the submission.
+Add "$scope.submitAnswer()" function called on answer submission. The function sends the answer to the server using "POST /api/questions/QUESTION-ID/answers" API. Reload whole question after the submission.
 
 client/app/questionsShow/questionsShow.controller.js
 
@@ -504,7 +504,7 @@ client/app/questionsShow/questionsShow.controller.js
     };
 ```
 
-#### Editing client-side question showing HTML
+#### Editing client-side question-showing HTML
 Output the list of answer stored in the question.
 Add "ng-submit" attribute to call "$scope.submitAnswer()" on answer submission.
 
@@ -556,7 +556,7 @@ We can just add a module and edit tags to support Markdown.
 
 #### Installing angular-pagedown module
 
-Install angular-pagedown module to support Markdown. When prompted for AngularJS, choose a option to use the latest version.
+Install angular-pagedown module to support Markdown. When prompted for AngularJS, choose an option to use the latest version.
 
 ```shell
 % bower install angular-pagedown --save
@@ -629,7 +629,7 @@ angular.module('paizaqaApp', [
 
 #### Using pagedown tag
 
-Enable Markdown input. Change from "textarea" tag to "pagdown-editor" tag and set bound variable by "content" attribute. For about output, change from "{&#x7b;&#x7d;}" to "pagedown-viewer" tag.
+Enable Markdown input. Change from "textarea" tag to "pagedown-editor" tag and set the bound variable by "content" attribute. For about output, change from "{&#x7b;&#x7d;}" to "pagedown-viewer" tag.
 
 client/app/questionsCreate/questionsCreate.html
 
@@ -661,7 +661,7 @@ To make it easy to understand kinds of questions, let's add tags related to ques
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152716.png)
 
 #### Editing database model
-Edit QuestionSchema to store tags as a array.
+Edit QuestionSchema to store tags as an array.
 
 ```javascript
 var QuestionSchema = new Schema({
@@ -708,7 +708,7 @@ angular.module('paizaqaApp', [
 ])
 ```
 
-#### Editing question creating HTML file
+#### Editing question-creating HTML file
 Add question tags input field using "tags-input" tag.
 You can also add auto completion by adding "auto-complete" element inside "tags-input" element, but not for this time.
 
@@ -722,7 +722,7 @@ client/questionsCreate/questionsCreate.html
     </tags-input>
 ```
 
-#### Editing question listing HTML file
+#### Editing question-listing HTML file
 Add tags below the question title.
 
 client/app/questionsIndex/questionsIndex.html
@@ -739,7 +739,7 @@ client/app/questionsIndex/questionsIndex.html
           </div>
 ```
 
-#### Editing question showing HTML file
+#### Editing question-showing HTML file
 Add tags below the question title.
 
 client/app/questionsShow/questionsShow.html
@@ -758,13 +758,13 @@ client/app/questionsShow/questionsShow.html
 User authentication
 ==================
 For now, we don't know who submit questions and answers. So, let's add user authentication feature.
-Only submitted user can edit or remove the articles. Also, store the submission date.
+Only submitted users can edit or remove the articles. Also, store the submission date.
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152718.png)
 
 #### Editing server-side database model
 
-Store submitted user's object ID to questions and answers. Specify object's referring model as "ref: 'User'" so that "populate()" function can expands user IDs to User objects.
+Store submitted user's object ID to questions and answers. Specify object's referring model as "ref: 'User'" so that "populate()" function can expand user IDs to User objects.
 
 server/api/question/question.model.js
 
@@ -800,8 +800,8 @@ var QuestionSchema = new Schema({
 
 #### Editing server-side API routing
 
-On the server-side API routing, add "auth.isAuthenticated()" as a Express middleware to the URL resource requiring authentication so that server-side controller can refer current login user as "req.user". 
-Also, add a answer deleting API(DELETE /:id/answers/:answerId).
+On the server-side API routing, add "auth.isAuthenticated()" as an Express middleware to the URL resource requiring authentication so that server-side controller can refer current login user as "req.user". 
+Also, add an answer-deleting API(DELETE /:id/answers/:answerId).
 
 server/api/question/index.js
 
@@ -821,7 +821,7 @@ router.delete('/:id/answers/:answerId', auth.isAuthenticated(), controller.destr
 ```
 
 #### Editing server-side controller
-On question listing API, call "pupulate()" to expand user ID to user object.
+On question-listing API, call "populate()" to expand a user ID to a user object.
 "populate('user', 'name')" expands name field of each user object.
 Also, change to return last 20 questions.
 "sort({createdAt: -1})" sort by created time in descending order and "limit(20)" returns the first 20 objects.
@@ -835,7 +835,7 @@ exports.index = function(req, res) {
     ...
 ```
 
-Change question showing API to expand user ID to user object.
+Change question-showing API to expand a user ID to a user object.
 
 server/api/question/question.controller.js
 
@@ -845,7 +845,7 @@ exports.show = function(req, res) {
     ...
 ```
 
-Change question creating API to save user as a part of question.
+Change question-creating API to save user as a part of question.
 
 ```javascript
 exports.create = function(req, res) {
@@ -853,8 +853,8 @@ exports.create = function(req, res) {
   Question.create(req.body, ...
 ```
 
-On question updating and destroying API, veryfy that current login user ID is the same as the question's user ID so that
-only submitted user can edit or delete the articles.
+On question-updating and question-destroying API, verify that current login user ID is the same as the question's user ID so that
+only submitted users can edit or delete the articles.
 
 ```javascript
 exports.update = function(req, res) {
@@ -884,7 +884,7 @@ exports.destroyAnswer = function(req, res) {
 };
 ```
 
-Implement answer updating API. On the MongoDB query, we can refer the matching index of the array(answer array in this case) as '$'.
+Implement answer-updating API. On the MongoDB query, we can refer the matching index of the array(answer array in this case) as '$'.
 Add a condition to match current login user and answer's user ID so that only submitted user can update the answer.
 
 ```javascript
@@ -897,9 +897,9 @@ exports.updateAnswer = function(req, res) {
 };
 ```
 
-#### Editing client-side question listing HTML
+#### Editing client-side question-listing HTML
 
-Add user name and created time to the quesion.
+Add user name and created time to the question.
 
 client/app/questionsIndex/questionsIndex.html
 
@@ -912,7 +912,7 @@ client/app/questionsIndex/questionsIndex.html
           </div>
 ```
 
-#### Editing client-side question showing controller
+#### Editing client-side question-showing controller
 Implement question and answer deletion function("deleteQuestion()", "deleteAnswer()") and updating function("updateQuestion()", "updateAnswer()"). Deleting functions call "DELETE /api/questions/:id" and "DELETE /api/questions/:id" API.
 Updating functions call "PUT /api/questions/:id" and "PUT /api/questions/:id/answers/:id" API.
 
@@ -950,7 +950,7 @@ angular.module('paizaqaApp')
     };
 ```
 
-#### Editing client-side question showing HTML file
+#### Editing client-side question-showing HTML file
 
 Add submitted user name and created time to the question and answers.
 
@@ -979,7 +979,7 @@ client/app/questionsShow/questionsShow.html
 
 ```
 
-Also, add editing button. "editing" variable is true while editing. Use "ng-show"/"ng-if" to switch element by "editing" variable. Although we are using the same "editing" variable for question and answers, answers are under a element with "ng-repeat" attribute and ng-repeat create seperate scope for each items. So, each "editing" actually refers different variables for question and each answers.
+Also, add editing button. "editing" variable is true while editing. Use "ng-show"/"ng-if" to switch element by "editing" variable. Although we are using the same "editing" variable for question and answers, answers are under an element with "ng-repeat" attribute and ng-repeat create separate scope for each item. So, each "editing" actually refers different variables for the question and each answer.
 
 client/app/questionsShow/questionsShow.html
 
@@ -1003,9 +1003,9 @@ client/app/questionsShow/questionsShow.html
     ...
 ```
 
-#### Editing client-side question creating controller
+#### Editing client-side question-creating controller
 
-If not authenticated, move to login page.
+If not authenticated, move to the login page.
 
 client/app/questionsCreate/questionsCreate.controller.js
 
@@ -1023,7 +1023,7 @@ client/app/questionsCreate/questionsCreate.controller.js
 
 Input validation
 ==============
-For now, we can submit forms with empty question, empty answer. Let's validate inputs not to submit without filling the field.
+For now, we can submit a form with an empty question, or an empty answer. Let's validate inputs not to submit without filling the field.
 
 ![valication](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731160812.gif)
 
@@ -1185,7 +1185,7 @@ karma.conf.js
     ],
 ```
 
-Change test code to test that the fromNow filter with current time(Date.now()) returns 'a few seconds ago'.
+Change test code to test that the fromNow filter with the current time(Date.now()) returns 'a few seconds ago'.
 
 client/app/fromNow/fromNow.filter.spec.js
 
@@ -1204,7 +1204,7 @@ Now, let's add comment fields for questions and answers.
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152722.png)
 
 #### Editing server-side database model
-On QuestionSchema, store comments as a array inside the each question and answer. Each comment hold created time and submitted user.
+On QuestionSchema, store comments as an array inside the each question and answer. Each comment hold created time and submitted user.
 
 
 server/api/question/question.model.js
@@ -1242,14 +1242,14 @@ var QuestionSchema = new Schema({
 ```
 
 #### Editing server-side routing
-Add the following APIs for create, update, and delete a comment to a question or an answer.
+Add the following APIs to create, update, and delete a comment on a question or an answer.
 
-* POST /:id/comments Create a comment for a question
-* PUT /:id/comments/:commentId Update a comment for a question
-* DELETE /:id/comments/:commentId Delete a comment for a question
-* POST /:id/answers/:answerId/comments Create a comment for a answer
-* PUT /:id/answers/:answerId/comments/:commentId Update a comment for a answer
-* DELETE /:id/answers/:answerId/comments/:commentId Delete a comment for a answer
+* POST /:id/comments Create a comment on a question
+* PUT /:id/comments/:commentId Update a comment on a question
+* DELETE /:id/comments/:commentId Delete a comment on a question
+* POST /:id/answers/:answerId/comments Create a comment on an answer
+* PUT /:id/answers/:answerId/comments/:commentId Update a comment on an answer
+* DELETE /:id/answers/:answerId/comments/:commentId Delete a comment on an answer
 
 /Users/tsuneo/gino/paizaqa2/server/api/question/index.js
 
@@ -1266,7 +1266,7 @@ router.delete('/:id/answers/:answerId/comments/:commentId', auth.isAuthenticated
 
 #### Editing server-side controller
 
-On question listing API, expand a user ID of a comment to a user object using populate().
+On question-listing API, expand a user ID of a comment to a user object using populate().
 
 server/api/question/question.controller.js
 
@@ -1276,7 +1276,7 @@ exports.show = function(req, res) {
     ...
 ```
 
-Implement APIs to create, update, or delete a comment. To create a comment, add a comment to the comment array of the question document using '$push' operator. To delete a comment, delete a comment from the comment array of the question document. To update a comment, specify the updating index of the comment array of the question document using '$'. To update a comment for a answer, because we update a item inside a array of a array and only one '$' can be used to specify index, we need to iterate each item for the array.
+Implement APIs to create, update, or delete a comment. To create a comment, add a comment to the comment array of the question document using '$push' operator. To delete a comment, delete a comment from the comment array of the question document. To update a comment, specify the updating index of the comment array of the question document using '$'. To update a comment on an answer, because we update a item inside an array of an array and only one '$' can be used to specify index, we need to iterate each item for the array.
 
 
 server/api/question/question.controller.js
@@ -1395,7 +1395,7 @@ client/app/questionsShow/questionsShow.controller.js
     };
 ```
 
-#### Editing client-side question showing HTML file
+#### Editing client-side question-showing HTML file
 
 Output comments' content, created time, and user for the question or the answers in the question object. Also, add forms to submit new comments.
 
@@ -1476,14 +1476,14 @@ client/app/questionsShow/questionsShow.html
 
 Adding stars
 ==============
-Adding a feature to star or unstar questions, answers, and comments for questions or answers.
+Adding a feature to star or unstar questions, answers, and comments on questions or answers.
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152723.png)
 
 
 #### Editing server-side database model
 
-Store the list of starring users for a question, a answer, and a comment for a question or answer to a "stars" field of a question document as an array.
+Store the list of starring users for a question, an answer, and a comment on a question or answer to a "stars" field of a question document as an array.
 
 server/api/question/question.model.js
 
@@ -1525,16 +1525,16 @@ var QuestionSchema = new Schema({
 
 #### Adding server-side routing
 
-Add the following APIs to star or unstar a question, a answer, or a comment for question or answer.
+Add the following APIs to star or unstar a question, an answer, or a comment on a question or an answer.
 
 * POST /:id/star Star a question
 * DELETE /:id/star Unstar a question
-* POST /:id/answers/:answerId/star Star a answer
-* DELETE /:id/answers/:answerId/unstar Unstar a answer
-* POST /:id/comments/:commentId/star Star a comment for a question
-* DELETE /:id/comments/:commentId/unstar Unstar a comment for a question
-* POST /:id/answers/:answerId/comments/:commentId/star Star a comment for a answer
-* DELETE /:id/answers/:answerId/comments/:commentId/star Unstar a comment for a answer
+* POST /:id/answers/:answerId/star Star an answer
+* DELETE /:id/answers/:answerId/unstar Unstar an answer
+* POST /:id/comments/:commentId/star Star a comment on a question
+* DELETE /:id/comments/:commentId/unstar Unstar a comment on a question
+* POST /:id/answers/:answerId/comments/:commentId/star Star a comment on an answer
+* DELETE /:id/answers/:answerId/comments/:commentId/star Unstar a comment on an answer
 
 Because these APIs are related to user, register "auth.isAuthenticate()" to enable authentication.
 
@@ -1555,8 +1555,8 @@ router.delete('/:id/answers/:answerId/comments/:commentId/star', auth.isAuthenti
 
 #### Editing server-side database model
 
-On database model, for questions, answers, and comments for questions or answers, store the list of starred user as a array.
-On "update()" function, we can refer the matched index of a array using "$". For the list of a starred user of a comment array of a answer array, because we can only use one "$", we need to iterate the array explicitly.
+On database model, for questions, answers, and comments on questions or answers, store the list of starred user as an array.
+On "update()" function, we can refer the matched index of an array using "$". For the list of a starred user of a comment array of an answer array, because we can only use one "$", we need to iterate the array explicitly.
 
 server/api/question/question.controller.js
 
@@ -1644,10 +1644,10 @@ exports.unstarAnswerComment = function(req, res) {
 };
 ```
 
-#### Editing client-side question showing controller
+#### Editing client-side question-showing controller
 
-Add functions to star, unstar, or check staring status for a question, a answer, or a comment for a question or a answer.
-We use sub-pathname parameter to use the common function for questions, answers, or comments.
+Add functions to star, unstar, or check staring status for a question, an answer, or a comment on a question or an answer.
+We use a sub-pathname parameter to use the common function for questions, answers, or comments.
 
 client/app/questionsShow/questionsShow.controller.js
 
@@ -1669,7 +1669,7 @@ client/app/questionsShow/questionsShow.controller.js
 ```
 
 
-#### Editing client-side question showing HTML file
+#### Editing client-side question-showing HTML file
 
 Show the staring status as star icon. We can click the star icon to star or unstar.
 
@@ -1737,7 +1737,7 @@ client/app/questionsShow/questionsShow.html
         <pagedown-viewer content="comment.content" ng-if="!editing"></pagedown-viewer>
 ```
 
-#### Editing client-side question listing controller
+#### Editing client-side question-listing controller
 
 Add "isStar()" function to show the staring status on question listing.
 
@@ -1751,7 +1751,7 @@ client/app/questionsIndex/questionsIndex.controller.js
     };
 ```
 
-#### Editing client-side question listing HTML file
+#### Editing client-side question-listing HTML file
 
 On question listing, show the number of staring user for the question, and the number of answers.
 
@@ -1867,7 +1867,7 @@ client/app/questionsIndex/questionsIndex.js
   });
 ```
 
-#### Editing client-side question listing controller
+#### Editing client-side question-listing controller
 Send the query set on routing to the server.
 
 client/app/questionsIndex/questionsIndex.controller.js
@@ -1877,8 +1877,8 @@ client/app/questionsIndex/questionsIndex.controller.js
     $http.get('/api/questions', {params: {query: query}}).success(function(questions) {
 ```
 
-#### Editing client-side question listing controller test
-Add empty "query" to test code not to cause error.
+#### Editing client-side question-listing controller test
+Add empty "query" to test code not to cause an error.
 
 client/app/questionsIndex/questionsIndex.controller.spec.js
 
@@ -1890,7 +1890,7 @@ client/app/questionsIndex/questionsIndex.controller.spec.js
 ```
 
 #### Editing server-side controller
-Send the received query to database.
+Send the received query to the database.
 
 server/api/question/question.controller.js
 
@@ -1902,7 +1902,7 @@ exports.index = function(req, res) {
 
 #### Editing client-side Navbar controller
 On Navbar, add links for all questions, my questions, starred questions.
-Because we need to change the URL or enable/disable for links before login or logout, use functions instead of variables for those information on menu items.
+Because we need to change the URL or enable/disable for links before login or logout, use functions instead of variables for that information on menu items.
 
 client/components/navbar/navbar.controller.js
 
@@ -1947,8 +1947,7 @@ client/components/navbar/navbar.html
 
 Search
 ============
-With MongoDB's full-text search, let's add a feature to search from question title, contents, comments, or answers.
-MongoDBの全文検索機能を使って、タイトル・質問内容・質問コメント・回答・回答コメントから検索できるようにしてみます。
+With MongoDB's full-text search, let's add a feature to search on question titles, contents, comments, or answers.
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152725.png)
 
@@ -1983,7 +1982,7 @@ client/components/navbar/navbar.controller.js
 
 #### Editing server-side database model
 
-To add index for full-text search for question titles, question contents, comments, and answers, use "QuestionSchema.index()" function and specify search target fields as 'text'.
+To add index for a full-text search for question titles, question contents, comments, and answers, use "QuestionSchema.index()" function and specify search target fields as 'text'.
 Although MongoDB can automatically set index name, because MongoDB does not work as intended if the length of the name is long and exceeds 128 bytes, let's explicitly specify the index name (ex: 'question_schema_index').
 (Ref: [We need to specify name explicitly for long schema.](
 http://docs.mongodb.org/manual/reference/limits/#Index-Name-Length))
@@ -2002,7 +2001,7 @@ QuestionSchema.index({
 ```
 
 
-#### Editing client-side question listing routing
+#### Editing client-side question-listing routing
 
 To accept search keyword as "keyword" URL parameter, add "/?keyword" to "url" field of the routing information.
 
@@ -2014,7 +2013,7 @@ client/app/questionsIndex/questionsIndex.js
         ...
 ```
 
-#### Editing client-side question showing controller
+#### Editing client-side question-showing controller
 Set the query using MongoDB's '$text' and '$search' parameter to search by 'keyword' parameter.
 
 
@@ -2036,7 +2035,7 @@ client/app/questionsIndex/questionsIndex.controller.js
 
 Japanese search
 ==============
-MongoDB's full-text search only support Latin languages, and does not support other languages like Japanese.
+MongoDB's full-text search only supports Latin languages, and does not support other languages like Japanese.
 Let's support Japanese search by using Japanese tokenizer "TinySegmenter".
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731160824.gif)
@@ -2178,7 +2177,7 @@ exports.updateAnswerComment = function(req, res) {
 
 Infinite scroll
 ============
-For now, we can list only the last 20 questions. Let's add a infinite scroll to show older questions.
+For now, we can list only the last 20 questions. Let's add an infinite scroll to show older questions.
 
 
 #### Installing ngInfiniteScroll library
@@ -2214,10 +2213,10 @@ angular.module('paizaqaApp', [
  ])
 ```
 
-#### Editing client-side question listing controller
+#### Editing client-side question-listing controller
 
 To list older questions on a scroll, implement "nextPage()" function. To retrieve questions older than the current oldest question ID, specify the query as "{_id: {$lt: lastID}}". 
-Store the loading status as "$scope.busy", and the status whether more data is avaiable or not as "$scope.noMoreData".
+Store the loading status as "$scope.busy", and the status whether more data is available or not as "$scope.noMoreData".
 
 client/app/questionsIndex/questionsIndex.controller.js
 
@@ -2251,7 +2250,7 @@ client/app/questionsIndex/questionsIndex.controller.js
 #### Editing client-side question lisging
 To load older questions on scroll to the bottom, add "infinite-scroll" attribute to call "nextPage()" function.
 Disable scroll when loading or no more data.
-Show "Loading data" on loading by adding a element with "ng-show='busy'", so the element is shown only when "busy" variable is "true". 
+Show "Loading data" on loading by adding an element with "ng-show='busy'", so the element is shown only when "busy" variable is "true". 
 
 ```html
 <div class="container" infinite-scroll='nextPage()' infinite-scroll-disabled='busy || noMoreData'>
@@ -2265,7 +2264,7 @@ Show "Loading data" on loading by adding a element with "ng-show='busy'", so the
 SNS authentication
 =========
 When using SNS authentication(Facebook, Twitter, Google), set API key and SECRET key. See
-[a instruction in the first article](http://paiza.hatenablog.com/entry/2015/07/08/最新・最速！Webサービスが今すぐ作れる！_-_MEANスタッ#sns_link) for details.
+[an instruction in the first article](http://paiza.hatenablog.com/entry/2015/07/08/最新・最速！Webサービスが今すぐ作れる！_-_MEANスタッ#sns_link) for details.
 
 For about Facebook authentication, because API specification changed on Graph API 2.4(on 9th,July,2015), we need to explicitly specify fields to use on "profileFields" as follows.
 
@@ -2285,7 +2284,7 @@ Deploying
 ============
 Now, let's deploy the application to Heroku.
 To configure Heroku deployment, use "yo angular-fullstack:heroku" command.
-Also, install a MongoDB module MongoLab to the Heroku application, as MongoLab have free plan.
+Also, install a MongoDB module MongoLab to the Heroku application, as MongoLab have a free plan.
 
 ```shell
 % yo angular-fullstack:heroku
@@ -2326,7 +2325,7 @@ Summary
 ===============
 I introduced how to build a QA service using a MEAN stack, AngularJS Full-Stack generator.
 Using MEAN stack, we can build a sophisticated web service from client-side logic to server-side logic quickly by only using JavaScript.
-Using generator, we can get best practice boilerplate codes, and just edit the codes to create services. It is especially helpful for startups or prototypes where it is required to create and change services quickly by trial and error.
+Using the generator, we can get best practice boilerplate codes, and just edit the codes to create services. It is especially helpful for startups or prototypes where it is required to create and change services quickly by trial and error.
 
 Lets' come up with ideas, and build your own services!
 
@@ -2348,5 +2347,4 @@ I'll continue writing articles to build web services using MEAN stack.
 
 <hr>
 <br><br>
-
 
