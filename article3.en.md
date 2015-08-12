@@ -16,14 +16,14 @@ MEANスタックで今すぐ作る最新ウェブサービス:ジェネレータ
 
 [f:id:paiza:20140712194904j:plain]( by Yoshioka Tsuneo ([twitter:@yoshiokatsuneo]))
 
-MEAN stack(*) is a all-in-one JavaScript based web service development environment supporting front-end, back-end, and database development. A MEAN stack envinronment, AngularJS Full-Stack generator, provides the best practice to develop clean software in a timely manner.
+MEAN stack(*) is a all-in-one JavaScript based web service development environment supporting front-end, back-end, and database development. A MEAN stack environment, AngularJS Full-Stack generator, provides the best practice to develop clean software in a timely manner.
 (*) MEAN stack packs MongoDB, Express, AngularJS, and Node.js.
 
 In the first article, I introduced how to install the MEAN stack. In the second article, I introduced how to build Twitter-like web service.
 
-In this article, as a example of more practile web service, I introduce how to build a QA service, like Stack Overflow, Qiita, or even Reddit or HackerNews. It can be applied for features like Blog or SNS comments where users can comment, discuss, or communicate each other.
+In this article, as a example of more practical web service, I introduce how to build a QA service, like Stack Overflow, Qiita, or even Reddit or HackerNews. It can be applied for features like Blog or SNS comments where users can comment, discuss, or communicate each other.
 
-In the second article(Twitter-like service), we build a service with one page. In this QA service, we build multilpe pages using generator, input validation using validator.
+In the second article (Twitter-like service), we build a service with one page. In this QA service, we build multilpe pages using generator, input validation using validator.
 
 The QA service has the following features:
 
@@ -32,7 +32,7 @@ The QA service has the following features:
 * Create, edit, or delete answers for each question
 * Create, edit, or delete comments for each question or answer.
 * Tags for each question
-* Markdown editting
+* Markdown editing
 * Searching questions, answers, or comments.
 * Staring questions, answers, or comments.
 * Listing all questions, my questions, or starred questions.
@@ -43,7 +43,7 @@ The QA service has the following features:
 The QA service is available in the following URL:
 http://paizaqa.herokuapp.com
 
-Source code is availalbe below:
+Source code is available below:
 https://github.com/gi-no/paizaqa
 
 So, let's build the QA service!
@@ -56,7 +56,7 @@ Contents
 * [Generating a new project](#new_project)
 * [Directory structure](#structure)
 * [Creating server-side question component(model, API, etc)](#generate_server_questions)
-* [Creating client-side question listing, question creating, and question showing components(controllers, HTMLs, etc)](#generate_client_questions)
+* [Creating client-side question listing, question creating, and question showing components (controllers, HTMLs, etc)](#generate_client_questions)
 * [Creating answer field](#add_answers)
 * [Using Markdown](#markdown)
 * [Adding question tags](#tags)
@@ -94,7 +94,7 @@ At first, we generate a project from templates. Let's name the project "paizaqa"
 % yo angular-fullstack paizaqa
 ```
 
-We use almost default settings but enable SNS authentication(oAuth).
+We use almost default settings but enable SNS authentication (oAuth).
 
 ```
 - Would you like to include additional oAuth strategies? 
@@ -130,8 +130,8 @@ The generated project have the following structure.
 
 ```
 .
-|-- bower.json                            Bower packages(Client-side libraries)
-|-- package.json                          npm packages(Server-side libraries)
+|-- bower.json                            Bower packages (Client-side libraries)
+|-- package.json                          npm packages (Server-side libraries)
 |
 |-- client                                Client-side codes
 |   |-- app
@@ -154,7 +154,7 @@ The generated project have the following structure.
     `-- api
         `-- thing
             |-- index.js                  Server-side API routing configuration
-            |-- thing.controller.js       Server-side controller(API implementation)
+            |-- thing.controller.js       Server-side controller (API implementation)
             |-- thing.model.js            Server-side DB model
             |-- thing.socket.js           Server-side WebSocket implementation
             `-- thing.spec.js             Server-side test code
@@ -162,7 +162,7 @@ The generated project have the following structure.
 
 Client-side codes are deployed under a client directory, server-side codes are deployed under a server directory. By packaging files into a directory for each feature as a component, components become independent each other and whole the project is clean and easy to understand.
 
-On client directory, each "app/MODULE" directory stores files for each URL routing as a component. The main files for directories are HTML files(ex: "main.html"), client-side controller(ex: "main.controller.js"). Other files are client-side routing configuration, test codes, CSS files, etc. Common features for the project are stored under "components" directory as a subdirectory.
+On client directory, each "app/MODULE" directory stores files for each URL routing as a component. The main files for directories are HTML files (ex: "main.html"), client-side controller (ex: "main.controller.js"). Other files are client-side routing configuration, test codes, CSS files, etc. Common features for the project are stored under "components" directory as a subdirectory.
 
 On server directory, each "server/api/MODULE" directory stores files for each URL routing as a component. The main files for the directories are Database model, server-side controller. Other files are server-side routing configuration, server-side WebSocket implementation, test codes.
 
@@ -171,12 +171,12 @@ The client and the server send or receive data or events by communicating client
 
 <div id="generate_server_questions"></div>
 
-Creating server-side question component(model, API, etc)
+Creating server-side question component (model, API, etc)
 ======================================
 
 In this QA service, each question is stores as a document in a database.
 
-Generate server-side question-related directory and files(DB mode, server-side controller, etc) using generator.
+Generate server-side question-related directory and files (DB mode, server-side controller, etc) using generator.
 
 ```shell
 % yo angular-fullstack:endpoint question
@@ -199,10 +199,10 @@ var QuestionSchema = new Schema({
 
 <div id="generate_client_questions"></div>
 
-Creating client-side question listing, question creating, and question showing components(controllers, HTMLs, etc)
+Creating client-side question listing, question creating, and question showing components (controllers, HTMLs, etc)
 =====================================
 
-Now, we create files for question listing, question creating, and question showing components(controllers, HTMLs)
+Now, we create files for question listing, question creating, and question showing components (controllers, HTMLs)
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152639.png)
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152631.png)
@@ -218,14 +218,14 @@ Remove needless files from the project.
 
 #### Generating components
 
-Generate question related directories and files. Now, we create three directories(questionsIndex, questionsCreate, and questionsShow) for question listing, question creating, and question showing.
+Generate question related directories and files. Now, we create three directories (questionsIndex, questionsCreate, and questionsShow) for question listing, question creating, and question showing.
 
 
 When generator prompted URL routing as "What will the url of your route be?", type the following URLs.
 
-* questionsIndex(Question listing): /
-* questionsCreate(Question creating): /questions/create
-* questionsShow(Question showing): /questions/show/:id
+* questionsIndex (Question listing): /
+* questionsCreate (Question creating): /questions/create
+* questionsShow (Question showing): /questions/show/:id
 
 ```shell
 % yo angular-fullstack:route questionsIndex
@@ -239,7 +239,7 @@ When generator prompted URL routing as "What will the url of your route be?", ty
 ? What will the url of your route be? /questions/show/:id
 ```
 
-Directories and files are generated. Now, we implement client-side controllers and HTMLs by editting the files.
+Directories and files are generated. Now, we implement client-side controllers and HTMLs by editing the files.
 
 #### Editing question listing controller
 On the question listing controller, we retrieve question listing using "GET /api/questions" API.
@@ -256,7 +256,7 @@ client/app/questionsIndex/questionsIndex.controller.js
 ```
 
 #### Editing question listing HTML file
-On question listing HTML file, we can refer "$scope.question" as "questions". By writting a attribute as 'ng-repeat="question in questions"', we can repeatedly output the elements for each question.
+On question listing HTML file, we can refer "$scope.question" as "questions". By writing a attribute as 'ng-repeat="question in questions"', we can repeatedly output the elements for each question.
 Also, we can refer "$scope" variable such as "{&#x7b;question.title&#x7b;}".
 
 client/app/questionIndex/questionIndex.html
@@ -334,8 +334,8 @@ client/app/questionIndex/questionIndex.scss
 
 #### Editing question crating controller
 Implement "$scope.submit()" function called when questions are submitted.
-The function stores the submitted question($scope.question) to server using "POST /api/questions" API.
-After the submittion, move to submittion listing page using "$location.path('/questions')".
+The function stores the submitted question ($scope.question) to server using "POST /api/questions" API.
+After the submission, move to submission listing page using "$location.path('/questions')".
 
 
 client/app/questionsCreate/questionsCreate.controller.js
@@ -372,7 +372,7 @@ client/app/questionsCreate/questionsCreate.html
 
 #### Editing question showing controller
 On question showing controller, retrieve question contents and show it.
-Question ID can be retrieved from URL("/question/show/:id") by refering ":id" part as "$stateParams.id".
+Question ID can be retrieved from URL("/question/show/:id") by referring ":id" part as "$stateParams.id".
 
 client/app/questionsShow/questionsShow.controller.js
 
@@ -388,7 +388,7 @@ client/app/questionsShow/questionsShow.controller.js
 ```
 
 #### Editing question showing HTML file
-On question showing HTML file, output question titile and contents.
+On question showing HTML file, output question title and contents.
 We refer "$scope.question" variable set on controller as "question".
 
 
@@ -436,14 +436,14 @@ But now, because we changed the directory structure dramatically, we restart the
 
 Creating answer field
 ==============================
-Now, though we are building QA service, we can only ask quetions and no one can answer it.
+Now, though we are building QA service, we can only ask questions and no one can answer it.
 So, let's enable to create, display answers.
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152706.png)
 
 #### Editing server-side DB model
 
-Edit QuestionSchema to store answers. MongoDB can store JSON object including arrays into a document(corresponding a record in RDB).
+Edit QuestionSchema to store answers. MongoDB can store JSON object including arrays into a document (corresponding a record in RDB).
 
 server/api/question/question.model.js
 
@@ -460,7 +460,7 @@ var QuestionSchema = new Schema({
 
 #### Editing server-side routing
 
-Add answer submittion API to the URL routing.
+Add answer submission API to the URL routing.
 
 server/api/question/index.js
 
@@ -471,7 +471,7 @@ router.post('/:id/answers', controller.createAnswer);
 
 #### Editing server-side controller
 
-Implement answer submittion API. We can add a value to a array by using MongoDB's '$push' operator.
+Implement answer submission API. We can add a value to a array by using MongoDB's '$push' operator.
 
 server/api/question/question.controller.js
 
@@ -488,7 +488,7 @@ exports.createAnswer = function(req, res) {
 
 #### Editing client-side question showing controller
 
-Add "$scope.submitAnswer()" function called on answer submittion. The function send the answer to server using "POST /api/questions/QUESTION-ID/answers" API. Reload whole question after the submittion.
+Add "$scope.submitAnswer()" function called on answer submission. The function send the answer to server using "POST /api/questions/QUESTION-ID/answers" API. Reload whole question after the submission.
 
 client/app/questionsShow/questionsShow.controller.js
 
@@ -506,7 +506,7 @@ client/app/questionsShow/questionsShow.controller.js
 
 #### Editing client-side question showing HTML
 Output the list of answer stored in the question.
-Add "ng-submit" attribute to call "$scope.submitAnswer()" on answer submittion.
+Add "ng-submit" attribute to call "$scope.submitAnswer()" on answer submission.
 
 client/app/questionsShow/questionsShow.html
 
@@ -601,7 +601,7 @@ Load depending files.
 % grunt wiredep
 ```
 
-Add the module to test(Karma) libraries.
+Add the module to test (Karma) libraries.
 
 karma.conf.js
 
@@ -629,7 +629,7 @@ angular.module('paizaqaApp', [
 
 #### Using pagedown tag
 
-Enable Markdown input. Change from "textarea" tag to "pagdown-editor" tag and set binded variable by "content" attribute. For about output, change from "{&#x7b;&#x7d;}" to "pagedown-viewer" tag.
+Enable Markdown input. Change from "textarea" tag to "pagdown-editor" tag and set bound variable by "content" attribute. For about output, change from "{&#x7b;&#x7d;}" to "pagedown-viewer" tag.
 
 client/app/questionsCreate/questionsCreate.html
 
@@ -655,7 +655,7 @@ client/app/questionsShow/questionsShow.html
 
 Adding question tags
 ==================
-To make it easy to understand kinds of questions, let's add tags related to questions(ex: "Android", "Objective-C") to each question.
+To make it easy to understand kinds of questions, let's add tags related to questions (ex: "Android", "Objective-C") to each question.
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152715.png)
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152716.png)
@@ -684,7 +684,7 @@ Install ngTagsInput module to make it easy to edit or show tags.
 % grunt wiredep
 ```
 
-Also, add the module to test(Karma) libraries.
+Also, add the module to test (Karma) libraries.
 
 karma.conf.js
 
@@ -917,7 +917,7 @@ Implement question and answer deletion function("deleteQuestion()", "deleteAnswe
 Updating functions call "PUT /api/questions/:id" and "PUT /api/questions/:id/answers/:id" API.
 
 Also, implement "isOwner()" function which checks whether the user of question or answer matches current login user or not. We can use "Auth.isLoggedIn()" to check whether the user is logged in or not, and "Auth.getCurrentUser()._id" to get current login user ID.
-To user "$location" and "Auth" modules, add "$location" and "Auth" parameter to the controller function. AngularJS assign the services to the parameters from the parameter names, automcatically.
+To user "$location" and "Auth" modules, add "$location" and "Auth" parameter to the controller function. AngularJS assign the services to the parameters from the parameter names, automatically.
 
 client/app/questionsShow/questionsShow.controller.js
 
@@ -979,26 +979,26 @@ client/app/questionsShow/questionsShow.html
 
 ```
 
-Also, add editting button. "editting" varialbe is true while editting. Use "ng-show"/"ng-if" to switch element by "editting" variable. Although we are using the same "editting" variable for question and answers, answers are under a element with "ng-repeat" attribute and ng-repeat create seperate scope for each items. So, each "editting" actually refers different variables for question and each answers.
+Also, add editing button. "editing" variable is true while editing. Use "ng-show"/"ng-if" to switch element by "editing" variable. Although we are using the same "editing" variable for question and answers, answers are under a element with "ng-repeat" attribute and ng-repeat create seperate scope for each items. So, each "editing" actually refers different variables for question and each answers.
 
 client/app/questionsShow/questionsShow.html
 
 ```html
       <h1>
-        <div ng-if="! editting">{{question.title}}</div>
-        <input type=text ng-model="question.title" ng-if=" editting">
+        <div ng-if="! editing">{{question.title}}</div>
+        <input type=text ng-model="question.title" ng-if=" editing">
       </h1>
       ...
-  <pagedown-viewer content="question.content" ng-if="!editting"></pagedown-viewer>
-  <pagedown-editor content="question.content" ng-if=" editting"></pagedown-editor>
-  <button type="submit" class="btn btn-primary" ng-click="editting=false;updateQuestion()" ng-show=" editting">Save</button>
-  <a ng-click="editting=!editting;" ng-show="isOwner(question) && !editting">Edit</a>
+  <pagedown-viewer content="question.content" ng-if="!editing"></pagedown-viewer>
+  <pagedown-editor content="question.content" ng-if=" editing"></pagedown-editor>
+  <button type="submit" class="btn btn-primary" ng-click="editing=false;updateQuestion()" ng-show=" editing">Save</button>
+  <a ng-click="editing=!editing;" ng-show="isOwner(question) && !editing">Edit</a>
   ...
     <div class="answer">
-      <pagedown-viewer content="answer.content" ng-if="!editting"></pagedown-viewer>
-      <pagedown-editor content="answer.content" ng-if=" editting"></pagedown-editor>
-      <button type="submit" class="btn btn-primary" ng-click="editting=false;updateAnswer(answer)" ng-show=" editting">Save</button>
-      <a ng-click="editting=!editting;" ng-show="isOwner(answer) && !editting">Edit</a>
+      <pagedown-viewer content="answer.content" ng-if="!editing"></pagedown-viewer>
+      <pagedown-editor content="answer.content" ng-if=" editing"></pagedown-editor>
+      <button type="submit" class="btn btn-primary" ng-click="editing=false;updateAnswer(answer)" ng-show=" editing">Save</button>
+      <a ng-click="editing=!editing;" ng-show="isOwner(answer) && !editing">Edit</a>
     </div>
     ...
 ```
@@ -1035,7 +1035,7 @@ Install ngMessage module for the validation as a client-side library.
 % grunt wiredep
 ```
 
-Also, add the ngMessage module to test(Karma) libraries.
+Also, add the ngMessage module to test (Karma) libraries.
 
 karma.conf.js
 
@@ -1061,7 +1061,7 @@ angular.module('paizaqaApp', [
 ```
 
 #### Editing client-side HTML files
-Add validations(ex: "required") to input fields. Also, to refer the validation results, add name(with "name" attribute) to the form and add name(with "name" attribute) and model(with "ng-model" attribute) to each input field. The validation result is stored as "FORM-NAME.FIELD-NAME.$error", and output the result using ng-messages/ng-message attributes in which only matching elements are shown. The whole form validation result is stored as "FORM-NAME.$invalid" and we can disable submit button when invalid.
+Add validations (ex: "required") to input fields. Also, to refer the validation results, add name(with "name" attribute) to the form and add name(with "name" attribute) and model(with "ng-model" attribute) to each input field. The validation result is stored as "FORM-NAME.FIELD-NAME.$error", and output the result using ng-messages/ng-message attributes in which only matching elements are shown. The whole form validation result is stored as "FORM-NAME.$invalid" and we can disable submit button when invalid.
 
 client/app/questionsCreate/questionsCreate.html
 
@@ -1410,10 +1410,10 @@ client/app/questionsShow/questionsShow.html
       <hr/>
       <button ng-if="isOwner(comment)" type="button" class="close" ng-click="deleteComment(comment)">&times;</button>
 
-      <pagedown-viewer content="comment.content" ng-if="!editting"></pagedown-viewer>
-      <pagedown-editor content="comment.content" ng-if=" editting"></pagedown-editor>
-      <button type="submit" class="btn btn-primary" ng-click="editting=false;updateComment(comment)" ng-show=" editting">Save</button>
-      <a ng-click="editting=!editting;" ng-show="isOwner(comment) && !editting">Edit</a>
+      <pagedown-viewer content="comment.content" ng-if="!editing"></pagedown-viewer>
+      <pagedown-editor content="comment.content" ng-if=" editing"></pagedown-editor>
+      <button type="submit" class="btn btn-primary" ng-click="editing=false;updateComment(comment)" ng-show=" editing">Save</button>
+      <a ng-click="editing=!editing;" ng-show="isOwner(comment) && !editing">Edit</a>
 
       <div class="text-right" style="vertical-align: bottom;">by <a ng-href="/users/{{comment.user._id}}">{{comment.user.name}}</a> · {{comment.createdAt|fromNow}}</div>
       <div class="clearfix"></div>
@@ -1437,10 +1437,10 @@ client/app/questionsShow/questionsShow.html
         <hr/>
         <button ng-if="isOwner(comment)" type="button" class="close" ng-click="deleteAnswerComment(answer, comment)">&times;</button>
  
-        <pagedown-viewer content="comment.content" ng-if="!editting"></pagedown-viewer>
-        <pagedown-editor content="comment.content" ng-if=" editting"></pagedown-editor>
-        <button type="submit" class="btn btn-primary" ng-click="editting=false;updateAnswerComment(answer, comment)" ng-show=" editting">Save</button>
-        <a ng-click="editting=!editting;" ng-show="isOwner(comment) && !editting">Edit</a>
+        <pagedown-viewer content="comment.content" ng-if="!editing"></pagedown-viewer>
+        <pagedown-editor content="comment.content" ng-if=" editing"></pagedown-editor>
+        <button type="submit" class="btn btn-primary" ng-click="editing=false;updateAnswerComment(answer, comment)" ng-show=" editing">Save</button>
+        <a ng-click="editing=!editing;" ng-show="isOwner(comment) && !editing">Edit</a>
 
         <div class="text-right">by <a ng-href="/users/{{question.user._id}}">{{comment.user.name}}</a> · {{comment.createdAt|fromNow}}</div>
         <div class="clearfix"></div>
@@ -1689,7 +1689,7 @@ client/app/questionsShow/questionsShow.html
     
     <div>
       <h1>
-        <div ng-if="! editting">{{question.title}}</div>
+        <div ng-if="! editing">{{question.title}}</div>
 ```
 
 ```html
@@ -1704,7 +1704,7 @@ client/app/questionsShow/questionsShow.html
         <div>{{comment.stars.length}}</div>
       </div>
 
-      <pagedown-viewer content="comment.content" ng-if="!editting"></pagedown-viewer>
+      <pagedown-viewer content="comment.content" ng-if="!editing"></pagedown-viewer>
 ```
 
 ```html
@@ -1734,7 +1734,7 @@ client/app/questionsShow/questionsShow.html
           <div>{{comment.stars.length}}</div>
         </div>
 
-        <pagedown-viewer content="comment.content" ng-if="!editting"></pagedown-viewer>
+        <pagedown-viewer content="comment.content" ng-if="!editing"></pagedown-viewer>
 ```
 
 #### Editing client-side question listing controller
@@ -1813,12 +1813,12 @@ For now, all questions are always listed. Let's enable to choose from all questi
 
 Assign the following URLs for all questions, my questions, and starred questions.
 
-* / :All questions
-* /users/:userId :My questions
-* /users/:userId/starred :Starred questions
+* / : All questions
+* /users/:userId : My questions
+* /users/:userId/starred : Starred questions
 
 Use the same controller and HTML template and change the searching query by "query" variable.
-For my quetions listing, the query checks whether the user of the question is the same as current login user or not.
+For my questions listing, the query checks whether the user of the question is the same as current login user or not.
 For starred questions listing, the query checks whether the starred user for the question, the answers, or the comments contains current login user or not.
 
 client/app/questionsIndex/questionsIndex.js
@@ -1901,7 +1901,7 @@ exports.index = function(req, res) {
 ```
 
 #### Editing client-side Navbar controller
-On Navbar, add links for all questions, my quetions, starred questions.
+On Navbar, add links for all questions, my questions, starred questions.
 Because we need to change the URL or enable/disable for links before login or logout, use functions instead of variables for those information on menu items.
 
 client/components/navbar/navbar.controller.js
@@ -1984,7 +1984,7 @@ client/components/navbar/navbar.controller.js
 #### Editing server-side database model
 
 To add index for full-text search for question titles, question contents, comments, and answers, use "QuestionSchema.index()" function and specify search target fields as 'text'.
-Although MongoDB can automatically set index name, because MongoDB does not work as intended if the length of the name is long and exceeds 128 bytes, let's explicitly specify the index name(ex: 'question_schema_index').
+Although MongoDB can automatically set index name, because MongoDB does not work as intended if the length of the name is long and exceeds 128 bytes, let's explicitly specify the index name (ex: 'question_schema_index').
 (Ref: [We need to specify name explicitly for long schema.](
 http://docs.mongodb.org/manual/reference/limits/#Index-Name-Length))
 
@@ -2036,13 +2036,13 @@ client/app/questionsIndex/questionsIndex.controller.js
 
 Japanese search
 ==============
-MongoDB's full-text search only support latin languages, and does not support other languages like Japanese.
+MongoDB's full-text search only support Latin languages, and does not support other languages like Japanese.
 Let's support Japanese search by using Japanese tokenizer "TinySegmenter".
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731160824.gif)
 
 #### Installing TinySegmenter library
-Install TinySegmenter as as server-side library.
+Install TinySegmenter as a server-side library.
 
 
 ```shell
@@ -2190,7 +2190,7 @@ Install ngInfiniteScroll module for infinite scroll as a client-side library.
 % grunt wiredep
 ```
 
-Also, add the module to test(Karma) library.
+Also, add the module to test (Karma) library.
 
 karma.conf.js
 
@@ -2285,7 +2285,7 @@ Deploying
 ============
 Now, let's deploy the application to Heroku.
 To configure Heroku deployment, use "yo angular-fullstack:heroku" command.
-Also, install a MongoDB module MongoLab to the heroku application, as MongoLab have free plan.
+Also, install a MongoDB module MongoLab to the Heroku application, as MongoLab have free plan.
 
 ```shell
 % yo angular-fullstack:heroku
@@ -2332,7 +2332,7 @@ Lets' come up with ideas, and build your own services!
 
 Welcome any feedback such as errors, suggestion, or anything you noticed about this articles as comments!
 
-I'll continue writing arcitles to build web services using MEAN stack.
+I'll continue writing articles to build web services using MEAN stack.
 
 
 
