@@ -1,5 +1,5 @@
-Building a QA web service in an hour - with MEAN stack(3)
 <!--
+Building a QA web service in an hour - MEAN stack development(3)
 0:1時間でフルスタックQAサービスを作る！- MEANスタック開発(3)
 MEANスタックで今すぐ作る最新ウェブサービス:ジェネレータを使ってみよう編
 フルスタック・ウェブ開発環境の使い方 - MEANスタックで作る最新ウェブサービス
@@ -14,7 +14,7 @@ MEANスタックで今すぐ作る最新ウェブサービス:ジェネレータ
 
 <iframe src="https://player.vimeo.com/video/135022783?autoplay=1&loop=1&title=0&byline=0&portrait=0" width="500" height="395" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> <p><a href="https://vimeo.com/135022783">Mean Stack 3 Demo</a> from <a href="https://vimeo.com/user34262363">paiza</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
 
-[f:id:paiza:20140712194904j:plain]( by Yoshioka Tsuneo ([twitter:@yoshiokatsuneo]))
+[f:id:paiza:20140712194904j:plain]  (by Yoshioka Tsuneo ([twitter:@yoshiokatsuneo]))
 
 MEAN stack(*) is an all-in-one JavaScript based web service development environment supporting front-end, back-end, and database development. A MEAN stack environment, AngularJS Full-Stack generator, provides the best practice to develop clean software quickly.
 (*) MEAN stack packs MongoDB, Express, AngularJS, and Node.js.
@@ -2335,16 +2335,5 @@ I'll continue writing articles to build web services using MEAN stack.
 
 
 
-<br><br>
-<hr>
 
-
-<a href="http://paiza.jp/">paiza</a>ではITエンジニアとしてのスキルレベル測定(9言語に対応)や、プログラミング問題による学習コンテンツ(<a href="https://paiza.jp/learning"  target="_blank">paiza Learning</a>)を提供(こちらは21言語に対応)しています。テストの結果によりS,A,B,C,D,Eの６段階でランクが分かります。自分のプログラミングスキルを客観的に知りたいという方は是非チャレンジしてみてください。
-
-<a href="https://paiza.jp/learning"  target="_blank">http://paiza.jp
-<img src="http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20140901/20140901151109.jpg"></a>
-<a href="http://paiza.jp"><img src="http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20130917/20130917190908.gif?1379412762"></a>
-
-<hr>
-<br><br>
 
