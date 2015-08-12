@@ -2006,9 +2006,9 @@ MongoDBの全文検索は、日本語検索に対応していません。日本�
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731160824.gif)
 
-#### クライアント側ライブラリTinySegmenterをインストール
+#### TinySegmenterをインストール
 
-TinySegmenterをインストールします。
+TinySegmenterをサーバ側ライブラリとしてインストールします。
 
 ```shell
 % npm install --save r7kamura/tiny-segmenter
@@ -2016,7 +2016,7 @@ TinySegmenterをインストールします。
 
 サーバ側DBモデルで、分かち書き結果を保存するフィールドをsearchTextとして作成します。
 
-server/api/question/question.mode.js
+server/api/question/question.model.js
 
 ```javascript
 var QuestionSchema = new Schema({
@@ -2028,7 +2028,7 @@ var QuestionSchema = new Schema({
 
 インデックスにsearchTextフィールドを追加します。
 
-server/api/question/question.mode.js
+server/api/question/question.model.js
 
 ```javascript
 QuestionSchema.index({
@@ -2037,7 +2037,7 @@ QuestionSchema.index({
 }, {name: 'question_schema_index'});
 ```
 
-分かち書きを行う関数を追加し、pre('save')を使って保存前に呼び出します。また質問オブジェクトの静的関数で更新できるようにもしておきます。
+分かち書きを行う関数を追加し、pre('save')を使って保存前に呼び出します。また質問モデルの静的関数でインデックスを更新できるように、"QuestionSchema.statics"上に関数を追加しておきます。
 
 ```javascript
 var TinySegmenter = require('tiny-segmenter');
@@ -2075,7 +2075,7 @@ QuestionSchema.pre('save', function(next){
 });
 ```
 
-pre('save')はupdate()での更新時は呼び出されませんので、サーバ側コントローラでupdate関数での更新後に分かち書きを行いsearchTextフィールドを更新するようにします。
+pre('save')はupdate()での更新時は呼び出されませんので、サーバ側コントローラでupdate関数での更新後にupdateSearchText()関数を呼び出して、明示的に分かち書きと全文検索用のインデックスの更新を行います。
 
 server/api/question/question.controller.js
 
@@ -2182,7 +2182,7 @@ angular.module('paizaqaApp', [
 
 #### クライアント側質問一覧コントローラの変更
 
-スクロース時に表示できるように、nextPage関数を実装します。最後の質問IDより古いIDの質問を返すように、クエリで"{_id: {$lt: lastID}}"と条件を指定します。読み込み中状態を$scope.busyで、質問がまだあるかを$scope.noMoreDataに保持します。
+スクロール時に過去の質問を追加表示できるように、nextPage関数を実装します。最後の質問IDより古いIDの質問を返すように、クエリで"{_id: {$lt: lastID}}"と条件を指定します。読み込み中状態を$scope.busyで、質問がまだあるかを$scope.noMoreDataに保持します。
 
 client/app/questionsIndex/questionsIndex.controller.js
 
@@ -2269,7 +2269,7 @@ exports.setup = function (User, config) {
 % heroku logs
 ```
 
-MongoDBのデータについては、MongoHubなどのGUIツールで確認すると便利です。MongoDBのURLはHerokuから取得します。
+MongoDBのデータについては、MongoHubなどのGUIツールで確認すると便利です。MongoDBのURLはHerokuから"heroku config"コマンドで取得します。
 
 ```shell
 % heroku config

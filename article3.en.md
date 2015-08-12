@@ -52,30 +52,30 @@ Contents
 =====
 <!-- [TOC] -->
 
-* [MEANスタックのインストール](#install)
-* [プロジェクトの作成](#new_project)
-* [ディレクトリ構成](#structure)
-* [サーバ側の質問コンポーネント(モデル、API等)の作成](#generate_server_questions)
-* [クライアント側の質問一覧、作成、表示コンポーネント(コントローラ・HTML等)の作成](#generate_client_questions)
-* [回答の追加](#add_answers)
-* [Markdown表記の対応](#markdown)
-* [質問タグの追加](#tags)
-* [ユーザ認証](#user_auth)
-* [入力の検証](#validation)
-* [時刻表示フィルタ](#fromnow_filter)
-* [コメントの追加](#add_comments)
-* [お気に入りの追加](#stars)
-* [全ての質問、自分の質問、お気に入りの質問の一覧表示](#navbar_all_mine_stars)
-* [検索](#search)
-* [日本語検索](#search_japanese)
-* [無限スクロール](#infinite_scroll)
-* [SNS認証](#oauth)
-* [デプロイ](#deploy)
-* [まとめ](#summary)
+* [Installing MEAN stack](#install)
+* [Generating a new project](#new_project)
+* [Directory structure](#structure)
+* [Creating server-side question component(model, API, etc)](#generate_server_questions)
+* [Creating client-side question listing, question creating, and question showing components(controllers, HTMLs, etc)](#generate_client_questions)
+* [Creating answer field](#add_answers)
+* [Using Markdown](#markdown)
+* [Adding question tags](#tags)
+* [User authentication](#user_auth)
+* [Input validation](#validation)
+* [Time formatting filter](#fromnow_filter)
+* [Adding comments](#add_comments)
+* [Adding stars](#stars)
+* [Question listing for all questions, my questions, and starred questions](#navbar_all_mine_stars)
+* [Search](#search)
+* [Japanese search](#search_japanese)
+* [Infinite scroll](#infinite_scroll)
+* [SNS authentication](#oauth)
+* [Deploying](#deploy)
+* [Summary](#summary)
 
 <div id="install"></div>
 
-Install MEAN stack
+Installing MEAN stack
 ================
 If you have not installed, install a MEAN stack, Angular Full-Stack generator.
 See 
@@ -84,7 +84,7 @@ See
 
 <div id="new_project"></div>
 
-Generate a new project
+Generating a new project
 ================
 At first, we generate a project from templates. Let's name the project "paizaqa" for now. We use "yo" Yeoman command to generate the project.
 
@@ -123,7 +123,7 @@ Browser will open generated project on http://localhost:9000/ .
 
 <div id="structure"></div>
 
-Directory strucure
+Directory structure
 ===================
 The generated project have the following structure.
 
@@ -171,7 +171,7 @@ The client and the server send or receive data or events by communicating client
 
 <div id="generate_server_questions"></div>
 
-Create server-side question component(model, API, etc)
+Creating server-side question component(model, API, etc)
 ======================================
 
 In this QA service, each question is stores as a document in a database.
@@ -199,8 +199,7 @@ var QuestionSchema = new Schema({
 
 <div id="generate_client_questions"></div>
 
-Create client-side question listing, question creating, and question showing components(controllers, HTMLs, etc)
-クライアント側の質問一覧、作成、表示コンポーネント(コントローラ・HTML等)の作成
+Creating client-side question listing, question creating, and question showing components(controllers, HTMLs, etc)
 =====================================
 
 Now, we create files for question listing, question creating, and question showing components(controllers, HTMLs)
@@ -210,19 +209,17 @@ Now, we create files for question listing, question creating, and question showi
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152705.png)
 
 
-#### 不要なファイルの削除
+#### Removing needless files
 Remove needless files from the project.
 
 ```shell
 % rm -r client/app/main
 ```
 
-#### 雛形作成
+#### Generating components
 
 Generate question related directories and files. Now, we create three directories(questionsIndex, questionsCreate, and questionsShow) for question listing, question creating, and question showing.
 
-
-そして、質問関連のファイル、及びそれらをまとめたディレクトリgeneratorで作成します。ここでは質問一覧表示、質問作成、質問表示に対応した３つのディレクトリ(questionsIndex, questionCreate, questionsShow)を作成します。
 
 When generator prompted URL routing as "What will the url of your route be?", type the following URLs.
 
@@ -244,7 +241,7 @@ When generator prompted URL routing as "What will the url of your route be?", ty
 
 Directories and files are generated. Now, we implement client-side controllers and HTMLs by editting the files.
 
-#### Edit question listing controller
+#### Editing question listing controller
 On the question listing controller, we retrieve question listing using "GET /api/questions" API.
 Store the retrieved question to $scope variable so that we can refer from HTML file. Because we use "$http" service, add "$http" to the controller function parameters. The service based on the parameter variable name is assigned to the parameter.
 
@@ -258,7 +255,7 @@ client/app/questionsIndex/questionsIndex.controller.js
   });
 ```
 
-#### Edit question listing HTML file
+#### Editing question listing HTML file
 On question listing HTML file, we can refer "$scope.question" as "questions". By writting a attribute as 'ng-repeat="question in questions"', we can repeatedly output the elements for each question.
 Also, we can refer "$scope" variable such as "{&#x7b;question.title&#x7b;}".
 
@@ -335,7 +332,7 @@ client/app/questionIndex/questionIndex.scss
 }
 ```
 
-#### Edit question crating controller
+#### Editing question crating controller
 Implement "$scope.submit()" function called when questions are submitted.
 The function stores the submitted question($scope.question) to server using "POST /api/questions" API.
 After the submittion, move to submittion listing page using "$location.path('/questions')".
@@ -354,7 +351,7 @@ client/app/questionsCreate/questionsCreate.controller.js
   });
 ```
 
-#### Edit question creating HTML file
+#### Editing question creating HTML file
 On question creating HTML file, add "ng-submit" attribute to call "submit()" on submissions. Add 'ng-model="question.title"' attribute to input tag to synchronize between input tag and "question.title" variable bi-directionally.
 
 client/app/questionsCreate/questionsCreate.html
@@ -373,7 +370,7 @@ client/app/questionsCreate/questionsCreate.html
 </div>
 ```
 
-#### Edit question showing controller
+#### Editing question showing controller
 On question showing controller, retrieve question contents and show it.
 Question ID can be retrieved from URL("/question/show/:id") by refering ":id" part as "$stateParams.id".
 
@@ -390,7 +387,7 @@ client/app/questionsShow/questionsShow.controller.js
   });
 ```
 
-#### Edit question showing HTML file
+#### Editing question showing HTML file
 On question showing HTML file, output question titile and contents.
 We refer "$scope.question" variable set on controller as "question".
 
@@ -437,14 +434,14 @@ But now, because we changed the directory structure dramatically, we restart the
 
 <div id="add_answers"></div>
 
-Create answer field
+Creating answer field
 ==============================
 Now, though we are building QA service, we can only ask quetions and no one can answer it.
 So, let's enable to create, display answers.
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152706.png)
 
-#### Edit server-side DB model
+#### Editing server-side DB model
 
 Edit QuestionSchema to store answers. MongoDB can store JSON object including arrays into a document(corresponding a record in RDB).
 
@@ -461,7 +458,7 @@ var QuestionSchema = new Schema({
 ```
 
 
-#### Edit server-side routing
+#### Editing server-side routing
 
 Add answer submittion API to the URL routing.
 
@@ -472,7 +469,7 @@ server/api/question/index.js
 router.post('/:id/answers', controller.createAnswer);
 ```
 
-#### Edit server-side controller
+#### Editing server-side controller
 
 Implement answer submittion API. We can add a value to a array by using MongoDB's '$push' operator.
 
@@ -489,7 +486,7 @@ exports.createAnswer = function(req, res) {
 ```
 
 
-#### Edit client-side question showing controller
+#### Editing client-side question showing controller
 
 Add "$scope.submitAnswer()" function called on answer submittion. The function send the answer to server using "POST /api/questions/QUESTION-ID/answers" API. Reload whole question after the submittion.
 
@@ -507,7 +504,7 @@ client/app/questionsShow/questionsShow.controller.js
     };
 ```
 
-#### Edit client-side question showing HTML
+#### Editing client-side question showing HTML
 Output the list of answer stored in the question.
 Add "ng-submit" attribute to call "$scope.submitAnswer()" on answer submittion.
 
@@ -547,7 +544,7 @@ client/app/questionsShow/questionsShow.css
 
 <div id="markdown"></div>
 
-Support Markdown
+Using Markdown
 ==================
 For now, we can use only plain text for questions or answers.
 Let's support Markdown used like Stack Overflow.
@@ -557,7 +554,7 @@ We can just add a module and edit tags to support Markdown.
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152709.png)
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152711.png)
 
-#### Install module
+#### Installing angular-pagedown module
 
 Install angular-pagedown module to support Markdown. When prompted for AngularJS, choose a option to use the latest version.
 
@@ -617,7 +614,7 @@ karma.conf.js
 ```
 
 
-#### Add module to application
+#### Adding angular-pagedown module to application
 
 To make use of the module, add "ui.pagedown" to application depending modules.
 
@@ -630,7 +627,7 @@ angular.module('paizaqaApp', [
 ])
 ```
 
-#### Use pagedown tag
+#### Using pagedown tag
 
 Enable Markdown input. Change from "textarea" tag to "pagdown-editor" tag and set binded variable by "content" attribute. For about output, change from "{&#x7b;&#x7d;}" to "pagedown-viewer" tag.
 
@@ -656,14 +653,14 @@ client/app/questionsShow/questionsShow.html
 
 <div id="tags"></div>
 
-Add question tags
+Adding question tags
 ==================
 To make it easy to understand kinds of questions, let's add tags related to questions(ex: "Android", "Objective-C") to each question.
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152715.png)
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152716.png)
 
-#### Edit database model
+#### Editing database model
 Edit QuestionSchema to store tags as a array.
 
 ```javascript
@@ -679,7 +676,7 @@ var QuestionSchema = new Schema({
 });
 ```
 
-#### Add tag editting module
+#### Installing ngTagsInput module
 Install ngTagsInput module to make it easy to edit or show tags.
 
 ```shell
@@ -699,7 +696,7 @@ karma.conf.js
     ]
 ```
 
-#### Add module to application
+#### Adding ngTagsInput module to the application modules
 To make use of ngTagsInput module, add the module to application depending modules.
 
 client/app/app.js
@@ -711,7 +708,7 @@ angular.module('paizaqaApp', [
 ])
 ```
 
-#### Edit question creating HTML file
+#### Editing question creating HTML file
 Add question tags input field using "tags-input" tag.
 You can also add auto completion by adding "auto-complete" element inside "tags-input" element, but not for this time.
 
@@ -725,7 +722,7 @@ client/questionsCreate/questionsCreate.html
     </tags-input>
 ```
 
-#### Edit question listing HTML file
+#### Editing question listing HTML file
 Add tags below the question title.
 
 client/app/questionsIndex/questionsIndex.html
@@ -742,7 +739,7 @@ client/app/questionsIndex/questionsIndex.html
           </div>
 ```
 
-#### Edit question showing HTML file
+#### Editing question showing HTML file
 Add tags below the question title.
 
 client/app/questionsShow/questionsShow.html
@@ -765,7 +762,7 @@ Only submitted user can edit or remove the articles. Also, store the submission 
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152718.png)
 
-#### Edit server-side database model
+#### Editing server-side database model
 
 Store submitted user's object ID to questions and answers. Specify object's referring model as "ref: 'User'" so that "populate()" function can expands user IDs to User objects.
 
@@ -801,7 +798,7 @@ var QuestionSchema = new Schema({
 ```
 
 
-#### Edit server-side API routing
+#### Editing server-side API routing
 
 On the server-side API routing, add "auth.isAuthenticated()" as a Express middleware to the URL resource requiring authentication so that server-side controller can refer current login user as "req.user". 
 Also, add a answer deleting API(DELETE /:id/answers/:answerId).
@@ -823,7 +820,7 @@ router.put('/:id/answers/:answerId', auth.isAuthenticated(), controller.updateAn
 router.delete('/:id/answers/:answerId', auth.isAuthenticated(), controller.destroyAnswer);
 ```
 
-#### Edit server-side controller
+#### Editing server-side controller
 On question listing API, call "pupulate()" to expand user ID to user object.
 "populate('user', 'name')" expands name field of each user object.
 Also, change to return last 20 questions.
@@ -900,7 +897,7 @@ exports.updateAnswer = function(req, res) {
 };
 ```
 
-#### Edit client-side question listing HTML
+#### Editing client-side question listing HTML
 
 Add user name and created time to the quesion.
 
@@ -915,7 +912,7 @@ client/app/questionsIndex/questionsIndex.html
           </div>
 ```
 
-#### Edit client-side question showing controller
+#### Editing client-side question showing controller
 Implement question and answer deletion function("deleteQuestion()", "deleteAnswer()") and updating function("updateQuestion()", "updateAnswer()"). Deleting functions call "DELETE /api/questions/:id" and "DELETE /api/questions/:id" API.
 Updating functions call "PUT /api/questions/:id" and "PUT /api/questions/:id/answers/:id" API.
 
@@ -953,7 +950,7 @@ angular.module('paizaqaApp')
     };
 ```
 
-#### Edit client-side question showing HTML file
+#### Editing client-side question showing HTML file
 
 Add submitted user name and created time to the question and answers.
 
@@ -1006,7 +1003,7 @@ client/app/questionsShow/questionsShow.html
     ...
 ```
 
-#### Edit client-side question creating controller
+#### Editing client-side question creating controller
 
 If not authenticated, move to login page.
 
@@ -1030,8 +1027,8 @@ For now, we can submit forms with empty question, empty answer. Let's validate i
 
 ![valication](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731160812.gif)
 
-#### Install module
-Install ngMessage module for the validation.
+#### Installing ngMessage module
+Install ngMessage module for the validation as a client-side library.
 
 ```shell
 % bower install angular-messages --save
@@ -1051,7 +1048,7 @@ karma.conf.js
 ```
 
 
-#### Add module to application
+#### Adding ngMessage module to application module
 Add the ngMessage module to the application depending modules to use the module.
 
 client/app/app.js
@@ -1063,7 +1060,7 @@ angular.module('paizaqaApp', [
 ])
 ```
 
-#### On client-side HTML file, add validations to input fields
+#### Editing client-side HTML files
 Add validations(ex: "required") to input fields. Also, to refer the validation results, add name(with "name" attribute) to the form and add name(with "name" attribute) and model(with "ng-model" attribute) to each input field. The validation result is stored as "FORM-NAME.FIELD-NAME.$error", and output the result using ng-messages/ng-message attributes in which only matching elements are shown. The whole form validation result is stored as "FORM-NAME.$invalid" and we can disable submit button when invalid.
 
 client/app/questionsCreate/questionsCreate.html
@@ -1104,8 +1101,8 @@ For now, the time format for created time is UTC. Let's change it to show the ti
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152721.png)
 
-#### Install Moment.js library
-Install Moment.js library for time formatting.
+#### Installing Moment.js library
+Install Moment.js library for time formatting as a client-side library.
 
 ```shell
 % bower install --save momentjs
@@ -1126,7 +1123,7 @@ client/index.html
 <!-- endbuild -->
 ```
 
-#### Generate filter
+#### Generating filter
 
 Generate a filter boilerplate.
 
@@ -1135,7 +1132,7 @@ Generate a filter boilerplate.
 % grunt injector
 ```
 
-#### Implement filter
+#### Implementing filter
 
 Format time using Moment.js's fromNow() function. You can optionally use locale() function to set language.
 
@@ -1147,7 +1144,7 @@ client/app/fromNow/fromNow.filter.js
     };
 ```
 
-#### Use filter
+#### Using filter
 
 Change time format from UTC to time from now, using the fromNow filter we created. To use filter, change from "{&#x7b;EXPRESSION&#x7d;}" to "{&#x7b;EXPRESSION|FILTER&#x7d;}". In this case, we change from "{&#x7b;EXPRESSION&#x7d;}"を"{&#x7b;EXPRESSION|fromNow&#x7d;}".
 
@@ -1172,7 +1169,7 @@ client/app/questionsCreate/questionsCreate.html
 
 ```
 
-#### Change test
+#### Changing test code
 
 Fix the failing test.
 
@@ -1200,13 +1197,13 @@ client/app/fromNow/fromNow.filter.spec.js
 
 <div id="add_comments"></div>
 
-Add comments
+Adding comments
 ================
 Now, let's add comment fields for questions and answers.
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152722.png)
 
-#### Edit server-side database model
+#### Editing server-side database model
 On QuestionSchema, store comments as a array inside the each question and answer. Each comment hold created time and submitted user.
 
 
@@ -1244,7 +1241,7 @@ var QuestionSchema = new Schema({
 });
 ```
 
-#### Edit server-side routing
+#### Editing server-side routing
 Add the following APIs for create, update, and delete a comment to a question or an answer.
 
 * POST /:id/comments Create a comment for a question
@@ -1267,7 +1264,7 @@ router.delete('/:id/answers/:answerId/comments/:commentId', auth.isAuthenticated
 ```
 
 
-#### Edit server-side controller
+#### Editing server-side controller
 
 On question listing API, expand a user ID of a comment to a user object using populate().
 
@@ -1357,7 +1354,7 @@ exports.updateAnswerComment = function(req, res) {
 ```
 
 
-#### Edit client-side controller
+#### Editing client-side controller
 
 Add functions to add, update, or delete a comment that send the request to the server.
 
@@ -1398,7 +1395,7 @@ client/app/questionsShow/questionsShow.controller.js
     };
 ```
 
-#### Edit client-side question showing HTML file
+#### Editing client-side question showing HTML file
 
 Output comments' content, created time, and user for the question or the answers in the question object. Also, add forms to submit new comments.
 
@@ -1484,7 +1481,7 @@ Adding a feature to star or unstar questions, answers, and comments for question
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152723.png)
 
 
-#### Edit server-side database model
+#### Editing server-side database model
 
 Store the list of starring users for a question, a answer, and a comment for a question or answer to a "stars" field of a question document as an array.
 
@@ -1526,7 +1523,7 @@ var QuestionSchema = new Schema({
 });
 ```
 
-#### Add server-side routing
+#### Adding server-side routing
 
 Add the following APIs to star or unstar a question, a answer, or a comment for question or answer.
 
@@ -1556,7 +1553,7 @@ router.delete('/:id/answers/:answerId/comments/:commentId/star', auth.isAuthenti
 
 
 
-#### Edit server-side database model
+#### Editing server-side database model
 
 On database model, for questions, answers, and comments for questions or answers, store the list of starred user as a array.
 On "update()" function, we can refer the matched index of a array using "$". For the list of a starred user of a comment array of a answer array, because we can only use one "$", we need to iterate the array explicitly.
@@ -1647,7 +1644,7 @@ exports.unstarAnswerComment = function(req, res) {
 };
 ```
 
-#### Edit client-side question showing controller
+#### Editing client-side question showing controller
 
 Add functions to star, unstar, or check staring status for a question, a answer, or a comment for a question or a answer.
 We use sub-pathname parameter to use the common function for questions, answers, or comments.
@@ -1672,7 +1669,7 @@ client/app/questionsShow/questionsShow.controller.js
 ```
 
 
-#### Edit client-side question showing HTML file
+#### Editing client-side question showing HTML file
 
 Show the staring status as star icon. We can click the star icon to star or unstar.
 
@@ -1740,7 +1737,7 @@ client/app/questionsShow/questionsShow.html
         <pagedown-viewer content="comment.content" ng-if="!editting"></pagedown-viewer>
 ```
 
-#### Edit client-side question listing controller
+#### Editing client-side question listing controller
 
 Add "isStar()" function to show the staring status on question listing.
 
@@ -1754,7 +1751,7 @@ client/app/questionsIndex/questionsIndex.controller.js
     };
 ```
 
-#### Edit client-side question listing HTML file
+#### Editing client-side question listing HTML file
 
 On question listing, show the number of staring user for the question, and the number of answers.
 
@@ -1812,7 +1809,7 @@ For now, all questions are always listed. Let's enable to choose from all questi
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152724.png)
 
 
-#### Edit client-side routing
+#### Editing client-side routing
 
 Assign the following URLs for all questions, my questions, and starred questions.
 
@@ -1870,7 +1867,7 @@ client/app/questionsIndex/questionsIndex.js
   });
 ```
 
-#### Edit client-side question listing controller
+#### Editing client-side question listing controller
 Send the query set on routing to the server.
 
 client/app/questionsIndex/questionsIndex.controller.js
@@ -1880,7 +1877,7 @@ client/app/questionsIndex/questionsIndex.controller.js
     $http.get('/api/questions', {params: {query: query}}).success(function(questions) {
 ```
 
-#### Edit client-side question listing controller test
+#### Editing client-side question listing controller test
 Add empty "query" to test code not to cause error.
 
 client/app/questionsIndex/questionsIndex.controller.spec.js
@@ -1892,7 +1889,7 @@ client/app/questionsIndex/questionsIndex.controller.spec.js
     });
 ```
 
-#### Edit server-side controller
+#### Editing server-side controller
 Send the received query to database.
 
 server/api/question/question.controller.js
@@ -1903,7 +1900,7 @@ exports.index = function(req, res) {
   Question.find(query).sort(...
 ```
 
-#### Edit client-side Navbar controller
+#### Editing client-side Navbar controller
 On Navbar, add links for all questions, my quetions, starred questions.
 Because we need to change the URL or enable/disable for links before login or logout, use functions instead of variables for those information on menu items.
 
@@ -1931,7 +1928,7 @@ client/components/navbar/navbar.controller.js
     ...
 ```
 
-#### Edit client-side Navbar HTML
+#### Editing client-side Navbar HTML
 Retrieve linked URLs using "$scope.item.link()" function.
 Also, show the link only when "$scope.item.show()" returns true.
 
@@ -1955,7 +1952,7 @@ MongoDBの全文検索機能を使って、タイトル・質問内容・質問�
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152725.png)
 
-#### Edit client-side Navbar HTML file
+#### Editing client-side Navbar HTML file
 
 Add serach box to Navbar. Call "search()" function on search.
 
@@ -1974,7 +1971,7 @@ Add serach box to Navbar. Call "search()" function on search.
       <ul class="nav navbar-nav navbar-right">
 ```
 
-#### Edit client-side Navbar controller
+#### Editing client-side Navbar controller
 
 client/components/navbar/navbar.controller.js
 
@@ -1984,7 +1981,7 @@ client/components/navbar/navbar.controller.js
     };
 ```
 
-#### Edit server-side database model
+#### Editing server-side database model
 
 To add index for full-text search for question titles, question contents, comments, and answers, use "QuestionSchema.index()" function and specify search target fields as 'text'.
 Although MongoDB can automatically set index name, because MongoDB does not work as intended if the length of the name is long and exceeds 128 bytes, let's explicitly specify the index name(ex: 'question_schema_index').
@@ -2005,7 +2002,7 @@ QuestionSchema.index({
 ```
 
 
-#### Edit client-side question listing routing
+#### Editing client-side question listing routing
 
 To accept search keyword as "keyword" URL parameter, add "/?keyword" to "url" field of the routing information.
 
@@ -2017,7 +2014,7 @@ client/app/questionsIndex/questionsIndex.js
         ...
 ```
 
-#### Edit client-side question showing controller
+#### Editing client-side question showing controller
 Set the query using MongoDB's '$text' and '$search' parameter to search by 'keyword' parameter.
 
 
@@ -2036,23 +2033,25 @@ client/app/questionsIndex/questionsIndex.controller.js
 
 <div id="search_japanese"></div>
 
-日本語検索
+
+Japanese search
 ==============
-MongoDBの全文検索は、日本語検索に対応していません。日本語検索を行えるように、TinySegmenterで分かち書きを行ってみます。
+MongoDB's full-text search only support latin languages, and does not support other languages like Japanese.
+Let's support Japanese search by using Japanese tokenizer "TinySegmenter".
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731160824.gif)
 
-#### クライアント側ライブラリTinySegmenterをインストール
+#### Installing TinySegmenter library
+Install TinySegmenter as as server-side library.
 
-TinySegmenterをインストールします。
 
 ```shell
 % npm install --save r7kamura/tiny-segmenter
 ```
 
-サーバ側DBモデルで、分かち書き結果を保存するフィールドをsearchTextとして作成します。
+On server-side DB model, add "searchText" field to store tokenized text.
 
-server/api/question/question.mode.js
+server/api/question/question.model.js
 
 ```javascript
 var QuestionSchema = new Schema({
@@ -2062,9 +2061,9 @@ var QuestionSchema = new Schema({
 
 ```
 
-インデックスにsearchTextフィールドを追加します。
+Add "searchText" field to the text index.
 
-server/api/question/question.mode.js
+server/api/question/question.model.js
 
 ```javascript
 QuestionSchema.index({
@@ -2073,7 +2072,8 @@ QuestionSchema.index({
 }, {name: 'question_schema_index'});
 ```
 
-分かち書きを行う関数を追加し、pre('save')を使って保存前に呼び出します。また質問オブジェクトの静的関数で更新できるようにもしておきます。
+Add a function to tokenize, call it before saving using "pre('save')" hook.
+Also, add a static function to question model by adding set the function to "QuestionSchema.statics".
 
 ```javascript
 var TinySegmenter = require('tiny-segmenter');
@@ -2111,7 +2111,7 @@ QuestionSchema.pre('save', function(next){
 });
 ```
 
-pre('save')はupdate()での更新時は呼び出されませんので、サーバ側コントローラでupdate関数での更新後に分かち書きを行いsearchTextフィールドを更新するようにします。
+Because "pre('save')" hook is not called by "update()" call, explicitly call "updateSearchText()" function to tokenize and update full-text index.
 
 server/api/question/question.controller.js
 
@@ -2176,21 +2176,21 @@ exports.updateAnswerComment = function(req, res) {
 
 <div id="infinite_scroll"></div>
 
-無限スクロール
+Infinite scroll
 ============
-現状、最新20件の質問しか表示することができていませんので、無限スクロールで過去の質問も表示できるようにしてみます。
+For now, we can list only the last 20 questions. Let's add a infinite scroll to show older questions.
 
 
-#### クライアント側ライブラリngInfiniteScrollのインストール
+#### Installing ngInfiniteScroll library
 
-無限スクロール用のライブラリngInfiniteScrollをインストールします。
+Install ngInfiniteScroll module for infinite scroll as a client-side library.
 
 ```shell
 % bower install --save ngInfiniteScroll
 % grunt wiredep
 ```
 
-テスト(Karma)で読み込むライブラリにも追加します。
+Also, add the module to test(Karma) library.
 
 karma.conf.js
 
@@ -2202,10 +2202,8 @@ karma.conf.js
     ]
 ```
 
-#### アプリケーションの依存モジュール追加
-
-ngInfiniteScrollをアプリケーションの依存モジュールに追加して利用できるようにします。
-
+#### Adding ngInfiniteScroll to the application modules
+Add ngInfiniteScroll to the application depending modules to use.
 
 client/app/app.js
 
@@ -2216,9 +2214,10 @@ angular.module('paizaqaApp', [
  ])
 ```
 
-#### クライアント側質問一覧コントローラの変更
+#### Editing client-side question listing controller
 
-スクロース時に表示できるように、nextPage関数を実装します。最後の質問IDより古いIDの質問を返すように、クエリで"{_id: {$lt: lastID}}"と条件を指定します。読み込み中状態を$scope.busyで、質問がまだあるかを$scope.noMoreDataに保持します。
+To list older questions on a scroll, implement "nextPage()" function. To retrieve questions older than the current oldest question ID, specify the query as "{_id: {$lt: lastID}}". 
+Store the loading status as "$scope.busy", and the status whether more data is avaiable or not as "$scope.noMoreData".
 
 client/app/questionsIndex/questionsIndex.controller.js
 
@@ -2249,8 +2248,10 @@ client/app/questionsIndex/questionsIndex.controller.js
     };
 ```
 
-#### クライアント側質問一覧HTMLの変更
-一番下までスクロールしたら次の質問を読み込むように、infinite-scroll属性でnextPage()関数を呼び出します。また、読み込み中やすべてを読み込み済みの場合は無限スクロールを無効にします。読み込み中は"Loading data"と表示するようにしておきます。ng-show='busy'と指定することでbusyがtrueの場合のみ要素が表示されます。
+#### Editing client-side question lisging
+To load older questions on scroll to the bottom, add "infinite-scroll" attribute to call "nextPage()" function.
+Disable scroll when loading or no more data.
+Show "Loading data" on loading by adding a element with "ng-show='busy'", so the element is shown only when "busy" variable is "true". 
 
 ```html
 <div class="container" infinite-scroll='nextPage()' infinite-scroll-disabled='busy || noMoreData'>
@@ -2261,11 +2262,12 @@ client/app/questionsIndex/questionsIndex.controller.js
 
 <div id="oauth"></div>
 
-SNS認証
+SNS authentication
 =========
-SNS認証(Facebook, Twitter, Google)を利用する場合、APIキーとSECRETキーの登録を行います。登録手順は[第一回の手順](http://paiza.hatenablog.com/entry/2015/07/08/最新・最速！Webサービスが今すぐ作れる！_-_MEANスタッ#sns_link)を参照ください。
+When using SNS authentication(Facebook, Twitter, Google), set API key and SECRET key. See
+[a instruction in the first article](http://paiza.hatenablog.com/entry/2015/07/08/最新・最速！Webサービスが今すぐ作れる！_-_MEANスタッ#sns_link) for details.
 
-また、Facebook認証については、FacebookのAPIが変わった関係で以下のようにprofileFieldsを指定する必要があります。
+For about Facebook authentication, because API specification changed on Graph API 2.4(on 9th,July,2015), we need to explicitly specify fields to use on "profileFields" as follows.
 
 server/auth/facebook/passport.js
 
@@ -2279,9 +2281,11 @@ exports.setup = function (User, config) {
 
 <div id="deploy"></div>
 
-デプロイ
+Deploying
 ============
-それではHerokuにデプロイをします。デプロイ設定は"yo angular-fullstack:heroku"コマンドで行います。また、無料プランがあるMongoDBモジュールMongoLabもインストールしておきます。
+Now, let's deploy the application to Heroku.
+To configure Heroku deployment, use "yo angular-fullstack:heroku" command.
+Also, install a MongoDB module MongoLab to the heroku application, as MongoLab have free plan.
 
 ```shell
 % yo angular-fullstack:heroku
@@ -2289,43 +2293,47 @@ exports.setup = function (User, config) {
 % heroku addons:add mongolab
 ```
 
-次回以降のデプロイでは、"grunt"でビルドを行い、"grunt buildcontrol:heroku"でデプロイします。
+From the next deployment, use "grunt" to build the application, and use "grunt buildcontrol:heroku" to deploy the application.
 
 ```shell
 % grunt
 % grunt buildcontrol:heroku
 ```
 
-デプロイできたら、http://アプリケーション名.herokuapp.com/ で動作確認をします。
+The application is deployed. Open http://APPLICATION.herokuapp.com/ to see the application !
 
-正しく表示できていない場合、Herokuのログを確認します。
+When it does not work, see Heroku logs.
 
 ```shell
 % cd dist
 % heroku logs
 ```
 
-MongoDBのデータについては、MongoHubなどのGUIツールで確認すると便利です。MongoDBのURLはHerokuから取得します。
+For about browging MongoDB, GUI tools like MongoHub is convenient.
+We can retrieve the URL for the MongoDB database from Heroku using "heroku config" command.
 
 ```shell
 % heroku config
 ...
-MONGOLAB_URI: mongodb://ユーザ名:パスワード@ホスト名:ポート番号/データベース名
+MONGOLAB_URI: mongodb://USERNAME:PASSWORD@HOSTNAME:PORT/DATABASE
 ...
 
 ```
 
 <div id="summary"></div>
 
-まとめ
+Summary
 ===============
-MEANスタックAngularJS Full-Stack generatorを用いてQAサイトを作成する手順を紹介しました。MEANスタックを使えば、JavaScriptのみでサーバからクライアントまで、見通しの良いサービスを簡単に作ることができます。ジェネレータを使うことで雛形となるコードを自動生成ができますので、変更を加えていくだけでサービスが作れるようになります。特に、スタートアップやプロトタイプで短時間・少ない人数で試行錯誤しながらサービスを作り上げる時には非常に便利です。
+I introduced how to build a QA service using a MEAN stack, AngularJS Full-Stack generator.
+Using MEAN stack, we can build a sophisticated web service from client-side logic to server-side logic quickly by only using JavaScript.
+Using generator, we can get best practice boilerplate codes, and just edit the codes to create services. It is especially helpful for startups or prototypes where it is required to create and change services quickly by trial and error.
 
-ぜひアイデアを生かして、ウェブサービスを作ってみてはいかがでしょうか？
+Lets' come up with ideas, and build your own services!
 
-手順通りに動作しないなど、気づいた点がありましたら、コメント等でフィードバックいただけるとうれしいです。
+Welcome any feedback such as errors, suggestion, or anything you noticed about this articles as comments!
 
-今後ともMEANスタックを使ったたのWebサービスの作り方も紹介していきたいと思います。
+I'll continue writing arcitles to build web services using MEAN stack.
+
 
 
 <br><br>
