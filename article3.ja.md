@@ -12,7 +12,7 @@ MEANスタックで今すぐ作る最新ウェブサービス:ジェネレータ
 -->
 <!--div class="paiza-custom-header"-->
 
-<iframe src="https://player.vimeo.com/video/135022783?autoplay=1&loop=1&title=0&byline=0&portrait=0" width="500" height="395" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> <p><a href="https://vimeo.com/135022783">Mean Stack 3 Demo</a> from <a href="https://vimeo.com/user34262363">paiza</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
+<iframe src="https://player.vimeo.com/video/135022783?autoplay=1&loop=1&title=0&byline=0&portrait=0" width="500" height="395" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
 [f:id:paiza:20140712194904j:plain]こんにちは、吉岡([twitter:@yoshiokatsuneo])です。
 
