@@ -12,11 +12,12 @@ MEANスタックで今すぐ作る最新ウェブサービス:ジェネレータ
 -->
 <!--div class="paiza-custom-header"-->
 
-<iframe src="https://player.vimeo.com/video/135022783?autoplay=1&loop=1&title=0&byline=0&portrait=0" width="500" height="395" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> <p><a href="https://vimeo.com/135022783">Mean Stack 3 Demo</a> from <a href="https://vimeo.com/user34262363">paiza</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
+<iframe src="https://player.vimeo.com/video/136183259?autoplay=1&loop=1&title=0&byline=0&portrait=0" width="500" height="350" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
 [f:id:paiza:20140712194904j:plain]  (by Yoshioka Tsuneo ([twitter:@yoshiokatsuneo]))
 
-MEAN stack(*) is an all-in-one JavaScript based web service development environment supporting front-end, back-end, and database development. A MEAN stack environment, AngularJS Full-Stack generator, provides the best practice to develop clean software quickly.
+MEAN stack (*) is an all-in-one JavaScript based web service development environment supporting front-end, back-end, and database development. A MEAN stack environment, AngularJS Full-Stack generator, provides the best practice to develop clean software quickly.
+
 (*) MEAN stack packs MongoDB, Express, AngularJS, and Node.js.
 
 In the first article, I introduced how to install the MEAN stack. In the second article, I introduced how to build Twitter-like web service.
@@ -37,8 +38,8 @@ The QA service has the following features:
 * Staring questions, answers, or comments.
 * Listing all questions, my questions, or starred questions.
 
-![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152603.png)
-![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152617.png)
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150813/20150813170623.png)
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150813/20150813170615.png)
 
 The QA service is available in the following URL:
 http://paizaqa.herokuapp.com
@@ -2332,8 +2333,6 @@ Lets' come up with ideas, and build your own services!
 Welcome any feedback such as errors, suggestion, or anything you noticed about this articles as comments!
 
 I'll continue writing articles to build web services using MEAN stack.
-
-
 
 
 

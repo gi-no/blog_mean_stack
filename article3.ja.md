@@ -1042,7 +1042,7 @@ angular.module('paizaqaApp', [
 client/app/questionsCreate/questionsCreate.html
 
 ```html
-  <form name="form">
+  <form name="form" ng-submit="submit()">
     <h2>Title:</h2>
     <input type="text" class="form-control" ng-model="question.title" name="question_title" required>
     <span class="text-danger" ng-messages="form.question_title.$error">
