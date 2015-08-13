@@ -823,7 +823,7 @@ router.delete('/:id/answers/:answerId', auth.isAuthenticated(), controller.destr
 #### Editing server-side controller
 On question-listing API, call "populate()" to expand a user ID to a user object.
 "populate('user', 'name')" expands name field of each user object.
-Also, change to return last 20 questions.
+Also, change to return the last 20 questions.
 "sort({createdAt: -1})" sort by created time in descending order and "limit(20)" returns the first 20 objects.
 After creating the query, call "exec()" to execute the query and receive the result in the callback function.
 

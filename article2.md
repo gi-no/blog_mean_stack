@@ -6,16 +6,16 @@
 <iframe src="https://player.vimeo.com/video/133009564?autoplay=1&title=0&byline=0&portrait=0" width="500" height="408" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
 
-[f:id:paiza:20140712194904j:plain] (by Yoshioka Tsuneo, [twitter:@yoshiokatsuneo] at https://paiza.IO/)
+[f:id:paiza:20140712194904j:plain]  (by Yoshioka Tsuneo, [twitter:@yoshiokatsuneo] at https://paiza.IO/)
 
 (Japanese article is available <a href="http://paiza.hatenablog.com/entry/2015/07/09/1時間でTwitter風フルスタック・Webサービスを作る！-_MEANス">here</a>.)
 
-[In the previous article](http://engineering.paiza.io/entry/2015/07/08/153011), I introduced a MEAN stack, Yeoman-based AngularJS Full-Stack generator, and the way how to install, run, edit, debug and deploy programs. MEAN stack is a web development package of MongoDB, Express, AngularJS, NodeJS. You can easily build interactive and intuitive full-stack web service by just using one language: JavaScript.
+[In the previous article](http://engineering.paiza.io/entry/2015/07/08/153011), I introduced a MEAN stack, Yeoman-based AngularJS Full-Stack generator, and explained how to install, run, edit, debug, and deploy programs. MEAN stack is a web development package of MongoDB, Express, AngularJS, and Node.js. You can easily build interactive and intuitive full-stack web services by just using one language: JavaScript.
 
 In this article, we'll build a more practical real web service!
 
-The web service is Twitter-like service where users can post and list messages.
-We can build full-fledged, nearly production ready web service based by editing some JavaScript or HTML code generated. Let's try!
+The web service is a Twitter-like service where users can post and list messages.
+We can build a full-fledged, nearly production-ready web service based by editing some JavaScript or HTML code generated. Let's try!
 
 [f:id:paiza:20150706130351p:plain]
 
@@ -29,7 +29,7 @@ The web service has features like below:
 * Infinite scrolling list
 * Starred messages (Add, remove, or list)
 
-You can download the source code below. But, I suggest writing code by your hands to get more feeling.
+You can download the source code below. But, I suggest writing code by your hands to have a better understanding for the codes.
 
 [https://github.com/gi-no/paizatter](https://github.com/gi-no/paizatter)
 
@@ -55,14 +55,14 @@ Contents
 <div id="install"></div>
 Install MEAN stack
 =======================
-Install Yeoman-based AngularJS Full-Stack generator(generator-angular-fullstack) following instructions in a previous article.
+Install Yeoman-based AngularJS Full-Stack generator(generator-angular-fullstack) following [the instructions in the previous article](http://engineering.paiza.io/entry/2015/07/08/153011#install).
 
 
 <div id="new_project"></div>
 Create a new project
 =======================
 
-At first, let's create a new project. Create a project directory and run "yo"(Yeoman) command. I named the project as "paizatter".
+First, let's create a new project. Create a project directory and run "yo"(Yeoman) command. I named the project "paizatter".
 
 ```shell
 $ mkdir paizatter
@@ -70,8 +70,8 @@ $ cd paizatter
 $ yo angular-fullstack paizatter
 ```
 
-There are multiple configurations to choose.
-Let's just choose default settings except SNS setting where we enable all the SNS.
+There are multiple configurations from which to choose.
+Let's just choose default settings except for the SNS setting where we enable all the SNS.
 
 ```
 - Would you like to include additional oAuth strategies? 
@@ -80,7 +80,7 @@ Let's just choose default settings except SNS setting where we enable all the SN
 ❯◉ Twitter
 ```
 
-Just after a minute, many project files are generated. Following is some of project files related to this article.
+After a minute, many project files are generated. The following are some of project files related to this article.
 
 ```
 .
@@ -114,21 +114,21 @@ Just after a minute, many project files are generated. Following is some of proj
             `-- thing.spec.js             Server-side test code
 ```
 
-Client-side codes are under "client" directory, and server-side codes are under "server" directory.
+Client-side codes are under the "client" directory, and server-side codes are under the "server" directory.
 
-On "client/app" directory, each page have own directory(ex: "client/app/main"). The directory pack JavaScript code(controller), HTML file(view), URL routing configuration file, CSS files, test file to make it easy to maintain.
+In the "client/app" directory, each page has its own directory (ex: "client/app/main"). The directory pack a JavaScript code (controller), a HTML file (view), a URL routing configuration file, a CSS files, and a test file to make it easy to maintain.
 
-On "server/api" directory, each subdirectory has own JavaScript API code(controller), Web socket code, URL routing configuration, test code, and DB model.
+In the "server/api" directory, each subdirectory has own JavaScript API code(controller), Web socket code, URL routing configuration, test code, and DB model.
 
 [f:id:paiza:20150709030234p:plain]
 
-Client-side controllers communicate with server-side controllers using server API, and update HTML template or handle events. Server-side controllers communicates with client-side controller using server API, and retrieve or update data from/to MongoDB through DB model.
+Client-side controllers communicate with server-side controllers using the server APIs, and they update HTML page or handle events. Server-side controllers communicate with client-side controllers using server APIs, and they retrieve or update data from/to MongoDB through the DB model.
 
-If we think about MVC, from clients' point of view, servers are like models, from servers' point of view, clients are like views.
+If we think about MVC, from the clients' point of view, servers are like models. From servers' point of view, clients are like views.
 
 
 
-Default npm packages on Angular Full-stack generator is a bit old, so update to latest packages using "npm-check-updates" .
+The default npm packages on Angular Full-stack generator are a bit old, so update to the latest packages using "npm-check-updates" .
 
 ```shell
 % sudo npm install -g npm-check-updates
@@ -149,7 +149,7 @@ Generated project have a controller(client/app/main/main.controller.js) that own
 
 In this project, we use the "thing" object to store messages.
 
-Open HTML file and edit a "div" element with "container" class.
+Open the HTML file and edit a "div" element with "container" class.
 
 client/app/main/main.html:
 
@@ -173,11 +173,11 @@ client/app/main/main.html:
 </div>
 ```
 
-Now, the main page shows input form and message list.
+Now, the main page shows the input form and message list.
 
-You see "ng-repeat" or "{{expression}}" that is not used in HTML. Those are AngularJS syntax to embed JavaScript variables on HTML templates.
+You see "ng-repeat" or "{{expression}}" that is not used in HTML. Those are AngularJS syntax to embed JavaScript variables on the HTML templates.
 
-"ng-repeat" is an AngularJS syntax to expand array object in HTML templates. You can write as "ng-repeat=ITEM in ARRAY" to output each object in the array. You can use "{{expression}}" syntax to embed variable or simple expression(Angular Expression) to HTML templates.
+"ng-repeat" is an AngularJS syntax to expand an array object in HTML templates. You can write "ng-repeat=ITEM in ARRAY" to output each object in the array. You can use "{{expression}}" syntax to embed a variable or simple expression(Angular Expression) in the HTML templates.
 
 [f:id:paiza:20150706134637p:plain]
 
@@ -185,9 +185,9 @@ You see "ng-repeat" or "{{expression}}" that is not used in HTML. Those are Angu
 <div id="change_order"></div>
 Change order of the list
 ================
-Now, we see the message list, but new messages are appended on the bottom of the list, instead of on the top of the list. Let's append new message on the top of the list like Twitter. Also, let's show only last 20 messages instead of all the messages.
+Now, we see the message list, but new messages are appended on the bottom of the list, instead of on the top of the list. Let's append a new message on the top of the list like Twitter does. Also, let's show only the last 20 messages instead of all the messages.
 
-On WebSocket code, use "push" instead of "unshift" to append new item on the top of the messages.
+On WebSocket code, use "push" instead of "unshift" to append a new item on the top of the messages.
 
 client/components/socket/socket.service.js:
 
@@ -199,9 +199,9 @@ client/components/socket/socket.service.js:
           array.unshift(item);
 ```
 
-Callback code inside "socket.on()" is called using WebSocket when message list is updated. Thanks to WebSocket, we can automatically update message list without manually reloading page when other users added message, 
+Callback code inside "socket.on()" is called using WebSocket when the message list is updated. Thanks to WebSocket, we can automatically update the message list without manually reloading page when other users add a message, 
 
-To change the order on loading messages when initially loading page or reloading page, edit the server-side controller for listing message.
+To change the order on loading messages when initially loading the page or reloading the page, edit the server-side controller for the listing message.
 
 server/api/thing/thing.controller.js:
 
@@ -215,27 +215,27 @@ exports.index = function(req, res) {
 };
 ```
 
-Use sort() function of mongoose(MongoDB middleware), to sort on descendant order by creation time.
-MongoDB has "_id" field on every document(RDB's record), and "_id" field is ordered by creation time. So, we can just sort by "_id" field to sort by creation time.
+Use sort() function of mongoose (MongoDB middleware), to sort in descending order by creation time.
+MongoDB has "_id" field on every document (RDB's record), and the "_id" field is ordered by creation time. So, we can just sort by "_id" field to sort by creation time.
 
-limit() function limit the number of object to return. When the query is built, call exec() function to call query. Query result is returned as an argument of the callback function. So, just return the result to the client.
+limit() function limits the number of object to return. When the query is built, call exec() function to call query. The query result is returned as an argument of the callback function. So, just return the result to the client.
 
 <div id="user_authentication"></div>
 User authentication
 =================
-Now, we can list the message, we don't see who post the messages. Also, only posted user should be able to delete the message.
+Now, we can list the messages, but we don't see who posted the messages. Also, only posted user should be able to delete his/her message.
 
 So, let's add user authentication.
 
-Sign Up and Login feature is already generated from the template, so we just need to add authentication for features, and show user name on the messages.
+Sign Up and Login feature is already generated from the template, so we just need to add authentication for features and show the user name on the messages.
 
 
 
 #### Server-side model schema
 
-Store user ID and message together. MongoDB itself has flexible schema, but AngularJS FullStack generator also uses mongoose as a driver. Mongoose has features like removing needless fields on save, hook functions or expand related document.
+Store the user ID and the message together. MongoDB itself has flexible schema, but AngularJS Full-Stack generator also uses mongoose as a driver. Mongoose has features such as removing needless fields on save, hook functions, and expanding related documents.
 
-On mongoose schema configuration for messages(ThingSchema), add user ID to message schema. Also, add creation time.
+On the mongoose schema configuration for messages(ThingSchema), add user ID to message schema. Also, add creation time.
 
 server/api/thing/thing.model.js:
 
@@ -253,10 +253,10 @@ var ThingSchema = new Schema({
 });
 ```
 
-Now, "name" field store a message, "user" field store User's ObjectID. "ref: 'User'" relate the ObjectID to User collection, and enables to expand using populate() function. "createAt" field have "Date.now" function as a default value to set creation time automatically.
+Now, the "name" field stores a message, "user" field stores User's ObjectID. "ref: 'User'" relates the ObjectID to the User collection, and enables to expand using populate() function. The "createAt" field have "Date.now()" function as a default value to set creation time automatically.
 
 #### Server-side API routing configuration
-For API Requests requiring authentication, add "auth.isAuthenticated()" middleware to the routings. By that, posting or deleting messages from unauthorized users are prohibited, and request object(req) have user field(req.user) to store User object.
+For APIs requiring authentication, add "auth.isAuthenticated()" middleware to the routings. In this way, posting or deleting messages from unauthorized users is prohibited, and request object ("req") have user field ("req.user") to store User object.
 
 server/api/thing/index.js:
 
@@ -268,13 +268,13 @@ router.get('/:id', controller.show);
 router.post('/', auth.isAuthenticated(), controller.create);
 router.delete('/:id', auth.isAuthenticated(), controller.destroy);
 ```
-On the routing file above, specify function called when each URL is called.
-To add authentication, specify auth.isAuthenticated() as middleware. Also, remove needless put/patch routing.
+On the routing file above, we can specify a function called when each URL is requested.
+To add authentication, specify auth.isAuthenticated() as a middleware. Also, remove needless put/patch routing.
 
 
 #### Edit server-side controller(create function)
-On server-side controller, add user object to user field of creating document.(req.body.user = req.user)
-Because "req.user" already contains User object, just set it to Thing.create argument("req.body") to save user.
+On the server-side controller, add the user object to "user" field of creating document (req.body.user = req.user).
+Because "req.user" already contains the user object, just set it to Thing.create argument ("req.body") to save user.
 
 server/api/thing/thing.controller.js:
 
@@ -287,8 +287,8 @@ exports.create = function(req, res) {
 
 
 #### Edit server-side controller to show messages
-Now, API functions to output message(index(), show()) just returns ObjectID of User instead of User object itself. Use populate() function to expand User object.
-populate('user') expand all fields of User object. Specify populate('user','name') to just expand needed field('name').
+Now, API functions to output a message(index() and show()) just returns the ObjectID of User instead of the User object itself. Use the populate() function to expand User object.
+populate('user') expand all fields of the User object. Specify populate('user','name') to just expand a needed field('name').
 
 server/api/thing/thing.controller.js:
 
@@ -306,7 +306,7 @@ exports.show = function(req, res) {
 
 
 #### Edit server-side controller to delete messages.
-On deletion, validate that the posting user and the current user is the same before deletion.
+On deletion, validate that the posting user and the current user are the same before deletion.
 
 server/api/thing/thing.controller.js:
 
@@ -334,7 +334,7 @@ function onSave(socket, doc, cb) {
 ```
 
 ####Edit client-side controller
-Add isMyTweet() function to check whether the message is mine or not.
+Add isMyTweet() function to check whether the message is of current user or not.
 
 client/app/main/main.controller.js:
 
@@ -350,14 +350,14 @@ angular.module('paizatterApp')
   });
 ```
 
-On the above controller function, arguments of controller function specify modules to use. So, add "Auth" to the controller function arguments.
+On the above controller function, arguments of the controller function specify modules to use. So, add "Auth" to the controller function arguments.
 
-Variables or functions stored in $scope object can be referred on HTML code, add function as "$scope.isMyTweet".
-"isMyTweet" function checks whether the message's user ID is the same as the current user or not. 
+Variables or functions stored in $scope object can be referred on HTML code, so add a function as "$scope.isMyTweet".
+"isMyTweet" function checks whether the message's user ID is the same as the current user ID or not. 
 Also, to call authentication function from HTML templates, add isLoggedIn/getCurrentUser to $scope object.
 
 #### Edit client-side HTML template
-On message listing, add username and creation time.
+On the message listing, add the username and creation time.
 
 client/app/main/main.html:
 
@@ -372,19 +372,19 @@ client/app/main/main.html:
 
 
 #### Test
-Now, all authentication feature is implemented, let's test it.
+Now, all authentication feature have been implemented, so let's test it.
 
-If you post without Login, you are redirected to Sign Up page. Posted message contains the username. You can only delete your message (using cross("x") button).
+If you post without Login, you are redirected to Sign Up page. The posted message contains the username. You can only delete your message (using the cross("x") button).
 
 [f:id:paiza:20150706135436p:plain]
 
 <div id="edit_css"></div>
 Edit CSS
 ============
-Current message list has no decoration. Add CSS to decorate message.
+The current message list has no decoration. Add CSS to decorate message.
 
 #### CSSARROW
-Choose arrow CSS from http://cssarrowplease.com . Just choose favorite style and append it to main.scss.
+Choose an arrow CSS from http://cssarrowplease.com . Just choose your favorite style and append it to "main.scss".
 
 client/app/main/main.scss:
 
@@ -434,8 +434,8 @@ client/app/main/main.scss:
 }
 ```
 
-####Edit HTML file
-Edit HTML file to apply CSS styles.
+####Edit the HTML file
+Edit the HTML file to apply CSS styles.
 
 client/app/main/main.html:
 
@@ -471,11 +471,11 @@ Let's deploy for now.
 % heroku addons:add mongolab
 ```
 
-"yo angular-fullstack:heroku" command setup deploy environment for Heroku.
-Also, add MongoDB module to Heroku. Heroku provides MongoHQ and MongoLab as MongoDB add-on. Let's add MongoLab add-on because MongoLab has a free plan.
+The "yo angular-fullstack:heroku" command will set up a deploy environment for Heroku.
+Also, add MongoDB module to Heroku. Heroku provides MongoHQ and MongoLab as MongoDB add-ons. Let's add MongoLab add-on because MongoLab has a free plan.
 
 Now, we deployed the web service to Heroku !
-For next deployments, use "grunt" command to build distribution package, and "grunt buildcontrol:heroku" for deployment.
+For next deployments, use the "grunt" command to build a distribution package, and "grunt buildcontrol:heroku" for deployment.
 
 ```shell
 % grunt
@@ -489,17 +489,17 @@ http://APPLICATION-NAME.herokuapp.com/
 <div id="sns_authentication"></div>
 SNS authentication
 ========
-To use SNS authentication(Facebook, Twitter, Google), set up API key and SECRET key. Please refer [instruction in the previous article](http://engineering.paiza.io/entry/2015/07/08/153011#sns_link).
+To use SNS authentication(Facebook, Twitter, Google), set up API key and SECRET key. Please refer to [the instructions in the previous article](http://engineering.paiza.io/entry/2015/07/08/153011#sns_link).
 
 <div id="debug"></div>
 Debug
 =========
-In case you failed deployment, check out server log file. Please refer [instruction in the previous article](http://engineering.paiza.io/entry/2015/07/08/153011#debug) for details.
+In case you failed deployment, check out the server log file. Please refer to [the instruction in the previous article](http://engineering.paiza.io/entry/2015/07/08/153011#debug) for details.
 
 % cd dist
 % heroku logs
 
-For about MongoDB operation, GUI tool like MongoHub is helpful. MongoDB URL can be retrieved from Heroku configuration.
+For about MongoDB operation, GUI tools like MongoHub are helpful. MongoDB URL can be retrieved from the Heroku configuration.
 
 % heroku config
 ...
@@ -510,7 +510,7 @@ MONGOLAB_URI:    mongodb://Username:Password@Hostname:Port/Database
 Create time format filter
 ==============
 
-Now, message creation time is shown in UTC. Let's change to show time from now like Twitter.
+Now, the message creation times are shown in UTC. Let's change it to show time from now like Twitter does.
 
 #### Install momentjs
 
@@ -528,7 +528,7 @@ We use a time formatting JavaScript library "momenjs" as a client-side library. 
 
 Create "fromNow" AngularJS filter. Filter is an AngularJS feature to format the value. So, let's create a filter to format time as time from now.
 
-Generate fromNow filter using a generator. The generator will create a directory and put filter code and test code under the directory.
+Generate fromNow filter using a generator. The generator will create a directory and put the filter code and test code under the directory.
 For now, when we created new directory, we need to run "grunt injector" or "grunt serve" to load JavaScript files. ( [grunt-contrib-watch/issues/166](https://github.com/gruntjs/grunt-contrib-watch/issues/166) )
 
 ```shell
@@ -546,10 +546,10 @@ client/app/fromNow/fromNow.filter.js
     };
 ```
 
-Now, the fromNow filter is implemented.
+Now, the fromNow filter has been implemented.
 
-So, let's use the filter on HTML template.
-We can use filter just by adding "|filter" at the end of "{{expression}}" style expression. Now, change from "{{thing.createdAt}}" to "{{thing.createdAt|fromNow}}".
+So, let's use the filter on the HTML template.
+We can use the filter just by adding "|filter" at the end of "{{expression}}" style expression. Now, change from "{{thing.createdAt}}" to "{{thing.createdAt|fromNow}}".
 
 
 client/app/main/main.html:
@@ -558,13 +558,13 @@ client/app/main/main.html:
         <span style="float: right;">({{thing.createdAt|fromNow}})</span>
 ```
 
-Now, message creation time is formatted as time from now like "~minutes ago".
+Now, the message creation times are formatted as time from now like "~minutes ago".
 
 [f:id:paiza:20150706145049p:plain]
 
 ### Edit test code
 
-Now, we need to edit test code because we edited filter code.
+Now, we need to edit the test code because we edited filter code.
 Add moment.js to karma.conf.js so that test code load moment.js.
 
 karma.conf.js:
@@ -577,7 +577,7 @@ karma.conf.js:
     ],
 ```
 
-Then, edit test code to test that fromNow filter for current time returns 'a few seconds ago'.
+Then, edit the test code to test that fromNow filter for the current time returns 'a few seconds ago'.
 
 client/app/fromNow/fromNow.filter.spec.js
 
@@ -587,7 +587,7 @@ client/app/fromNow/fromNow.filter.spec.js
   });
 ```
 
-Now, run tests, and see there is no error.
+Now, run tests, and confirm there is no error.
 
 ```shell
 % grunt test
@@ -605,7 +605,7 @@ client/index.html
       <script src="bower_components/momentjs/min/moment-with-locales.min.js"></script>
 ```
 
-Change the fromNow filter to use browser's language (window.navigator.language).
+Change the fromNow filter to use the the browser's language (window.navigator.language).
 
 client/app/fromNow/fromNow.filter.js
 
@@ -615,7 +615,7 @@ client/app/fromNow/fromNow.filter.js
     };
 ```
 
-Now, time is formatted using browser's language (Ex: "〜分前" in Japanese).
+Now, time is formatted using the browser's language (Ex: "〜分前" in Japanese).
 
 [f:id:paiza:20150706145342p:plain]
 
@@ -627,7 +627,7 @@ Let's add a feature to star/unstar messages.
 
 #### On servser-side DB model, add starred user to message schema
 
-Store starred users to messages. On MongoDB, you can store array as a part of a document. So, we'll store starred users as a part of a message. On message schema, add "stars" field with array type to store the list of user ObjectIDs.
+Store starred users to messages. On MongoDB, you can store an array as a part of a document. So, we'll store starred users as a part of a message. On the message schema, add "stars" field with array type to store the list of user ObjectIDs.
 
 server/api/thing/thing.model.js:
 
@@ -644,7 +644,7 @@ var ThingSchema = new Schema({
 
 #### Add server-side URL routing
 
-To star/unstar message, add two API(star/unstar) to server-side URL routing. To allow star/unstar only for authenticated user, add "isAuthenticated" to routing middleware.
+To star/unstar a message, add two APIs(star/unstar) to the server-side URL routing. To allow star/unstar only for authenticated users, add "isAuthenticated" to the routing middleware.
 
 server/api/thing/index.js:
 
@@ -655,7 +655,7 @@ router.delete('/:id/star', auth.isAuthenticated(), controller.unstar);
 
 #### Implement server-side API.
 
-Implement star/unstar API. We can use update() function with "{$push/$pull: {field name: value}}" to insert or remove item to/from array inside a document. Implementation for two APIs are same except "$push" or  "$pull". Call show() function at the end of API implementation to return a updated message.
+Implement star/unstar API. We can use the update() function with "{$push/$pull: {field name: value}}" to insert or remove an item to/from an array inside a document. Implementation for the two APIs are same except for "$push" and  "$pull". Call "show()" function at the end of API implementation to return an updated message.
 
 server/api/thing/thing.controller.js:
 
@@ -681,8 +681,8 @@ exports.unstar = function(req, res) {
 
 #### Implement client-side controller
 
-Make star/unstar function on the client-side controller that just calls server side star/unstar API. Those two functions are same except for requesting method("put" or "delete").
-Also, add "isMyStart()" function to see whether current user starred message or not.
+Make star/unstar functions on the client-side controller that just calls the server-side star/unstar APIs. Those two functions are same except for requesting methods("put" and "delete").
+Also, add "isMyStart()" function to see whether the current user starred a message or not.
 
 client/app/main/main.controller.js:
 
@@ -711,7 +711,7 @@ client/app/main/main.controller.js:
 
 #### Edit HTML template file
 
-Edit HTML file to add star icon, and call starThing() to star on click. If the message is already starred, call unstarThing() to unstar.
+Edit the HTML file to add star icons, and call "starThing()" to star on click. If the message is already starred, call "unstarThing()" to unstar the message.
 
 
 client/app/main/main.html:
@@ -740,17 +740,17 @@ List user messages, starred messages
 
 [f:id:paiza:20150706145600p:plain]
 
-Until now, message list shows all users' messages. Let's add a feature to list only user messages or only starred messages.
+Until now, the message list shows all users' messages. Let's add a feature to list only user messages or only starred messages.
 
 #### Add client-side routing
 Create new URLs to show each user's messages or starred messages.
 
-* User messages: /users/ユーザID
-* Starred messages: /users/ユーザID/starred
+* User messages: /users/USER-ID
+* Starred messages: /users/USER-ID/starred
 
-Client-side routing is set using $stateProvider.state function. Add above URLs to routing with the same controller(MainCtrl) and template(main.html). To filter messages, we set query. Add "query" to "resolve" field. Filter by user for user messages, and filter by stars field for starred messages.
+Client-side routing is set using "$stateProvider.state" function. Add the above URLs to routing with the same controller ("MainCtrl") and template ("main.html"). To filter messages, we set a query. Add "query" to "resolve" field. Filter by user for user messages, and filter by user ID of "stars" field for starred messages.
 
-On MongoDB, we can write queries using JavaScript. So, we can just transfer the query to MongoDB through Server-side API to filter messages.
+On MongoDB, we can write queries using JavaScript. So, we can just transfer the query to MongoDB through the server-side API to filter messages.
 
 Note that if you put "/users/:userId" first on the routing, "starred" will be part of userId. So, put "/users/:userId/stared" before that.
 
@@ -794,7 +794,7 @@ angular.module('paizatterApp')
 
 #### Edit client-side controller
 
-Add a query parameter to server-API requests. Add "query" to controller function, and add the query to $http.get() argument.
+Add a query parameter to the server-API request. Add "query" to the controller function, and add the "query" to "$http.get()" argument.
 
 client/app/main/main.controller.js:
 
@@ -806,7 +806,7 @@ client/app/main/main.controller.js:
 
 #### Edit server-side controller
 
-On the server-side controller, just transfer the received query to MongoDB by passing query as find() arguments.
+On the server-side controller, just transfer the received query to MongoDB by passing the query as "find()" arguments.
 
 server/api/thing/thing.controller.js
 
@@ -817,11 +817,11 @@ exports.index = ...
 ```
 
 
-#### Add nav links to navbar
+#### Add Nav links to Navbar
 
-Until now, navbar has only one link "Home". Change it to three links like "All", "Mine", "Starred".
+Until now, Navbar has only one link "Home". Change it to three links like "All", "Mine", and "Starred".
 
-Add link items to $scope.menu array. Enable "Mine" or "Starred" link only for logged in users. To switch link dynamically before or after login, set "link" field(for URL) and "show" field functions.
+Add link items to $scope.menu array. Enable "Mine" or "Starred" links only for logged-in users. To switch links dynamically before or after login, set the "link" field(for URL) and the "show" field as functions.
 
 client/components/navbar/navbar.controller.js:
 
@@ -845,7 +845,7 @@ client/components/navbar/navbar.controller.js:
     ];
 ```
 
-On navbar HTML file, change from "link" variable to "link()" function. Set item.show() on "ng-show"  to display on when show() returns true.
+On the Navbar HTML file, change from the "link" variable to the "link()" function. Set "item.show()" on "ng-show"  to display only when show() returns true.
 
 client/components/navbar/navbar.controller.html:
 
@@ -857,7 +857,7 @@ client/components/navbar/navbar.controller.html:
 ```
 
 #### Edit client-side HTML template
-Show user message on click user name. Just add link to user message URL(/users/userID).
+Show the user message on click user name. Just add a link to the user message URL (/users/userID).
 
 client/app/main/main.html:
 
@@ -866,7 +866,7 @@ client/app/main/main.html:
 ```
 
 #### Edit test code
-Edit test code to add dummy query parameter.
+Edit the test code to add a dummy query parameter.
 
 client/app/main/main.controller.spec.js:
 
@@ -877,7 +877,7 @@ client/app/main/main.controller.spec.js:
     });
 ```
 
-Now, we can see my or other users messages, or starred messages.
+Now, we can see my or other users' messages or starred messages.
 
 
 <div id="search"></div>
@@ -896,7 +896,7 @@ Use URLs below with "keyword" for searching.
 * User: /users/:userId?keyword=KEYWORD
 * Starred: /users/:userId/starred?keyword=KEYWORD
 
-On routing configuration, write url field like "XXX?keyword" so that we can use "keyword" as a parameter.
+On routing configuration, write to "url" field like "XXX?keyword" so that we can use "keyword" as a parameter.
 
 client/app/main/main.js
 
@@ -914,7 +914,7 @@ client/app/main/main.js
 
 #### Add search box
 
-Add search box to Navbar. Set "search(keyword)" to ng-submit attribute so that submitting keyword invoke the search function.
+Add a search box to the Navbar. Set "search(keyword)" to "ng-submit" attribute so that submitting keyword invoke the search function.
 
 
 ```html
@@ -936,7 +936,7 @@ Add search box to Navbar. Set "search(keyword)" to ng-submit attribute so that s
 
 #### Navbar controller: change routing state on search.
 
-On navbar controller, add a search function to change the URL state to have searching keyword specified.
+On the Navbar controller, add a search function to change the URL state to have the searching keyword specified.
 
 client/components/navbar/navbar.controller.js:
 
@@ -947,7 +947,7 @@ client/components/navbar/navbar.controller.js:
     };
 ```
 
-This works. But, it always searches from all messages. It would be nice if we can also search from user messages or starred messages. Change the search function to keep URL state(main, user, or starred) on search. Don't forget to add '$state' to NavbarCtrl function argument to use the variable.
+This works. But, it always searches all messages. It would be nice if we could also restrict the search to user messages or starred messages. Change the "search()" function to keep the URL state (main, user, or starred) on search. Don't forget to add '$state' to the NavbarCtrl function argument to use the variable.
 
 client/components/navbar/navbar.controller.js:
 
@@ -977,9 +977,9 @@ Now, let's try to search using a regular expression. Use MongoDB's  '$regex' ope
 
 ### Full-text search
 
-Regular expression search works, but it will be getting slow if we have many messages.
+Regular expression search works, but it will become slow if we have many messages.
 
-So, let's use full-text search MongoDB provides. MongoDB have '$text' / '$search' operator for full text search. For full-text search, we don't(can't) specify field to search.
+So, let's use full-text search MongoDB provides. MongoDB have '$text' / '$search' operators for full text search. For full-text search, we don't (can't) specify field to search.
 
 
 
@@ -993,7 +993,7 @@ So, let's use full-text search MongoDB provides. MongoDB have '$text' / '$search
 
 #### Edit server-side model
 
-For the full-text search, add 'text' index to the searching field on the schema.
+For the full-text search, add a 'text' index to the searching field on the schema.
 
 server/api/thing/thing.mode.js:
 
@@ -1005,11 +1005,11 @@ Now, we can search by word like "Development". (We cannot search by substring ma
 
 
 ####  Japanese search
-MongoDB's full-text searching only support Latin languages, and does not support other languages like Japanese.
+MongoDB's full-text searching only supports Latin languages, it and does not support other languages as Japanese.
 
-We can use ElasticSearch or other engines. But for now, we use TinySegmenter to tokenize Japanese.
+We can use ElasticSearch or other engines. But for now, we will use "TinySegmenter" to tokenize Japanese.
 
-Add "tokenizedName" field to store and indexing tokenized message.
+Add "tokenizedName" field to store and index tokenized messages.
 
 ```javascript
 var ThingSchema = new Schema({
@@ -1034,7 +1034,7 @@ Install TinySegmenter using npm as a server-side library.
 % npm install --save r7kamura/tiny-segmenter
 ```
 
-Tokenize message on save, and join with space, and save to "tokenizedName" field. You can hook on save by calling "pre('save', callback)" on the schema.
+Tokenize a message on save, and join with space, and save to the "tokenizedName" field. You can hook on save by calling "pre('save', callback)" on the schema.
 
 server/api/thing/thing.model.js:
 
@@ -1048,18 +1048,18 @@ ThingSchema.pre('save', function(next){
 });
 ```
 
-Now, we can search by Japanese words, we can search message "吾輩は猫である" by a word "我輩".
+Now, we can search by Japanese words. For example, we can search the message "吾輩は猫である" for the word "我輩".
 
 <div id="infinite_scroll"></div>
 Infinite scroll
 ============
 
-Now, we can only see last 20 messages, and there is no way to see older messages.
+Now, we can only see the last 20 messages, and there is no way to see older messages.
 
-Let's add infinite scroll to see older messages like Twitter.
+Let's add an infinite scroll to see older messages, like Twitter does.
 
 #### On client-side, install "ngInfiniteScroll" library
-Install an AngularJS library "ngInfiniteScroll" for infinite scroll.
+Install an AngularJS library "ngInfiniteScroll" for an infinite scroll.
 
 ```javascript
 % bower install --save ngInfiniteScroll
@@ -1067,7 +1067,7 @@ Install an AngularJS library "ngInfiniteScroll" for infinite scroll.
 ```
 
 #### Load ngInfiniteScroll
-To use ngInfiniteScroll module, add it to AnguarJS application module dependency.
+To use the ngInfiniteScroll module, add it to the AnguarJS application module dependency.
 
 client/app/app.js:
 
@@ -1080,9 +1080,9 @@ angular.module('paizatterApp', [
 
 #### Edit HTML file
 
-To use ngInfiniteScroll module, on div tag of "container" class, add "infinite-scroll" attribute to call a function("nextPage()") on scroll. Set flags("busy", "noMoreData") to "infinite-scroll-disabled" attribute not to scroll while loading or if no more message available.
+To use the ngInfiniteScroll module, on div tag of "container" class, add "infinite-scroll" attribute to call a function ("nextPage()") on scroll. Set flags ("busy", "noMoreData") to "infinite-scroll-disabled" attribute not to scroll while loading or if no more messages are available.
 
-At the end of HTML, output "Loading data" while loading.
+At the end of the HTML file, output "Loading data" while loading.
 
 client/app/main/main.html:
 
@@ -1095,9 +1095,9 @@ client/app/main/main.html:
 
 #### Edit client-side controller
 
-On $scope variable, create "busy" field to store for the loading state, and "noMoreData" flag to store whether all the message is loaded or not.
+On the "$scope" variable, create "busy" field to store for the loading state, and "noMoreData" flag to store whether all the message is loaded or not.
 
-On scroll, we need to load message older than last message. Add "{_id: {$lt: lastId}}" to query. 
+On scroll, we need to load messages older than the last message. Add "{_id: {$lt: lastId}}" to the query. 
 
 On initial loading, if there are messages fewer than 20, set "noMoreData" flag.
 
@@ -1134,7 +1134,7 @@ client/app/main/main.controller.js:
 
 ```
 
-Now, we can load messages older than 20 last messages, using infinite scroll.
+Now, we can load messages older than the last 20 messages, using infinite scroll.
 
 #### Edit karma.conf
 Add "ngInfiniteScroll" library to karma.conf to load on test.
@@ -1159,7 +1159,7 @@ Check test result.
 Re-deploy
 ===============
 
-Finally, we built all the features!
+Finally, we have built all the features!
 Let's re-deploy the latest version to Heroku.
 
 ```shell
@@ -1174,12 +1174,12 @@ http://APPLICATION.herokuapp.com/
 <div id="summary"></div>
 Summary
 =================
-In this article, we created Twitter-like full-stack web service using a MEAN stack, Angular Full-Stack generator. 
-We have not edited many lines of codes. But, we could build almost full-fledged, real web service.
+In this article, we created a Twitter-like full-stack web service using a MEAN stack, Angular Full-Stack generator. 
+Although we have not edited many lines of codes, we have build a nearly full-fledged, real web service.
 
-By MEAN stack, we can easily create Web services just using JavaScript.
+With MEAN stack, we can easily create web services just using JavaScript.
 Let's come up with ideas and build your own web services!
 
-I welcome your feedbacks about the instruction.
+I welcome your feedback about the instruction.
 
-I'll continue writing articles about creating web service using MEAN stack.
+I'll continue writing articles about creating web services using MEAN stack.
