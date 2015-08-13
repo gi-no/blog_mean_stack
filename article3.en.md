@@ -55,8 +55,8 @@ Contents
 * [Installing MEAN stack](#install)
 * [Generating a new project](#new_project)
 * [Directory structure](#structure)
-* [Creating server-side question component(model, API, etc)](#generate_server_questions)
-* [Creating client-side question-listing, question-creating, and question-showing components (controllers, HTMLs, etc)](#generate_client_questions)
+* [Creating server-side question component(model, API, etc.)](#generate_server_questions)
+* [Creating client-side question-listing, question-creating, and question-showing components (controllers, HTMLs, etc.)](#generate_client_questions)
 * [Creating answer field](#add_answers)
 * [Using Markdown](#markdown)
 * [Adding question tags](#tags)
@@ -171,12 +171,12 @@ The client and the server send or receive data or events by communicating client
 
 <div id="generate_server_questions"></div>
 
-Creating server-side question component (model, API, etc)
+Creating server-side question component (model, API, etc.)
 ======================================
 
 In this QA service, each question is stored as a document in a database.
 
-Generate server-side question-related directory and files (DB mode, server-side controller, etc) using the generator.
+Generate server-side question-related directory and files (DB mode, server-side controller, etc.) using the generator.
 
 ```shell
 % yo angular-fullstack:endpoint question
@@ -199,7 +199,7 @@ var QuestionSchema = new Schema({
 
 <div id="generate_client_questions"></div>
 
-Creating client-side question-listing, question-creating, and question-showing components (controllers, HTMLs, etc)
+Creating client-side question-listing, question-creating, and question-showing components (controllers, HTMLs, etc.)
 =====================================
 
 Now, we create files for question-listing, question-creating, and question-showing components (controllers, HTMLs)
