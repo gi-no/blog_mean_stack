@@ -1,5 +1,6 @@
 
 <!--
+Webサービスを作りたい人に最適、たった1時間でJSベースのQAサイトを作る方法 - MEANスタック開発(3)
 0:1時間でフルスタックQAサービスを作る！- MEANスタック開発(3)
 MEANスタックで今すぐ作る最新ウェブサービス:ジェネレータを使ってみよう編
 フルスタック・ウェブ開発環境の使い方 - MEANスタックで作る最新ウェブサービス
@@ -18,7 +19,7 @@ MEANスタックで今すぐ作る最新ウェブサービス:ジェネレータ
 MEANスタック(*)は、JavaScriptのみでフロントエンド、データベース、バックエンドの全てを開発できるWebサービス開発環境です。特にMEANスタックの一つAngularJS Full-Stack generatorでは、ウェブアプリケーション開発のノウハウが詰まっており、先人の知恵を生かすことで、見通しの良いソフトウェアを簡単・迅速に開発できるようになります。  
 ( * ) MEANスタックはMongoDB, Express, AngularJS, Node.jsを組み合わせています。
 
-[初回の記事](http://paiza.hatenablog.com/entry/2015/07/08/最新・最速！Webサービスが今すぐ作れる！_-_MEANスタッ)ではMEANスタックの説明とインストールについて、２回目ではTwitter風サービスの作り方について紹介しました。
+[初回の記事](http://paiza.hatenablog.com/entry/2015/07/08/最新・最速！Webサービスが今すぐ作れる！_-_MEANスタッ)ではMEANスタックの説明とインストールについて、[２回目の記事](http://paiza.hatenablog.com/entry/2015/07/09/1時間でTwitter風フルスタック・Webサービスを作る！-_MEANス)ではTwitter風サービスの作り方について紹介しました。
 
 今回は、具体的なウェブサービスとしてQAサービスを構築してみます。プログラミング関係では、Stack Overflow,teratail,Qiitaのようなサービスが思いつきます。さらに、ブログやFacebookのコメント欄のように、トピックごとに参加者がコメント・議論するような機能は、多くのサービスで参加者同士の交流の場として便利に使われており、応用範囲も広いです。
 
@@ -168,6 +169,7 @@ npmのパッケージが少々古いので最新にしておきます。
 
 クライアントとサーバはJSONベースのHTTP APIを用いて、クライアント側コントローラとサーバ側コントローラが通信することでデータやイベントの送受信を行います。MVCモデルをあてはめると、サーバ側からはクライアントがビューのように、クライアント側からはサーバがモデルのように見えます。
 
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150709/20150709025944.png)
 
 <div id="generate_server_questions"></div>
 
@@ -2301,6 +2303,30 @@ MEANスタックAngularJS Full-Stack generatorを用いてQAサイトを作成�
 
 今後ともMEANスタックを使ったたのWebサービスの作り方も紹介していきたいと思います。
 
+<br/>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<thead>
+  <tr>
+    <td colspan="2" style="background-color: darkblue; color: white;"><div style="font-size: small; font-weight: bold;">MEANスタック開発記事一覧</div></td>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td></td>
+    <td><a href="http://paiza.hatenablog.com/entry/2015/07/08/最新・最速！Webサービスが今すぐ作れる！_-_MEANスタッ">最新・最速！Webサービスが今すぐ作れる！ - MEANスタック開発(1)</a></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><a href="http://paiza.hatenablog.com/entry/2015/07/09/1時間でTwitter風フルスタック・Webサービスを作る！-_MEANス">初級者でも1時間でTwitter風Webサービスを作れる！- MEANスタック開発(2)</a></td>
+  </tr>
+  <tr>
+    <td>→</td>
+    <td>Webサービスを作りたい人に最適、たった1時間でJSベースのQAサイトを作る方法 - MEANスタック開発(3)</td>
+  </tr>
+
+</tbody>
+</table>
 
 <br><br>
 <hr>
@@ -2314,5 +2340,6 @@ MEANスタックAngularJS Full-Stack generatorを用いてQAサイトを作成�
 
 <hr>
 <br><br>
+
 
 

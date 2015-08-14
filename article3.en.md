@@ -19,7 +19,8 @@ MEAN stack (*) is an all-in-one JavaScript based web service development environ
 
 (*) MEAN stack packs MongoDB, Express, AngularJS, and Node.js.
 
-In the first article, I introduced how to install the MEAN stack. In the second article, I introduced how to build Twitter-like web service.
+[In the first article](http://engineering.paiza.io/entry/2015/07/08/153011), I introduced how to install the MEAN stack.
+[In the second article](http://engineering.paiza.io/entry/2015/07/09/154028), I introduced how to build Twitter-like web service.
 
 In this article, as an example of more practical web service, I introduce how to build a QA service, like Stack Overflow, Qiita, or even Reddit or HackerNews. It can be applied for features like Blog or SNS comments where users can comment, discuss, or communicate each other.
 
@@ -170,6 +171,7 @@ On server directory, each "server/api/MODULE" directory stores files for each UR
 
 The client and the server send or receive data or events by communicating client-side controllers and server-side controllers using JSON-based HTTP APIs. From MVC model's perspective, server sees client as views, and client sees server as models.
 
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150709/20150709030234.png)
 
 <div id="generate_server_questions"></div>
 
@@ -2341,5 +2343,29 @@ Welcome any feedback such as errors, suggestion, or anything you noticed about t
 
 I'll continue writing articles to build web services using MEAN stack.
 
+<br/>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<thead>
+  <tr>
+    <td colspan="2" style="background-color: darkblue; color: white;"><div style="font-size: small; font-weight: bold;">MEAN stack development articles</div></td>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td></td>
+    <td><a href="#">Building full-stack web service - MEAN stack development(1)</a></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><a href="#">Building Twitter-like full-stack web service in 1 hour - MEAN stack development (2)</a></td>
+  </tr>
+  <tr>
+    <td>*</td>
+    <td>Building a QA web service in an hour - MEAN stack development(3)</td>
+  </tr>
+
+</tbody>
+</table>
 
 
