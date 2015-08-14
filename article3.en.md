@@ -12,7 +12,6 @@ MEANスタックで今すぐ作る最新ウェブサービス:ジェネレータ
 -->
 <!--div class="paiza-custom-header"-->
 
-<iframe src="https://player.vimeo.com/video/136183259?autoplay=1&loop=1&title=0&byline=0&portrait=0" width="500" height="350" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
 [f:id:paiza:20140712194904j:plain]  (by Yoshioka Tsuneo ([twitter:@yoshiokatsuneo]))
 
@@ -23,6 +22,8 @@ MEAN stack (*) is an all-in-one JavaScript based web service development environ
 In the first article, I introduced how to install the MEAN stack. In the second article, I introduced how to build Twitter-like web service.
 
 In this article, as an example of more practical web service, I introduce how to build a QA service, like Stack Overflow, Qiita, or even Reddit or HackerNews. It can be applied for features like Blog or SNS comments where users can comment, discuss, or communicate each other.
+
+<iframe src="https://player.vimeo.com/video/136183259?autoplay=1&loop=1&title=0&byline=0&portrait=0" width="500" height="350" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
 In the second article (Twitter-like service), we build a service with one page. In this QA service, we will build multiple pages using generator, input validations using validators.
 
@@ -206,8 +207,8 @@ Creating client-side question-listing, question-creating, and question-showing c
 Now, we create files for question-listing, question-creating, and question-showing components (controllers, HTMLs)
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152639.png)
-![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152631.png)
-![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152705.png)
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150814/20150814100206.png)
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150814/20150814100204.png)
 
 
 #### Removing needless files
@@ -408,7 +409,7 @@ client/app/questionsShow/questionsShow.html
 </div>
 ```
 
-/Users/tsuneo/gino/paizaqa2/client/app/questionsShow/questionsShow.scss
+client/app/questionsShow/questionsShow.scss
 
 ```css
 #question-show-container .comment{
@@ -440,7 +441,7 @@ Creating answer field
 Now, though we are building QA service, we can only ask questions and no one can answer it.
 So, let's enable to create, display answers.
 
-![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152706.png)
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150814/20150814100156.png)
 
 #### Editing server-side DB model
 
@@ -552,8 +553,8 @@ Let's support Markdown used like Stack Overflow.
 
 We can just add a module and edit tags to support Markdown.
 
-![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152709.png)
-![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152711.png)
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150814/20150814100147.png)
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150814/20150814100142.png)
 
 #### Installing angular-pagedown module
 
@@ -659,7 +660,7 @@ Adding question tags
 To make it easy to understand kinds of questions, let's add tags related to questions (ex: "Android", "Objective-C") to each question.
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152715.png)
-![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152716.png)
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150814/20150814100155.png)
 
 #### Editing database model
 Edit QuestionSchema to store tags as an array.
@@ -1202,7 +1203,7 @@ Adding comments
 ================
 Now, let's add comment fields for questions and answers.
 
-![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152722.png)
+![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150814/20150814100154.png)
 
 #### Editing server-side database model
 On QuestionSchema, store comments as an array inside the each question and answer. Each comment hold created time and submitted user.
@@ -1245,14 +1246,16 @@ var QuestionSchema = new Schema({
 #### Editing server-side routing
 Add the following APIs to create, update, and delete a comment on a question or an answer.
 
-* POST /:id/comments Create a comment on a question
-* PUT /:id/comments/:commentId Update a comment on a question
-* DELETE /:id/comments/:commentId Delete a comment on a question
-* POST /:id/answers/:answerId/comments Create a comment on an answer
-* PUT /:id/answers/:answerId/comments/:commentId Update a comment on an answer
-* DELETE /:id/answers/:answerId/comments/:commentId Delete a comment on an answer
+| Method | URL | Description |
+|--------|-----|-----------|
+| POST   | /:id/comments | Create a comment on a question |
+| PUT    | /:id/comments/:commentId | Update a comment on a question |
+| DELETE | /:id/comments/:commentId | Delete a comment on a question |
+| POST   | /:id/answers/:answerId/comments | Create a comment on an answer |
+| PUT    | /:id/answers/:answerId/comments/:commentId | Update a comment on an answer |
+| DELETE | /:id/answers/:answerId/comments/:commentId | Delete a comment on an answer |
 
-/Users/tsuneo/gino/paizaqa2/server/api/question/index.js
+server/api/question/index.js
 
 ```javascript
 router.post('/:id/comments', auth.isAuthenticated(), controller.createComment);
@@ -1462,7 +1465,7 @@ client/app/questionsShow/questionsShow.html
   ...
 ```
 
-/Users/tsuneo/gino/paizaqa2/client/app/questionsShow/questionsShow.scss
+client/app/questionsShow/questionsShow.scss
 
 ```css
 .comment-wmd-input {
@@ -1528,14 +1531,16 @@ var QuestionSchema = new Schema({
 
 Add the following APIs to star or unstar a question, an answer, or a comment on a question or an answer.
 
-* POST /:id/star Star a question
-* DELETE /:id/star Unstar a question
-* POST /:id/answers/:answerId/star Star an answer
-* DELETE /:id/answers/:answerId/unstar Unstar an answer
-* POST /:id/comments/:commentId/star Star a comment on a question
-* DELETE /:id/comments/:commentId/unstar Unstar a comment on a question
-* POST /:id/answers/:answerId/comments/:commentId/star Star a comment on an answer
-* DELETE /:id/answers/:answerId/comments/:commentId/star Unstar a comment on an answer
+| Method | URL | Description |
+|--------|-----|-------------|
+| POST   | /:id/star | Star a question |
+| DELETE | /:id/star | Unstar a question |
+| POST   | /:id/answers/:answerId/star | Star an answer |
+| DELETE | /:id/answers/:answerId/unstar | Unstar an answer |
+| POST   | /:id/comments/:commentId/star | Star a comment on a question |
+| DELETE | /:id/comments/:commentId/unstar | Unstar a comment on a question |
+| POST   | /:id/answers/:answerId/comments/:commentId/star | Star a comment on an answer |
+| DELETE | /:id/answers/:answerId/comments/:commentId/star | Unstar a comment on an answer |
 
 Because these APIs are related to user, register "auth.isAuthenticate()" to enable authentication.
 
@@ -1814,9 +1819,11 @@ For now, all questions are always listed. Let's enable to choose from all questi
 
 Assign the following URLs for all questions, my questions, and starred questions.
 
-* / : All questions
-* /users/:userId : My questions
-* /users/:userId/starred : Starred questions
+| URL | Description |
+|-----|-------------|
+| / | All questions |
+| /users/:userId | My questions |
+| /users/:userId/starred | Starred questions |
 
 Use the same controller and HTML template and change the searching query by "query" variable.
 For my questions listing, the query checks whether the user of the question is the same as current login user or not.

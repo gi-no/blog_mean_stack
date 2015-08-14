@@ -12,18 +12,19 @@ MEANスタックで今すぐ作る最新ウェブサービス:ジェネレータ
 -->
 <!--div class="paiza-custom-header"-->
 
-<iframe src="https://player.vimeo.com/video/135022783?autoplay=1&loop=1&title=0&byline=0&portrait=0" width="500" height="395" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
 [f:id:paiza:20140712194904j:plain]こんにちは、吉岡([twitter:@yoshiokatsuneo])です。
 
 MEANスタック(*)は、JavaScriptのみでフロントエンド、データベース、バックエンドの全てを開発できるWebサービス開発環境です。特にMEANスタックの一つAngularJS Full-Stack generatorでは、ウェブアプリケーション開発のノウハウが詰まっており、先人の知恵を生かすことで、見通しの良いソフトウェアを簡単・迅速に開発できるようになります。  
 ( * ) MEANスタックはMongoDB, Express, AngularJS, Node.jsを組み合わせています。
 
-初回の記事ではMEANスタックの説明とインストールについて、２回目ではTwitter風サービスの作り方について紹介しました。
+[初回の記事](http://paiza.hatenablog.com/entry/2015/07/08/最新・最速！Webサービスが今すぐ作れる！_-_MEANスタッ)ではMEANスタックの説明とインストールについて、２回目ではTwitter風サービスの作り方について紹介しました。
 
 今回は、具体的なウェブサービスとしてQAサービスを構築してみます。プログラミング関係では、Stack Overflow,teratail,Qiitaのようなサービスが思いつきます。さらに、ブログやFacebookのコメント欄のように、トピックごとに参加者がコメント・議論するような機能は、多くのサービスで参加者同士の交流の場として便利に使われており、応用範囲も広いです。
 
-2回目のTwitter風サービスでは1画面のみでしたが、今回はジェネレータを使って複数画面を構築したり、バリデーションを使ってみたりしてみます。
+<iframe src="https://player.vimeo.com/video/135022783?autoplay=1&loop=1&title=0&byline=0&portrait=0" width="500" height="395" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+[2回目](http://paiza.hatenablog.com/entry/2015/07/09/1時間でTwitter風フルスタック・Webサービスを作る！-_MEANス)のTwitter風サービスでは1画面のみでしたが、今回はジェネレータを使って複数画面を構築したり、バリデーションを使ってみたりしてみます。
 
 今回作るQAサービスでは、以下のような機能を入れてみます。
 
@@ -220,9 +221,12 @@ var QuestionSchema = new Schema({
 そして、質問関連のファイル、及びそれらをまとめたディレクトリgeneratorで作成します。ここでは質問一覧表示、質問作成、質問表示に対応した３つのディレクトリ(questionsIndex, questionsCreate, questionsShow)を作成します。
 
 generatorがルーティングを聞いてきますので、「What will the url of your route be?」で、以下のように設定します。
-* questionsIndex(質問一覧): /
-* questionsCreate(質問作成): /questions/create
-* questionsShow(質問表示): /questions/show/:id
+
+| コントローラ | ルーティングURL |
+|------------|----------------|
+|questionsIndex(質問一覧)| / |
+|questionsCreate(質問作成)| /questions/create |
+|questionsShow(質問表示)| /questions/show/:id |
 
 ```shell
 % yo angular-fullstack:route questionsIndex
@@ -397,7 +401,7 @@ client/app/questionsShow/questionsShow.html
 </div>
 ```
 
-/Users/tsuneo/gino/paizaqa2/client/app/questionsShow/questionsShow.scss
+client/app/questionsShow/questionsShow.scss
 
 ```css
 #question-show-container .comment{
@@ -1217,14 +1221,16 @@ var QuestionSchema = new Schema({
 #### サーバ側ルーティングの変更
 質問コメント、回答コメントの追加・削除・更新に以下のようなAPIを追加します。
 
-* POST /:id/comments 質問コメント追加
-* PUT /:id/comments/:commentId 質問コメント更新
-* DELETE /:id/comments/:commentId 質問コメント削除
-* POST /:id/answers/:answerId/comments 回答コメント追加
-* PUT /:id/answers/:answerId/comments/:commentId 回答コメント更新
-* DELETE /:id/answers/:answerId/comments/:commentId 回答コメント削除
+| メソッド | URL | 動作 |
+|--------|----|-----|
+| POST   | /:id/comments | 質問コメント追加 |
+| PUT    | /:id/comments/:commentId | 質問コメント更新 |
+| DELETE | /:id/comments/:commentId | 質問コメント削除 |
+| POST   | /:id/answers/:answerId/comments | 回答コメント追加 |
+| PUT    | /:id/answers/:answerId/comments/:commentId | 回答コメント更新 |
+| DELETE | /:id/answers/:answerId/comments/:commentId | 回答コメント削除 |
 
-/Users/tsuneo/gino/paizaqa2/server/api/question/index.js
+server/api/question/index.js
 
 ```javascript
 router.post('/:id/comments', auth.isAuthenticated(), controller.createComment);
@@ -1433,7 +1439,7 @@ client/app/questionsShow/questionsShow.html
   ...
 ```
 
-/Users/tsuneo/gino/paizaqa2/client/app/questionsShow/questionsShow.scss
+client/app/questionsShow/questionsShow.scss
 
 ```css
 .comment-wmd-input {
@@ -1499,14 +1505,16 @@ var QuestionSchema = new Schema({
 
 質問、質問コメント、回答、回答コメントに対してお気に入りの登録・削除用に以下のようなAPIを追加します。
 
-* POST /:id/star 質問のお気に入り登録
-* DELETE /:id/star 質問のお気に入り削除
-* POST /:id/answers/:answerId/star 回答のお気に入り登録
-* DELETE /:id/answers/:answerId/unstar 回答のお気に入り削除
-* POST /:id/comments/:commentId/star 質問コメントのお気に入り登録
-* DELETE /:id/comments/:commentId/unstar 質問コメントのお気に入り削除
-* POST /:id/answers/:answerId/comments/:commentId/star 回答コメントのお気に入り登録
-* DELETE /:id/answers/:answerId/comments/:commentId/star 回答コメントのお気に入り削除
+| メソッド | URL | 動作 |
+|---------|------|-----|
+| POST   | /:id/star | 質問のお気に入り登録 |
+| DELETE | /:id/star | 質問のお気に入り削除 |
+| POST   | /:id/answers/:answerId/star | 回答のお気に入り登録 |
+| DELETE | /:id/answers/:answerId/unstar | 回答のお気に入り削除 |
+| POST   | /:id/comments/:commentId/star | 質問コメントのお気に入り登録 |
+| DELETE | /:id/comments/:commentId/unstar | 質問コメントのお気に入り削除 |
+| POST   | /:id/answers/:answerId/comments/:commentId/star | 回答コメントのお気に入り登録 |
+| DELETE | /:id/answers/:answerId/comments/:commentId/star | 回答コメントのお気に入り削除 |
 
 全てユーザに関する操作ですので、auth.isAuthenticated()を呼び出して認証機能を有効にしておきます。
 
@@ -1784,9 +1792,11 @@ client/app/questionsIndex/questionsIndex.html
 
 全ての質問、自分の質問、お気に入りの質問それぞれの一覧表示にURLを対応させます。
 
-* / :全ての質問一覧
-* /users/:userId :自分のお気に入り一覧
-* /users/:userId/starred :お気に入りの質問一覧
+| URL | 動作 |
+|-----|------|
+| /   | 全ての質問一覧 |
+| /users/:userId | 自分のお気に入り一覧 |
+| /users/:userId/starred | お気に入りの質問一覧 |
 
 それぞれのルーティングでは同じコントローラ、テンプレートを利用するようにしてquery変数で検索条件を変えます。自分の質問一覧表示では、質問のユーザIDに自分が含まれているかを確認します。お気に入り一覧表示では、質問、質問コメント、回答、回答コメントのいずれかのお気に入りユーザにログインユーザが含まれているか確認します。
 
