@@ -261,7 +261,7 @@ client/app/questionsIndex/questionsIndex.controller.js
 
 #### Editing question-listing HTML file
 On the question-listing HTML file, we can refer to "$scope.question" as "questions". By writing an attribute as 'ng-repeat="question in questions"', we can repeatedly output the elements for each question.
-Also, we can refer to "$scope" variable such as "{&#x7b;question.title&#x7b;}".
+Also, we can refer to "$scope" variable such as "{&#x7b;question.title&#x7d;}".
 
 client/app/questionIndex/questionIndex.html
 
@@ -634,7 +634,7 @@ angular.module('paizaqaApp', [
 
 #### Using pagedown tag
 
-Enable Markdown input. Change from the "textarea" tag to the "pagedown-editor" tag, and set the bound variable by using "content" attribute. For about output, change from "{&#x7b;&#x7d;}" to "pagedown-viewer" tag.
+Enable Markdown input. Change from the "textarea" tag to the "pagedown-editor" tag, and set the bound variable by using "content" attribute. For markdown output, change from "{&#x7b;&#x7d;}" to "pagedown-viewer" tag.
 
 client/app/questionsCreate/questionsCreate.html
 

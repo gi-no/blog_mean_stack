@@ -258,7 +258,7 @@ client/app/questionsIndex/questionsIndex.controller.js
 ```
 
 #### 質問一覧表示HTMLファイルの変更
-質問一覧表示HTMLファイルでは、$scope.questionsをquestionsとして参照します。'ng-repeat="question in questions"'のように属性を記述することで、すべての質問についてタグの内容を繰り返して表示できます。また{&#x7b;question.title&#x7b;}のように指定することでスコープ変数を参照できます。
+質問一覧表示HTMLファイルでは、$scope.questionsをquestionsとして参照します。'ng-repeat="question in questions"'のように属性を記述することで、すべての質問についてタグの内容を繰り返して表示できます。また{&#x7b;question.title&#x7d;}のように指定することでスコープ変数を参照できます。
 
 client/app/questionIndex/questionIndex.html
 
