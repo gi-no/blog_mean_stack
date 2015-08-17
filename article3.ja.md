@@ -21,7 +21,7 @@ MEANスタック(*)は、JavaScriptのみでフロントエンド、データベ
 
 [初回の記事](http://paiza.hatenablog.com/entry/2015/07/08/最新・最速！Webサービスが今すぐ作れる！_-_MEANスタッ)ではMEANスタックの説明とインストールについて、[２回目の記事](http://paiza.hatenablog.com/entry/2015/07/09/1時間でTwitter風フルスタック・Webサービスを作る！-_MEANス)ではTwitter風サービスの作り方について紹介しました。
 
-今回は、具体的なウェブサービスとしてQAサービスを構築してみます。プログラミング関係では、Stack Overflow,teratail,Qiitaのようなサービスが思いつきます。さらに、ブログやFacebookのコメント欄のように、トピックごとに参加者がコメント・議論するような機能は、多くのサービスで参加者同士の交流の場として便利に使われており、応用範囲も広いです。
+今回は、具体的なウェブサービスとしてQAサービスを構築してみます。プログラミング関係では、Stack Overflow,teratail,Qiitaのようなサービスが思いつきます。さらに、ブログやFacebookのコメント欄のように、トピックごとに参加者がコメント・議論するような機能は、多くのサービスで参加者同士の交流の場として便利に使われており、QAサービス構築方法の応用範囲も広いです。
 
 <iframe src="https://player.vimeo.com/video/135022783?autoplay=1&loop=1&title=0&byline=0&portrait=0" width="500" height="395" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
@@ -418,8 +418,8 @@ client/app/questionsShow/questionsShow.scss
 ```
 
 #### サービスの再起動
-通常は編集後の再起動は必要なくリアルタイムで反映されますが、構成をかなり変更したので
-念のためgruntを再起動して動作を確認します。
+通常は編集後の再起動は必要なくリアルタイムで変更が反映されますが、構成をかなり変更したので
+変更点が読み込まれるように、念のためgruntを再起動して動作を確認します。
 
 ```
 % grunt serve

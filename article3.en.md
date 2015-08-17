@@ -15,30 +15,30 @@ MEANスタックで今すぐ作る最新ウェブサービス:ジェネレータ
 
 [f:id:paiza:20140712194904j:plain]  (by Yoshioka Tsuneo ([twitter:@yoshiokatsuneo]))
 
-MEAN stack (*) is an all-in-one JavaScript based web service development environment supporting front-end, back-end, and database development. A MEAN stack environment, AngularJS Full-Stack generator, provides the best practice to develop clean software quickly.
+MEAN stack (*) is an all-in-one JavaScript-based web service development environment supporting front-end, back-end, and database development. A MEAN stack environment, AngularJS Full-Stack generator, provides the best practice to develop clean software quickly.
 
 (*) MEAN stack packs MongoDB, Express, AngularJS, and Node.js.
 
 [In the first article](http://engineering.paiza.io/entry/2015/07/08/153011), I introduced how to install the MEAN stack.
 [In the second article](http://engineering.paiza.io/entry/2015/07/09/154028), I introduced how to build Twitter-like web service.
 
-In this article, as an example of more practical web service, I introduce how to build a QA service, like Stack Overflow, Qiita, or even Reddit or HackerNews. It can be applied for features like Blog or SNS comments where users can comment, discuss, or communicate each other.
+In this article, as an example of a more practical web service, I introduce how to build a QA service like Stack Overflow, Qiita, or even Reddit or HackerNews. The way can be used for features like Blog or SNS comments where users can comment, discuss, or communicate each other.
 
 <iframe src="https://player.vimeo.com/video/136183259?autoplay=1&loop=1&title=0&byline=0&portrait=0" width="500" height="350" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
-In the second article (Twitter-like service), we build a service with one page. In this QA service, we will build multiple pages using generator, input validations using validators.
+In the second article (Twitter-like service), we build a service with one page. In this QA service, we will build multiple pages using generator. We also use input validations using validators.
 
 The QA service has the following features:
 
 * Listing questions
 * Create, edit, or delete questions
 * Create, edit, or delete answers for each question
-* Create, edit, or delete comments on each question or answer.
+* Create, edit, or delete comments on each question or answer
 * Tags for each question
 * Markdown editing
-* Searching questions, answers, or comments.
-* Staring questions, answers, or comments.
-* Listing all questions, my questions, or starred questions.
+* Searching questions, answers, or comments
+* Staring questions, answers, or comments
+* Listing all questions, my questions, or starred questions
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150813/20150813170623.png)
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150813/20150813170615.png)
@@ -97,7 +97,7 @@ At first, we generate a project from templates. Let's name the project "paizaqa"
 % yo angular-fullstack paizaqa
 ```
 
-We use almost default settings but enable SNS authentication (oAuth).
+We use almost all default settings but enable SNS authentication (oAuth).
 
 ```
 - Would you like to include additional oAuth strategies? 
@@ -120,7 +120,7 @@ Start the project.
 % grunt serve
 ```
 
-A browser will open generated project on http://localhost:9000/ .
+A browser will open the generated project on http://localhost:9000/ .
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152623.png)
 
@@ -163,13 +163,13 @@ The generated project has the following structure.
             `-- thing.spec.js             Server-side test code
 ```
 
-Client-side codes are deployed under a client directory, server-side codes are deployed under a server directory. By packaging files into a directory for each feature as a component, components become independent each other and whole the project is clean and easy to understand.
+Client-side codes are deployed under a client directory, and server-side codes are deployed under a server directory. By packaging files into a directory for each feature as a component, components become independent of each other and the whole project is clean and easy to understand.
 
-On client directory, each "app/MODULE" directory stores files for each URL routing as a component. The main files for directories are HTML files (ex: "main.html"), client-side controller (ex: "main.controller.js"). Other files are client-side routing configuration, test codes, CSS files, etc. Common features for the project are stored under "components" directory as a subdirectory.
+On client directory, each "app/MODULE" directory stores files for each URL routing as a component. The main files for directories are HTML files (ex: "main.html") and client-side controllers (ex: "main.controller.js"). Other files are client-side routing configurations, test codes, CSS files, etc. Common features for the project are stored under the "components" directory as a subdirectory.
 
-On server directory, each "server/api/MODULE" directory stores files for each URL routing as a component. The main files for the directories are Database model, server-side controller. Other files are server-side routing configuration, server-side WebSocket implementation, test codes.
+On server directory, each "server/api/MODULE" directory stores files for each URL routing as a component. The main files for the directories are Database models and server-side controllers. Other files are server-side routing configurations, server-side WebSocket implementations, and test codes.
 
-The client and the server send or receive data or events by communicating client-side controllers and server-side controllers using JSON-based HTTP APIs. From MVC model's perspective, server sees client as views, and client sees server as models.
+The client and the server send or receive data or events by communicating client-side controllers and server-side controllers using JSON-based HTTP APIs. From MVC model's perspective, the server sees the client as views, and the client sees the server as models.
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150709/20150709030234.png)
 
@@ -186,10 +186,10 @@ Generate server-side question-related directory and files (DB mode, server-side 
 % yo angular-fullstack:endpoint question
 ```
 
-When prompted endpoint, set default ("/api/questions").
-The generator generate "server/api/question" directory with files such as "question.controller.js", "question.model.js", and "/api/question" API is prepared for use.
+When prompted for a endpoint, set the default ("/api/questions").
+The generator generates "server/api/question" directory with files such as "question.controller.js", and "question.model.js". The "/api/question" API is prepared for use.
 
-We edit database model to store question titles, question contents, and the list of answers. MongoDB can directly store arrays or associated arrays as a part of one JSON object. MongoDB itself is flexible schema and does not require pre-defined schemas. But mongoose driver used in Angular Full-Stack generator provide schema as an additional feature to limit or validate fields, we define question-related information as a schema.
+Next, we edit the database model to store question titles, question contents, and the list of answers. MongoDB can directly store arrays or associated arrays as a part of one JSON object. MongoDB itself is flexible schema and does not require pre-defined schemas. But mongoose driver used in Angular Full-Stack generator provides schema as an additional feature to limit or validate fields. So, we define question-related information as a schema.
 
 
 server/api/question/question.model.js
@@ -206,7 +206,7 @@ var QuestionSchema = new Schema({
 Creating client-side question-listing, question-creating, and question-showing components (controllers, HTMLs, etc.)
 =====================================
 
-Now, we create files for question-listing, question-creating, and question-showing components (controllers, HTMLs)
+Now, we create files for question-listing, question-creating, and question-showing components (controllers, HTMLs).
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152639.png)
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150814/20150814100206.png)
@@ -225,7 +225,7 @@ Remove needless files from the project.
 Generate question-related directories and files. Now, we create three directories (questionsIndex, questionsCreate, and questionsShow) for question listing, question-creating, and question showing.
 
 
-When generator prompted URL routing as "What will the url of your route be?", type the following URLs.
+When generator prompted for URL routing as "What will the url of your route be?", type the following URLs.
 
 * questionsIndex (Question listing): /
 * questionsCreate (Question creating): /questions/create
@@ -260,8 +260,8 @@ client/app/questionsIndex/questionsIndex.controller.js
 ```
 
 #### Editing question-listing HTML file
-On question-listing HTML file, we can refer "$scope.question" as "questions". By writing an attribute as 'ng-repeat="question in questions"', we can repeatedly output the elements for each question.
-Also, we can refer "$scope" variable such as "{&#x7b;question.title&#x7b;}".
+On the question-listing HTML file, we can refer to "$scope.question" as "questions". By writing an attribute as 'ng-repeat="question in questions"', we can repeatedly output the elements for each question.
+Also, we can refer to "$scope" variable such as "{&#x7b;question.title&#x7b;}".
 
 client/app/questionIndex/questionIndex.html
 
@@ -339,7 +339,7 @@ client/app/questionIndex/questionIndex.scss
 #### Editing question crating controller
 Implement "$scope.submit()" function called when questions are submitted.
 The function stores the submitted question ($scope.question) to the server using "POST /api/questions" API.
-After the submission, move to submission listing page using "$location.path('/questions')".
+After the submission, move to submission-listing page using "$location.path('/questions')".
 
 
 client/app/questionsCreate/questionsCreate.controller.js
@@ -356,7 +356,7 @@ client/app/questionsCreate/questionsCreate.controller.js
 ```
 
 #### Editing question-creating HTML file
-On question-creating HTML file, add "ng-submit" attribute to call "submit()" on submissions. Add 'ng-model="question.title"' attribute to input tag to synchronize between input tag and "question.title" variable bi-directionally.
+On the question-creating HTML file, add "ng-submit" attribute to call "submit()" on submissions. Add 'ng-model="question.title"' attribute to input tag to synchronize between input tag and "question.title" variable bi-directionally.
 
 client/app/questionsCreate/questionsCreate.html
 
@@ -375,8 +375,8 @@ client/app/questionsCreate/questionsCreate.html
 ```
 
 #### Editing question-showing controller
-On question-showing controller, retrieve question contents and show it.
-Question ID can be retrieved from URL("/question/show/:id") by referring ":id" part as "$stateParams.id".
+On the question-showing controller, retrieve question contents and show it.
+Question ID can be retrieved from URL("/question/show/:id") by referring to ":id" part as "$stateParams.id".
 
 client/app/questionsShow/questionsShow.controller.js
 
@@ -392,8 +392,8 @@ client/app/questionsShow/questionsShow.controller.js
 ```
 
 #### Editing question-showing HTML file
-On question-showing HTML file, output question title and contents.
-We refer "$scope.question" variable set on controller as "question".
+On the question-showing HTML file, output question title and contents.
+We refer to $scope.question" variable set on controller as "question".
 
 
 client/app/questionsShow/questionsShow.html
@@ -427,7 +427,7 @@ client/app/questionsShow/questionsShow.scss
 
 #### Restart the service
 Generally, we don't need to restart the service.
-But now, because we changed the directory structure dramatically, we restart the service to make sure.
+However, because we changed the directory structure dramatically, we restart the service to make sure that our changes to code are applied.
 
 ```
 % grunt serve
@@ -440,14 +440,14 @@ But now, because we changed the directory structure dramatically, we restart the
 
 Creating answer field
 ==============================
-Now, though we are building QA service, we can only ask questions and no one can answer it.
-So, let's enable to create, display answers.
+Now, though we are building the QA service, we can only ask questions and no one can answer them.
+So, let's enable to create and display answers.
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150814/20150814100156.png)
 
 #### Editing server-side DB model
 
-Edit QuestionSchema to store answers. MongoDB can store JSON object including arrays into a document (corresponding a record in RDB).
+Edit QuestionSchema to store answers. MongoDB can store JSON object including arrays into a document (corresponding to a record in RDB).
 
 server/api/question/question.model.js
 
@@ -492,7 +492,8 @@ exports.createAnswer = function(req, res) {
 
 #### Editing client-side question-showing controller
 
-Add "$scope.submitAnswer()" function called on answer submission. The function sends the answer to the server using "POST /api/questions/QUESTION-ID/answers" API. Reload whole question after the submission.
+Add "$scope.submitAnswer()" function called on answer submission. The function sends the answer to the server using "POST /api/questions/QUESTION-ID/answers" API.
+Reload the whole question after the submission.
 
 client/app/questionsShow/questionsShow.controller.js
 
@@ -509,7 +510,7 @@ client/app/questionsShow/questionsShow.controller.js
 ```
 
 #### Editing client-side question-showing HTML
-Output the list of answer stored in the question.
+Output the list of answers stored in the question.
 Add "ng-submit" attribute to call "$scope.submitAnswer()" on answer submission.
 
 client/app/questionsShow/questionsShow.html
@@ -551,7 +552,7 @@ client/app/questionsShow/questionsShow.css
 Using Markdown
 ==================
 For now, we can use only plain text for questions or answers.
-Let's support Markdown used like Stack Overflow.
+Let's support Markdown like used in Stack Overflow.
 
 We can just add a module and edit tags to support Markdown.
 
@@ -560,7 +561,7 @@ We can just add a module and edit tags to support Markdown.
 
 #### Installing angular-pagedown module
 
-Install angular-pagedown module to support Markdown. When prompted for AngularJS, choose an option to use the latest version.
+Install angular-pagedown module to support Markdown. When prompted for AngularJS version, choose an option to use the latest version.
 
 ```shell
 % bower install angular-pagedown --save
@@ -633,7 +634,7 @@ angular.module('paizaqaApp', [
 
 #### Using pagedown tag
 
-Enable Markdown input. Change from "textarea" tag to "pagedown-editor" tag and set the bound variable by "content" attribute. For about output, change from "{&#x7b;&#x7d;}" to "pagedown-viewer" tag.
+Enable Markdown input. Change from the "textarea" tag to the "pagedown-editor" tag, and set the bound variable by using "content" attribute. For about output, change from "{&#x7b;&#x7d;}" to "pagedown-viewer" tag.
 
 client/app/questionsCreate/questionsCreate.html
 
@@ -688,7 +689,7 @@ Install ngTagsInput module to make it easy to edit or show tags.
 % grunt wiredep
 ```
 
-Also, add the module to test (Karma) libraries.
+Also, add the module to the test (Karma) libraries.
 
 karma.conf.js
 
@@ -714,7 +715,7 @@ angular.module('paizaqaApp', [
 
 #### Editing question-creating HTML file
 Add question tags input field using "tags-input" tag.
-You can also add auto completion by adding "auto-complete" element inside "tags-input" element, but not for this time.
+You can also add auto completion by adding "auto-complete" element inside "tags-input" element, but for simplicity, we'll omit the auto completion this time.
 
 client/questionsCreate/questionsCreate.html
 
@@ -761,7 +762,7 @@ client/app/questionsShow/questionsShow.html
 
 User authentication
 ==================
-For now, we don't know who submit questions and answers. So, let's add user authentication feature.
+For now, we don't know who submits questions and answers. So, let's add user authentication feature.
 Only submitted users can edit or remove the articles. Also, store the submission date.
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152718.png)
@@ -804,7 +805,7 @@ var QuestionSchema = new Schema({
 
 #### Editing server-side API routing
 
-On the server-side API routing, add "auth.isAuthenticated()" as an Express middleware to the URL resource requiring authentication so that server-side controller can refer current login user as "req.user". 
+On the server-side API routing, add "auth.isAuthenticated()" as an Express middleware to the URL resource requiring authentication so that the server-side controller can refer to the current login user as "req.user". 
 Also, add an answer-deleting API(DELETE /:id/answers/:answerId).
 
 server/api/question/index.js
@@ -825,9 +826,9 @@ router.delete('/:id/answers/:answerId', auth.isAuthenticated(), controller.destr
 ```
 
 #### Editing server-side controller
-On question-listing API, call "populate()" to expand a user ID to a user object.
-"populate('user', 'name')" expands name field of each user object.
-Also, change to return the last 20 questions.
+On the question-listing API, call "populate()" to expand a user ID to a user object.
+Use "populate('user', 'name')" to expand the name field of each user object.
+Also, change the query to return the last 20 questions.
 "sort({createdAt: -1})" sort by created time in descending order and "limit(20)" returns the first 20 objects.
 After creating the query, call "exec()" to execute the query and receive the result in the callback function.
 
@@ -839,7 +840,7 @@ exports.index = function(req, res) {
     ...
 ```
 
-Change question-showing API to expand a user ID to a user object.
+Change the question-showing API to expand a user ID to a user object.
 
 server/api/question/question.controller.js
 
@@ -849,7 +850,7 @@ exports.show = function(req, res) {
     ...
 ```
 
-Change question-creating API to save user as a part of question.
+Change the question-creating API to save a user as a part of question.
 
 ```javascript
 exports.create = function(req, res) {
@@ -876,7 +877,7 @@ exports.destroy = function(req, res) {
 };
 ```
 
-Implement answer destroying API. Delete the answer specified by answer's ID and answer's user ID using MongoDB '$pull' operator.
+Implement answer-destroying API. Delete the answer specified by answer's ID and answer's user ID using MongoDB '$pull' operator.
 
 ```javascript
 exports.destroyAnswer = function(req, res) {
@@ -888,7 +889,7 @@ exports.destroyAnswer = function(req, res) {
 };
 ```
 
-Implement answer-updating API. On the MongoDB query, we can refer the matching index of the array(answer array in this case) as '$'.
+Implement answer-updating API. On the MongoDB query, we can refer the matching index of the array (answer array in this case) as '$'.
 Add a condition to match current login user and answer's user ID so that only submitted user can update the answer.
 
 ```javascript
@@ -917,11 +918,12 @@ client/app/questionsIndex/questionsIndex.html
 ```
 
 #### Editing client-side question-showing controller
-Implement question and answer deletion function("deleteQuestion()", "deleteAnswer()") and updating function("updateQuestion()", "updateAnswer()"). Deleting functions call "DELETE /api/questions/:id" and "DELETE /api/questions/:id" API.
-Updating functions call "PUT /api/questions/:id" and "PUT /api/questions/:id/answers/:id" API.
+Implement the question- and answer-deletion functions ("deleteQuestion()", "deleteAnswer()") and updating functions ("updateQuestion()", "updateAnswer()"). 
+The deleting functions call "DELETE /api/questions/:id" and "DELETE /api/questions/:id" API.
+The updating functions call "PUT /api/questions/:id" and "PUT /api/questions/:id/answers/:id" API.
 
-Also, implement "isOwner()" function which checks whether the user of question or answer matches current login user or not. We can use "Auth.isLoggedIn()" to check whether the user is logged in or not, and "Auth.getCurrentUser()._id" to get current login user ID.
-To user "$location" and "Auth" modules, add "$location" and "Auth" parameter to the controller function. AngularJS assign the services to the parameters from the parameter names, automatically.
+Also, implement "isOwner()" function which checks whether the user of question or answer matches the current login user. We can use "Auth.isLoggedIn()" to check whether the user is logged in, and "Auth.getCurrentUser()._id" to get current login user ID.
+To user "$location" and "Auth" modules, add "$location" and "Auth" parameter to the controller function. AngularJS automatically assigns the services to the parameters from the parameter names.
 
 client/app/questionsShow/questionsShow.controller.js
 
@@ -983,7 +985,7 @@ client/app/questionsShow/questionsShow.html
 
 ```
 
-Also, add editing button. "editing" variable is true while editing. Use "ng-show"/"ng-if" to switch element by "editing" variable. Although we are using the same "editing" variable for question and answers, answers are under an element with "ng-repeat" attribute and ng-repeat create separate scope for each item. So, each "editing" actually refers different variables for the question and each answer.
+Also, add editing button. "editing" variable is true while editing. Use "ng-show"/"ng-if" to switch element by "editing" variable. Although we are using the same "editing" variable for the question and answers, answers are under an element with the "ng-repeat" attribute and "ng-repeat" create separate scope for each item. So, each "editing" actually refers to different variables for the question and each answer.
 
 client/app/questionsShow/questionsShow.html
 
@@ -1009,7 +1011,7 @@ client/app/questionsShow/questionsShow.html
 
 #### Editing client-side question-creating controller
 
-If not authenticated, move to the login page.
+If the current user is not authenticated, move to the login page.
 
 client/app/questionsCreate/questionsCreate.controller.js
 
@@ -1039,7 +1041,7 @@ Install ngMessage module for the validation as a client-side library.
 % grunt wiredep
 ```
 
-Also, add the ngMessage module to test (Karma) libraries.
+Also, add the ngMessage module to the test (Karma) libraries.
 
 karma.conf.js
 
@@ -1065,7 +1067,7 @@ angular.module('paizaqaApp', [
 ```
 
 #### Editing client-side HTML files
-Add validations (ex: "required") to input fields. Also, to refer the validation results, add name(with "name" attribute) to the form and add name(with "name" attribute) and model(with "ng-model" attribute) to each input field. The validation result is stored as "FORM-NAME.FIELD-NAME.$error", and output the result using ng-messages/ng-message attributes in which only matching elements are shown. The whole form validation result is stored as "FORM-NAME.$invalid" and we can disable submit button when invalid.
+Add validations (ex: "required") to the input fields. Also, to refer the validation results, add name (with "name" attribute) to the form and add name(with "name" attribute) and model (with "ng-model" attribute) to each input field. The validation result is stored as "FORM-NAME.FIELD-NAME.$error", and output the result using ng-messages/ng-message attributes in which only matching elements are shown. The whole form validation result is stored as "FORM-NAME.$invalid", and we can disable the submit button when invalid.
 
 client/app/questionsCreate/questionsCreate.html
 
@@ -1101,7 +1103,7 @@ client/app/questionsCreate/questionsShow.html
 
 Time formatting filter
 ============
-For now, the time format for created time is UTC. Let's change it to show the time from now like Stack Overflow.
+For now, the time format for created time is UTC. Let's change it to show the time from now like in Stack Overflow.
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731152721.png)
 
@@ -1113,7 +1115,7 @@ Install Moment.js library for time formatting as a client-side library.
 % grunt wiredep
 ```
 
-Add a "moment-with-locales.min.js" file for I18N. (no need for English)
+Add a "moment-with-locales.min.js" file for I18N (no need for English).
 
 client/index.html
 
@@ -1138,7 +1140,7 @@ Generate a filter boilerplate.
 
 #### Implementing filter
 
-Format time using Moment.js's fromNow() function. You can optionally use locale() function to set language.
+Format time using the Moment.js's fromNow() function. You can optionally use locale() function to set language.
 
 client/app/fromNow/fromNow.filter.js
 
@@ -1150,7 +1152,7 @@ client/app/fromNow/fromNow.filter.js
 
 #### Using filter
 
-Change time format from UTC to time from now, using the fromNow filter we created. To use filter, change from "{&#x7b;EXPRESSION&#x7d;}" to "{&#x7b;EXPRESSION|FILTER&#x7d;}". In this case, we change from "{&#x7b;EXPRESSION&#x7d;}"を"{&#x7b;EXPRESSION|fromNow&#x7d;}".
+Change time format from UTC to time from now using the fromNow filter we created. To use filter, change from "{&#x7b;EXPRESSION&#x7d;}" to "{&#x7b;EXPRESSION|FILTER&#x7d;}". In this case, we change from "{&#x7b;EXPRESSION&#x7d;}"を"{&#x7b;EXPRESSION|fromNow&#x7d;}".
 
 client/app/questionsIndex/questionsIndex.html
 
@@ -1208,7 +1210,7 @@ Now, let's add comment fields for questions and answers.
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150814/20150814100154.png)
 
 #### Editing server-side database model
-On QuestionSchema, store comments as an array inside the each question and answer. Each comment hold created time and submitted user.
+On QuestionSchema, store comments as an array inside the each question and answer. Each comment holds the created time and submitted user.
 
 
 server/api/question/question.model.js
@@ -1272,7 +1274,7 @@ router.delete('/:id/answers/:answerId/comments/:commentId', auth.isAuthenticated
 
 #### Editing server-side controller
 
-On question-listing API, expand a user ID of a comment to a user object using populate().
+On the question-listing API, expand a user ID of a comment to a user object using populate().
 
 server/api/question/question.controller.js
 
@@ -1282,7 +1284,7 @@ exports.show = function(req, res) {
     ...
 ```
 
-Implement APIs to create, update, or delete a comment. To create a comment, add a comment to the comment array of the question document using '$push' operator. To delete a comment, delete a comment from the comment array of the question document. To update a comment, specify the updating index of the comment array of the question document using '$'. To update a comment on an answer, because we update a item inside an array of an array and only one '$' can be used to specify index, we need to iterate each item for the array.
+Implement APIs to create, update, or delete a comment. To create a comment, add a comment to the comment array of the question document using '$push' operator. To delete a comment, delete a comment from the comment array of the question document. To update a comment, specify the updating index of the comment array of the question document using '$'. To update a comment on an answer, because we update an item inside an array of an array and only one '$' can be used to specify the index, we need to iterate each item for the array.
 
 
 server/api/question/question.controller.js
@@ -1563,8 +1565,8 @@ router.delete('/:id/answers/:answerId/comments/:commentId/star', auth.isAuthenti
 
 #### Editing server-side database model
 
-On database model, for questions, answers, and comments on questions or answers, store the list of starred user as an array.
-On "update()" function, we can refer the matched index of an array using "$". For the list of a starred user of a comment array of an answer array, because we can only use one "$", we need to iterate the array explicitly.
+On the database model, for questions, answers, and comments on questions or answers, store the list of starred users as an array.
+On "update()" function, we can refer the matched index of an array using "$". For the list of a starred users of a comment array of an answer array, because we can only use one "$", we need to iterate the array explicitly.
 
 server/api/question/question.controller.js
 
@@ -1679,7 +1681,7 @@ client/app/questionsShow/questionsShow.controller.js
 
 #### Editing client-side question-showing HTML file
 
-Show the staring status as star icon. We can click the star icon to star or unstar.
+Show the staring status as the star icon. We can click the star icon to star or unstar.
 
 client/app/questionsShow/questionsShow.html
 
@@ -1761,7 +1763,7 @@ client/app/questionsIndex/questionsIndex.controller.js
 
 #### Editing client-side question-listing HTML file
 
-On question listing, show the number of staring user for the question, and the number of answers.
+On question listing, show the number of staring users for the question and the number of answers.
 
 client/app/questionsIndex/questionsIndex.html
 
@@ -1828,8 +1830,8 @@ Assign the following URLs for all questions, my questions, and starred questions
 | /users/:userId/starred | Starred questions |
 
 Use the same controller and HTML template and change the searching query by "query" variable.
-For my questions listing, the query checks whether the user of the question is the same as current login user or not.
-For starred questions listing, the query checks whether the starred user for the question, the answers, or the comments contains current login user or not.
+For my questions listing, the query checks whether the user of the question is the same as the current login user.
+For starred questions listing, the query checks whether the starred user for the question, the answers, or the comments contains current login user.
 
 client/app/questionsIndex/questionsIndex.js
 
@@ -1888,7 +1890,7 @@ client/app/questionsIndex/questionsIndex.controller.js
 ```
 
 #### Editing client-side question-listing controller test
-Add empty "query" to test code not to cause an error.
+Add empty a "query" to test code not to cause an error.
 
 client/app/questionsIndex/questionsIndex.controller.spec.js
 
@@ -1911,7 +1913,7 @@ exports.index = function(req, res) {
 ```
 
 #### Editing client-side Navbar controller
-On Navbar, add links for all questions, my questions, starred questions.
+On Navbar, add links for all questions, my questions, and ffffffstarred questions.
 Because we need to change the URL or enable/disable for links before login or logout, use functions instead of variables for that information on menu items.
 
 client/components/navbar/navbar.controller.js
@@ -2013,7 +2015,7 @@ QuestionSchema.index({
 
 #### Editing client-side question-listing routing
 
-To accept search keyword as "keyword" URL parameter, add "/?keyword" to "url" field of the routing information.
+To accept search keyword as "keyword" URL parameter, add "/?keyword" to the "url" field of the routing information.
 
 client/app/questionsIndex/questionsIndex.js
 
@@ -2024,7 +2026,7 @@ client/app/questionsIndex/questionsIndex.js
 ```
 
 #### Editing client-side question-showing controller
-Set the query using MongoDB's '$text' and '$search' parameter to search by 'keyword' parameter.
+Set the query using MongoDB's '$text' and '$search' parameters to search by 'keyword' parameter.
 
 
 client/app/questionsIndex/questionsIndex.controller.js
@@ -2045,7 +2047,7 @@ client/app/questionsIndex/questionsIndex.controller.js
 
 Japanese search
 ==============
-MongoDB's full-text search only supports Latin languages, and does not support other languages like Japanese.
+MongoDB's full-text search only supports Latin languages, and does not support other languages such as Japanese.
 Let's support Japanese search by using Japanese tokenizer "TinySegmenter".
 
 ![](http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20150731/20150731160824.gif)
@@ -2058,7 +2060,7 @@ Install TinySegmenter as a server-side library.
 % npm install --save r7kamura/tiny-segmenter
 ```
 
-On server-side DB model, add "searchText" field to store tokenized text.
+On the server-side DB model, add "searchText" field to store tokenized text.
 
 server/api/question/question.model.js
 
@@ -2081,8 +2083,8 @@ QuestionSchema.index({
 }, {name: 'question_schema_index'});
 ```
 
-Add a function to tokenize, call it before saving using "pre('save')" hook.
-Also, add a static function to question model by adding set the function to "QuestionSchema.statics".
+Add a function to tokenize, and call it before saving by using "pre('save')" hook.
+Also, add a static function to the question model by adding the function to "QuestionSchema.statics".
 
 ```javascript
 var TinySegmenter = require('tiny-segmenter');
@@ -2120,7 +2122,7 @@ QuestionSchema.pre('save', function(next){
 });
 ```
 
-Because "pre('save')" hook is not called by "update()" call, explicitly call "updateSearchText()" function to tokenize and update full-text index.
+Because "pre('save')" hook is not called by "update()" call, explicitly call "updateSearchText()" function to tokenize and update the full-text index.
 
 server/api/question/question.controller.js
 
@@ -2199,7 +2201,7 @@ Install ngInfiniteScroll module for infinite scroll as a client-side library.
 % grunt wiredep
 ```
 
-Also, add the module to test (Karma) library.
+Also, add the module to the test (Karma) library.
 
 karma.conf.js
 
@@ -2226,7 +2228,7 @@ angular.module('paizaqaApp', [
 #### Editing client-side question-listing controller
 
 To list older questions on a scroll, implement "nextPage()" function. To retrieve questions older than the current oldest question ID, specify the query as "{_id: {$lt: lastID}}". 
-Store the loading status as "$scope.busy", and the status whether more data is available or not as "$scope.noMoreData".
+Store the loading status as "$scope.busy", and the status of whether more data is available as "$scope.noMoreData".
 
 client/app/questionsIndex/questionsIndex.controller.js
 
@@ -2257,10 +2259,10 @@ client/app/questionsIndex/questionsIndex.controller.js
     };
 ```
 
-#### Editing client-side question lisging
+#### Editing client-side question listing
 To load older questions on scroll to the bottom, add "infinite-scroll" attribute to call "nextPage()" function.
-Disable scroll when loading or no more data.
-Show "Loading data" on loading by adding an element with "ng-show='busy'", so the element is shown only when "busy" variable is "true". 
+Disable scroll when loading or when there is no more data.
+Show "Loading data" on loading by adding an element with "ng-show='busy'", so the element is shown only when the "busy" variable is "true". 
 
 ```html
 <div class="container" infinite-scroll='nextPage()' infinite-scroll-disabled='busy || noMoreData'>
@@ -2274,9 +2276,9 @@ Show "Loading data" on loading by adding an element with "ng-show='busy'", so th
 SNS authentication
 =========
 When using SNS authentication(Facebook, Twitter, Google), set API key and SECRET key. See
-[an instruction in the first article](http://paiza.hatenablog.com/entry/2015/07/08/最新・最速！Webサービスが今すぐ作れる！_-_MEANスタッ#sns_link) for details.
+[an instruction in the first article](http://engineering.paiza.io/entry/2015/07/08/153011#sns_link) for details.
 
-For about Facebook authentication, because API specification changed on Graph API 2.4(on 9th,July,2015), we need to explicitly specify fields to use on "profileFields" as follows.
+For Facebook authentication, because API specification changed on Graph API 2.4 (on July 9th, 2015), we need to explicitly specify fields to use on "profileFields" as follows.
 
 server/auth/facebook/passport.js
 
@@ -2294,7 +2296,7 @@ Deploying
 ============
 Now, let's deploy the application to Heroku.
 To configure Heroku deployment, use "yo angular-fullstack:heroku" command.
-Also, install a MongoDB module MongoLab to the Heroku application, as MongoLab have a free plan.
+Also, install a MongoDB module MongoLab to the Heroku application, as MongoLab has a free plan.
 
 ```shell
 % yo angular-fullstack:heroku
@@ -2318,7 +2320,7 @@ When it does not work, see Heroku logs.
 % heroku logs
 ```
 
-For about browging MongoDB, GUI tools like MongoHub is convenient.
+For browsing MongoDB, GUI tools such as MongoHub are convenient.
 We can retrieve the URL for the MongoDB database from Heroku using "heroku config" command.
 
 ```shell
@@ -2334,12 +2336,12 @@ MONGOLAB_URI: mongodb://USERNAME:PASSWORD@HOSTNAME:PORT/DATABASE
 Summary
 ===============
 I introduced how to build a QA service using a MEAN stack, AngularJS Full-Stack generator.
-Using MEAN stack, we can build a sophisticated web service from client-side logic to server-side logic quickly by only using JavaScript.
-Using the generator, we can get best practice boilerplate codes, and just edit the codes to create services. It is especially helpful for startups or prototypes where it is required to create and change services quickly by trial and error.
+Using MEAN stack, we can quickly build a sophisticated web service, from client-side logic to server-side logic, by only using JavaScript.
+Using the generator, we can get best practice boilerplate codes, and just edit the codes to create services. It is especially helpful for startups or prototypes where it is necessary to create and change services quickly by trial and error.
 
 Lets' come up with ideas, and build your own services!
 
-Welcome any feedback such as errors, suggestion, or anything you noticed about this articles as comments!
+I welcome any feedback such as errors, suggestion, or anything you noticed about this articles as comments!
 
 I'll continue writing articles to build web services using MEAN stack.
 
