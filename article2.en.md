@@ -57,6 +57,19 @@ Install MEAN stack
 =======================
 Install Yeoman-based AngularJS Full-Stack generator(generator-angular-fullstack) following [the instructions in the previous article](http://engineering.paiza.io/entry/2015/07/08/153011#install).
 
+Confirm that installed AngularJS Full-Stack generator is ver3.0.0 or later.
+
+```shell
+$ npm ls -g generator-angular-fullstack
+/usr/local/lib
+└── generator-angular-fullstack@3.0.0-rc4 
+```
+
+If it is older than ver3.0.0, update to the latest version.
+
+```shell
+$ sudo npm update -g generator-angular-fullstack
+```
 
 <div id="new_project"></div>
 Create a new project

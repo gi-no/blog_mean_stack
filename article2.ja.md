@@ -62,6 +62,19 @@ MEANスタックで今すぐ作る最新ウェブサービス:1時間で作れ�
 =======================
 YeomanのAngularJS Full-stack generator(generator-angular-fullstack)をインストールしていない場合、[前回の手順](http://paiza.hatenablog.com/entry/2015/07/08/最新・最速！Webサービスが今すぐ作れる！_-_MEANスタッ#install)でインストールしておいてください。
 
+インストールしたAngularJS Full-stack generatorのバージョンが3.0.0以降であることを確認します。
+
+```shell
+$ npm ls -g generator-angular-fullstack
+/usr/local/lib
+└── generator-angular-fullstack@3.0.0-rc4 
+```
+
+古い場合、アップデートしてください。
+
+```shell
+$ sudo npm update -g generator-angular-fullstack
+```
 
 <div id="new_project"></div>
 ■プロジェクトの作成
