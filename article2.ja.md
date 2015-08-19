@@ -119,7 +119,7 @@ $ yo angular-fullstack paizatter
             |-- thing.controller.js       サーバ側コントローラ(API実装)
             |-- thing.model.js            サーバ側DBモデル
             |-- thing.socket.js           サーバ側WebSocket実装
-            `-- thing.spec.js             サーバ側テストコード
+            `-- thing.integration.js      サーバ側テストコード
 ```
 
 client配下にクライアント側のコードが配置され、server配下にサーバ側のコードが配置されています。
@@ -220,12 +220,11 @@ WebSocketを使うことで、他のユーザがメッセージを追加した�
 server/api/thing/thing.controller.js:
 
 ```javascript
-// Get list of things
+// Gets a list of Things
 exports.index = function(req, res) {
-  Thing.find().sort({_id:-1}).limit(20).exec(function (err, things) {
-    if(err) { return handleError(res, err); }
-    return res.json(200, things);
-  });
+  Thing.find().sort({_id:-1}).limit(20).execAsync()
+    .then(responseWithResult(res))
+    .catch(handleError(res));
 };
 ```
 
@@ -248,7 +247,12 @@ limit()関数で、表示数の上限を設定します。クエリの設定が�
 
 メッセージを保存するときにユーザIDを一緒に保存するようにします。MongoDB自身はスキーマレスですが、Angular Full-stack generatorではmongooseというドライバを利用します。mongooseを利用することで、保存時に不必要なフィールドを保存しないようにしたり、フックしたり、関連するドキュメントを展開したり、といった便利な機能が利用できます。
 
-まず、Mongooseスキーマ定義でメッセージ(ThingSchma)にユーザIDを追加しまs。ついでに作成時刻も追加しておきます。
+まず、Mongooseスキーマ定義でメッセージ(ThingSchma)にユーザIDを追加します。
+
+"name"フィールドでメッセージが保持し、userフィールドでユーザのObjectIdを保持します。userフィールドでは、"ref: 'User'"のようにしてObjectIdをUserコレクションと関連づけておくことで、後でpopulate()関数等で展開できるようになります。
+
+また作成時刻も追加しておきます。
+"createdAt"はdefaultとして、Date.now関数を指定することで、作成時刻が自動的に設定されるようにします。
 
 server/api/thing/thing.model.js:
 
@@ -266,9 +270,23 @@ var ThingSchema = new Schema({
 });
 ```
 
-"name"にはメッセージが保存されています。userフィールドには、ユーザのObjectIdが記録されています。"ref: 'User'"のようにしてObjectIdをUserコレクションと関連づけておき、後でpopulate()関数等で展開できるようにしておきます。
 
-"createdAt"はdefaultとして、Date.now関数を指定することで、作成時刻が自動的に設定されるようにします。
+クエリ('find', 'findOne')に対しては、userフィールドはUserのオブジェクトIDを返すようになっています。実際のユーザ名を返すように、Userオブエジェクトに対してpopulate()を呼び出します。populateを呼び出すと、UserオブジェクトのIDではなく、Userオブジェクト自体が展開されるようになります。
+
+populate('user')でUserオブジェクトの全てのフィールドが展開されますが、必要なフィールド('name')のみ展開するように、populate('user','name')と記述します。
+
+個別のクエリでpopulate()を呼ぶこともできますが、すべてのクエリに対して展開するように、"pre()"でフックですべての'find', 'findOne'クエリに対してpopulate()を呼び出します。
+
+```javascript
+ThingSchema.pre('find', function(next){
+  this.populate('user', 'name');
+  next();
+});
+ThingSchema.pre('findOne', function(next){
+  this.populate('user', 'name');
+  next();
+});
+```
 
 
 #### ◆サーバAPIのルーティング設定
@@ -297,30 +315,11 @@ req.userはリクエスト時のユーザ情報がすでに設定されている
 server/api/thing/thing.controller.js:
 
 ```javascript
-// Creates a new thing in the DB.
+// Creates a new Thing in the DB
 exports.create = function(req, res) {
   req.body.user = req.user;
-  Thing.create(req.body, function(err, thing) {
-```
-
-
-#### ◆サーバ側コントローラのメッセージ表示関数変更
-表示用関数(index(), show())では、そのままではUserのオブジェクトIDを返すようになっています。実際のユーザ名を返すように、Userオブエジェクトに対してpopulate()を呼び出します。populateを呼び出すと、UserオブジェクトのIDではなく、Userオブジェクト自体が展開されるようになります。
-
-populate('user')でUserオブジェクトの全てのフィールドが展開されますが、必要なフィールド('name')のみ展開するように、populate('user','name')と記述します。
-
-server/api/thing/thing.controller.js:
-
-```javascript
-// Get list of things
-exports.index = function(req, res) {
-  Thing.find().sort({_id:-1}).limit(20).populate('user',' name').exec(function (err, things) {
-```
-
-```javascript
-// Get a single thing
-exports.show = function(req, res) {
-  Thing.findById(req.params.id).populate('user','name').exec(function (err, thing) {
+  Thing.createAsync(req.body)
+    ...
 ```
 
 
@@ -330,27 +329,25 @@ exports.show = function(req, res) {
 server/api/thing/thing.controller.js:
 
 ```javascript
-// Deletes a thing from the DB.
-exports.destroy = ...
-...
-    if(!thing) { ... }
-    if(thing.user.toString() !== req.user._id.toString()){
-      return res.send(403);
+function handleUnauthorized(req, res) {
+  return function(entity) {
+    if (!entity) {return null;}
+    if(entity.user._id.toString() !== req.user._id.toString()){
+      res.send(403).end();
+      return null;
     }
-```
-
-
-#### ◆サーバ側WebSocketコードの変更
-サーバ側ソケットコードでも、User情報をpopulateし、WebSocket経由でのアップデート通知情報にもユーザ情報が入るようにしておきます。
-
-server/api/thing/thing.socket.js:
-
-```javascript
-function onSave(socket, doc, cb) {
-  doc.populate('user', 'name', function(){
-    socket.emit('thing:save', doc);    
-  })
+    return entity;
+  }
 }
+...
+// Deletes a Thing from the DB
+exports.destroy = function(req, res) {
+  Thing.findByIdAsync(req.params.id)
+    .then(handleEntityNotFound(res))
+    .then(handleUnauthorized(req, res))
+    .then(removeEntity(res))
+    .catch(handleError(res));
+};
 ```
 
 
@@ -389,6 +386,57 @@ client/app/main/main.html:
       <button ng-if="isMyTweet(thing)" type="button" class="close" ng-click="deleteThing(thing)">&times;</button>
     </div>
   </div>
+```
+
+#### ◆サーバ側テストの変更
+認証が必要なAPIについては、"server/api/user/user.integration.js"を参考に、テスト前時にログインして認証情報を設定します。
+PUT APIは利用しないので削除しておきます。
+
+server/api/thing/thing.integration.js:
+
+```javascipt
+describe('Thing API:', function() {
+  var user;
+  before(function() {
+    return User.removeAsync().then(function() {
+      user = new User({
+        name: 'Fake User',
+        email: 'test@test.com',
+        password: 'password'
+      });
+
+      return user.saveAsync();
+    });
+  });
+
+  var token;
+  before(function(done) {
+    request(app)
+      .post('/auth/local')
+      .send({
+        email: 'test@test.com',
+        password: 'password'
+      })
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end(function(err, res) {
+        token = res.body.token;
+        done();
+      });
+  });
+  ...    
+  describe('POST /api/things', function() {
+    ...    
+        .post('/api/things')
+        .set('authorization', 'Bearer ' + token)
+    ...
+  describe('DELETE /api/things/:id', function() {
+    ...
+        .delete('/api/things/' + newThing._id)
+        .set('authorization', 'Bearer ' + token)
+    ...
+  /* describe('PUT /api/things/:id', function() {
+  }); */
 ```
 
 
@@ -510,6 +558,7 @@ client/app/main/main.html:
 ```
 
 実際にブラウザを開いて表示してみましょう！
+
 http://アプリケーション名.herokuapp.com/
 
 
@@ -524,8 +573,10 @@ SNS認証(Facebook, Twitter, Google)を利用する場合、APIキーとSECRET�
 =========
 デプロイしても動作しない場合は、ログを確認してみましょう。デバッグ方法については、[前回](http://paiza.hatenablog.com/entry/2015/07/08/最新・最速！Webサービスが今すぐ作れる！_-_MEANスタッ#debug)も参照ください。
 
+```shell
 % cd dist
 % heroku logs
+```
 
 また、MongoDBの操作は、MongoHubなどのGUIツールを使うと便利です。MongoDBのURLはHerokuから取得します。
 
@@ -596,20 +647,10 @@ client/app/main/main.html:
 
 また、フィルタと同時にテストコードも作成されていますが、コードを書き換えてためにテストが失敗してしまいますので、修正しておきます。
 
-テスト実行時に読み込まれるファイルを変更するため、karma.conf.jsにmoment.jsを追加します。
 
-karma.conf.js:
+現在時刻に対して、'a few seconds ago'が帰ってくることを確認します。
 
-```javascript
-    files: [
-    	...
-      'client/bower_components/momentjs/moment.js',
-      ...
-    ],
-```
-
-そして、テストコードを書き換えます。現在時刻に対して、'a few seconds ago'が帰ってくることを確認します。
-client/app/fromNow/fromNow.filter.spec.js
+client/app/fromNow/fromNow.filter.spec.js:
 
 
 ```javascript
@@ -700,19 +741,16 @@ server/api/thing/thing.controller.js:
 
 ```javascript
 exports.star = function(req, res) {
-  Thing.update({_id: req.params.id}, {$push: {stars: req.user}}, function(err, num){
-    if (err) { return handleError(res, err); }
-    if(num===0) { return res.send(404); }
+  Thing.update({_id: req.params.id}, {$push: {stars: req.user._id}}, function(err, num){
+    if (err) { return handleError(res)(err); }
+    if(num===0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
-```
-
-```javascript
 exports.unstar = function(req, res) {
-  Thing.update({_id: req.params.id}, {$pull: {stars: req.user}}, function(err, num){
-    if (err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+  Thing.update({_id: req.params.id}, {$pull: {stars: req.user._id}}, function(err, num){
+    if (err) { return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
@@ -734,17 +772,11 @@ client/app/main/main.controller.js:
         $scope.awesomeThings[$scope.awesomeThings.indexOf(thing)] = newthing;
       });
     };
-```
-
-```javascript
     $scope.unstarThing = function(thing) {
       $http.delete('/api/things/' + thing._id + '/star').success(function(newthing){
         $scope.awesomeThings[$scope.awesomeThings.indexOf(thing)] = newthing;
       });
     };
-```
-
-```javascript
     $scope.isMyStar = function(thing){
       return Auth.isLoggedIn() && thing.stars && thing.stars.indexOf(Auth.getCurrentUser()._id)!==-1;
     }
@@ -758,10 +790,6 @@ HTMLファイルを変更して、星アイコンを追加し、クリックさ�
 client/app/main/main.html:
 
 ```html
-<div class="container">
-  ...
-  <div class="row">
-    <div ng-repeat="thing in awesomeThings" class="tweet">
       ...
       <div class="arrow_box col-xs-10">
         <button ng-if="isMyTweet(thing)" type="button" class="close" ng-click="deleteThing(thing)">&times;</button>
@@ -771,6 +799,7 @@ client/app/main/main.html:
         <button ng-if="!isMyStar(thing)" type="button" class="close" ng-click="starThing(thing)"  >
           <span class="glyphicon glyphicon-star-empty"></span>
         </button>
+        ...
 ```
 
 以上でお気に入りができるようになりました。
@@ -892,7 +921,7 @@ client/components/navbar/navbar.controller.js:
 
 NavbarのHTMLファイルで、"link"を"link()"と関数呼び出しにします。"ng-show"ではitem.show()と指定し、show()がtrueの時のみ表示されるようにします。
 
-client/components/navbar/navbar.controller.html:
+client/components/navbar/navbar.html:
 
 ```html
         <li ng-repeat="item in menu" ng-class="{active: isActive(item.link())}" ng-show="item.show()">
@@ -1192,22 +1221,9 @@ client/app/main/main.controller.js:
 以上で20件以上のデータは無限スクロールで読み込めるようになりました。
 
 
-#### ◆karma.confの変更
-最後に、テスト時にもライブラリを読み込むように、テスト用のライブラリにもngInfiniteScrollを追加しておきます。
-
-karma.conf.js:
-
-```javascript
-    files: [
-      ...
-      'client/bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js',
-      ...
-    ]
-```
-
 テスト結果が問題ないことを確認します。
 
-```(shell)
+```shell
 % grunt test
 ```
 

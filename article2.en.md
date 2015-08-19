@@ -111,7 +111,7 @@ After a minute, many project files are generated. The following are some of proj
             |-- thing.controller.js       Server-side controller(API implementation)
             |-- thing.model.js            Server-side DB model
             |-- thing.socket.js           Server-side WebSocket implementation
-            `-- thing.spec.js             Server-side test code
+            `-- thing.integration.js      Server-side test code
 ```
 
 Client-side codes are under the "client" directory, and server-side codes are under the "server" directory.
@@ -206,12 +206,11 @@ To change the order on loading messages when initially loading the page or reloa
 server/api/thing/thing.controller.js:
 
 ```javascript
-// Get list of things
+// Gets a list of Things
 exports.index = function(req, res) {
-  Thing.find().sort({_id:-1}).limit(20).exec(function (err, things) {
-    if(err) { return handleError(res, err); }
-    return res.json(200, things);
-  });
+  Thing.find().sort({_id:-1}).limit(20).execAsync()
+    .then(responseWithResult(res))
+    .catch(handleError(res));
 };
 ```
 
@@ -235,7 +234,11 @@ Sign Up and Login feature is already generated from the template, so we just nee
 
 Store the user ID and the message together. MongoDB itself has flexible schema, but AngularJS Full-Stack generator also uses mongoose as a driver. Mongoose has features such as removing needless fields on save, hook functions, and expanding related documents.
 
-On the mongoose schema configuration for messages(ThingSchema), add user ID to message schema. Also, add creation time.
+On the mongoose schema configuration for messages(ThingSchema), add user ID to message schema. 
+The "name" field stores a message, "user" field stores User's ObjectID. "ref: 'User'" relates the ObjectID to the User collection, and enables to expand using populate() function.
+
+Also, add creation time.
+The "createAt" field have "Date.now()" function as a default value to set creation time automatically.
 
 server/api/thing/thing.model.js:
 
@@ -253,7 +256,23 @@ var ThingSchema = new Schema({
 });
 ```
 
-Now, the "name" field stores a message, "user" field stores User's ObjectID. "ref: 'User'" relates the ObjectID to the User collection, and enables to expand using populate() function. The "createAt" field have "Date.now()" function as a default value to set creation time automatically.
+
+And, find() or findOne() query just returns the ObjectID of User instead of the User object itself. Use the populate() function to expand User object.
+populate('user') expand all fields of the User object. Specify populate('user','name') to just expand a needed field('name').
+
+Although we can expand on each query, to expand for all query, use "pre()" to hook all 'find()', 'findOne()' call and call populate().
+
+```javascript
+ThingSchema.pre('find', function(next){
+  this.populate('user', 'name');
+  next();
+});
+ThingSchema.pre('findOne', function(next){
+  this.populate('user', 'name');
+  next();
+});
+```
+
 
 #### Server-side API routing configuration
 For APIs requiring authentication, add "auth.isAuthenticated()" middleware to the routings. In this way, posting or deleting messages from unauthorized users is prohibited, and request object ("req") have user field ("req.user") to store User object.
@@ -279,29 +298,11 @@ Because "req.user" already contains the user object, just set it to Thing.create
 server/api/thing/thing.controller.js:
 
 ```javascript
-// Creates a new thing in the DB.
+// Creates a new Thing in the DB
 exports.create = function(req, res) {
   req.body.user = req.user;
-  Thing.create(req.body, function(err, thing) {
-```
-
-
-#### Edit server-side controller to show messages
-Now, API functions to output a message(index() and show()) just returns the ObjectID of User instead of the User object itself. Use the populate() function to expand User object.
-populate('user') expand all fields of the User object. Specify populate('user','name') to just expand a needed field('name').
-
-server/api/thing/thing.controller.js:
-
-```javascript
-// Get list of things
-exports.index = function(req, res) {
-  Thing.find().sort({_id:-1}).limit(20).populate('user',' username').exec(function (err, things) {
-```
-
-```javascript
-// Get a single thing
-exports.show = function(req, res) {
-  Thing.findById(req.params.id).populate('user','user').exec(function (err, thing) {
+  Thing.createAsync(req.body)
+  ...
 ```
 
 
@@ -311,27 +312,27 @@ On deletion, validate that the posting user and the current user are the same be
 server/api/thing/thing.controller.js:
 
 ```javascript
-// Deletes a thing from the DB.
-exports.destroy = ...
-...
-    if(!thing) { ... }
-    if(thing.user.toString() !== req.user._id.toString()){
-      return res.send(403);
+function handleUnauthorized(req, res) {
+  return function(entity) {
+    if (!entity) {return null;}
+    if(entity.user._id.toString() !== req.user._id.toString()){
+      res.send(403).end();
+      return null;
     }
-```
-
-####Edit server-side WebSocket code
-Call populate() to expand User on update notification through WebSocket.
-
-server/api/thing/thing.socket.js:
-
-```javascript
-function onSave(socket, doc, cb) {
-  doc.populate('user', 'name', function(){
-    socket.emit('thing:save', doc);    
-  })
+    return entity;
+  }
 }
+...
+// Deletes a Thing from the DB
+exports.destroy = function(req, res) {
+  Thing.findByIdAsync(req.params.id)
+    .then(handleEntityNotFound(res))
+    .then(handleUnauthorized(req, res))
+    .then(removeEntity(res))
+    .catch(handleError(res));
+};
 ```
+
 
 ####Edit client-side controller
 Add isMyTweet() function to check whether the message is of current user or not.
@@ -370,6 +371,55 @@ client/app/main/main.html:
   </div>
 ```
 
+#### Edit server-side test
+For APIs requiring authentication, before each test, login and set authentication information before the test. Also, remove a test for "PUT API" which we don't use.
+
+server/api/thing/thing.integration.js:
+
+```javascipt
+describe('Thing API:', function() {
+  var user;
+  before(function() {
+    return User.removeAsync().then(function() {
+      user = new User({
+        name: 'Fake User',
+        email: 'test@test.com',
+        password: 'password'
+      });
+
+      return user.saveAsync();
+    });
+  });
+
+  var token;
+  before(function(done) {
+    request(app)
+      .post('/auth/local')
+      .send({
+        email: 'test@test.com',
+        password: 'password'
+      })
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end(function(err, res) {
+        token = res.body.token;
+        done();
+      });
+  });
+  ...    
+  describe('POST /api/things', function() {
+    ...    
+        .post('/api/things')
+        .set('authorization', 'Bearer ' + token)
+    ...
+  describe('DELETE /api/things/:id', function() {
+    ...
+        .delete('/api/things/' + newThing._id)
+        .set('authorization', 'Bearer ' + token)
+    ...
+  /* describe('PUT /api/things/:id', function() {
+  }); */
+```
 
 #### Test
 Now, all authentication feature have been implemented, so let's test it.
@@ -496,8 +546,10 @@ Debug
 =========
 In case you failed deployment, check out the server log file. Please refer to [the instruction in the previous article](http://engineering.paiza.io/entry/2015/07/08/153011#debug) for details.
 
+```shell
 % cd dist
 % heroku logs
+```
 
 For about MongoDB operation, GUI tools like MongoHub are helpful. MongoDB URL can be retrieved from the Heroku configuration.
 
@@ -565,19 +617,9 @@ Now, the message creation times are formatted as time from now like "~minutes ag
 ### Edit test code
 
 Now, we need to edit the test code because we edited filter code.
-Add moment.js to karma.conf.js so that test code load moment.js.
 
-karma.conf.js:
 
-```javascript
-    files: [
-        ...
-      'client/bower_components/momentjs/moment.js',
-      ...
-    ],
-```
-
-Then, edit the test code to test that fromNow filter for the current time returns 'a few seconds ago'.
+Edit the test code to test so that fromNow filter for the current time returns 'a few seconds ago'.
 
 client/app/fromNow/fromNow.filter.spec.js
 
@@ -661,19 +703,17 @@ server/api/thing/thing.controller.js:
 
 ```javascript
 exports.star = function(req, res) {
-  Thing.update({_id: req.params.id}, {$push: {stars: req.user}}, function(err, num){
-    if (err) { return handleError(res, err); }
-    if(num===0) { return res.send(404); }
+  Thing.update({_id: req.params.id}, {$push: {stars: req.user._id}}, function(err, num){
+    if (err) { return handleError(res)(err); }
+    if(num===0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
-```
 
-```javascript
 exports.unstar = function(req, res) {
-  Thing.update({_id: req.params.id}, {$pull: {stars: req.user}}, function(err, num){
-    if (err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+  Thing.update({_id: req.params.id}, {$pull: {stars: req.user._id}}, function(err, num){
+    if (err) { return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
@@ -693,17 +733,11 @@ client/app/main/main.controller.js:
         $scope.awesomeThings[$scope.awesomeThings.indexOf(thing)] = newthing;
       });
     };
-```
-
-```javascript
     $scope.unstarThing = function(thing) {
       $http.delete('/api/things/' + thing._id + '/star').success(function(newthing){
         $scope.awesomeThings[$scope.awesomeThings.indexOf(thing)] = newthing;
       });
     };
-```
-
-```javascript
     $scope.isMyStar = function(thing){
       return Auth.isLoggedIn() && thing.stars && thing.stars.indexOf(Auth.getCurrentUser()._id)!==-1;
     }
@@ -847,7 +881,7 @@ client/components/navbar/navbar.controller.js:
 
 On the Navbar HTML file, change from the "link" variable to the "link()" function. Set "item.show()" on "ng-show"  to display only when show() returns true.
 
-client/components/navbar/navbar.controller.html:
+client/components/navbar/navbar.html:
 
 ```html
         <li ng-repeat="item in menu" ng-class="{active: isActive(item.link())}" ng-show="item.show()">
@@ -1151,7 +1185,7 @@ karma.conf.js:
 
 Check test result.
 
-```(shell)
+```shell
 % grunt test
 ```
 
