@@ -402,12 +402,20 @@ client/app/main/main.html:
 ```
 
 #### ◆サーバ側テストの変更
-認証が必要なAPIについては、"server/api/user/user.integration.js"を参考に、テスト前時にログインして認証情報を設定します。
+ルーティングのテストは今回は削除しておきます。
+
+```shell
+% rm server/api/thing/index.spec.js
+```
+
+また、認証が必要なAPIについては、"server/api/user/user.integration.js"を参考に、テスト前時にログインして認証情報を設定します。
 PUT APIは利用しないので削除しておきます。
 
 server/api/thing/thing.integration.js:
 
 ```javascipt
+var User = require('../user/user.model');
+...
 describe('Thing API:', function() {
   var user;
   before(function() {
@@ -444,6 +452,9 @@ describe('Thing API:', function() {
         .set('authorization', 'Bearer ' + token)
     ...
   describe('DELETE /api/things/:id', function() {
+    ...
+        .delete('/api/things/' + newThing._id)
+        .set('authorization', 'Bearer ' + token)
     ...
         .delete('/api/things/' + newThing._id)
         .set('authorization', 'Bearer ' + token)
@@ -612,10 +623,9 @@ momentjsというライブラリを使います。クライアント側のライ
 
 ```shell
 % bower install --save momentjs
-% grunt wiredep
 ```
 
-bowerの--saveオプションを指定することで、"bower.json"にパッケージ名が保存され、"grunt wiredep"により、index.htmlにmomentjsを読み込むためのスクリプトタグが追加されます。
+bowerの--saveオプションを指定することで、"bower.json"にパッケージ名が保存され、gruntにより自動的にindex.htmlにmomentjsを読み込むためのスクリプトタグが追加されます。
 
 
 #### ◆fromNowフィルタ作成
@@ -792,7 +802,7 @@ client/app/main/main.controller.js:
     };
     $scope.isMyStar = function(thing){
       return Auth.isLoggedIn() && thing.stars && thing.stars.indexOf(Auth.getCurrentUser()._id)!==-1;
-    }
+    };
 ```
 
 
@@ -859,7 +869,7 @@ angular.module('paizatterApp')
         controller: 'MainCtrl',
         resolve: {
           query: function($stateParams){
-            return {stars: $stateParams.userId}
+            return {stars: $stateParams.userId};
           }
         }
       })
@@ -869,7 +879,7 @@ angular.module('paizatterApp')
         controller: 'MainCtrl',
         resolve: {
           query: function($stateParams){
-            return {user: $stateParams.userId}
+            return {user: $stateParams.userId};
           }
         }
       })
@@ -926,7 +936,7 @@ client/components/navbar/navbar.controller.js:
       },
       {
         'title': 'Starred',
-        'link': function(){return '/users/' + Auth.getCurrentUser()._id + '/starred'},
+        'link': function(){return '/users/' + Auth.getCurrentUser()._id + '/starred';},
         'show': Auth.isLoggedIn,
       },
     ];
@@ -1044,7 +1054,7 @@ client/components/navbar/navbar.controller.js:
 ```javascript
   .controller('NavbarCtrl', function ($scope, $location, Auth, $state) {
     $scope.search = function(keyword) {
-      if ($state.current.controller == 'MainCtrl'){
+      if ($state.current.controller === 'MainCtrl'){
         $state.go($state.current.name, {keyword: keyword}, {reload: true});        
       }else{
         $state.go('main', {keyword: keyword}, {reload: true});        
@@ -1057,7 +1067,11 @@ client/components/navbar/navbar.controller.js:
 
 まずは正規表現で検索してみましょう。MongoDBでは'$regex'を使って正規表現を指定します。
 
+client/app/main/main.controller.js:
+
 ```javascript
+  .controller('MainCtrl', function($scope, $http, $location, socket, Auth, query) {
+    ...
     var keyword = $location.search().keyword;
     if(keyword){
       query = _.merge(query, {name: {$regex: keyword, $options: 'i'}});
@@ -1071,10 +1085,14 @@ client/components/navbar/navbar.controller.js:
 これで検索はできますが、検索のたびにすべてのメッセージを見ることになってしまい、メッセージが増えてくると遅くなってしまいます。
 MongoDBの全文検索機能を使ってみましょう。全文検索では、'$text', '$search'キーワードを使って検索します。なお、フィールド名を指定しません。
 
+client/app/main/main.controller.js:
+
 ```javascript
+  .controller('MainCtrl', function($scope, $http, $location, socket, Auth, query) {
+    ...
     var keyword = $location.search().keyword;
     if(keyword){
-      query = _.merge(query, {$text: {$search: keyword}});
+      query = _.merge(query||{}, {$text: {$search: keyword}});
     }
 	$http.get('/api/things', {params: {query: query}})...
 ```
@@ -1155,7 +1173,6 @@ Twitterのように古いメッセージをスクロールで見れるように�
 
 ```javascript
 % bower install --save ngInfiniteScroll
-% grunt wiredep
 ```
 
 
@@ -1220,10 +1237,10 @@ client/app/main/main.controller.js:
       $scope.busy = true;
       var lastId = $scope.awesomeThings[$scope.awesomeThings.length-1]._id;
       var pageQuery = _.merge(query, {_id: {$lt: lastId}});
-      $http.get('/api/things', {params: {query: query}}).success(function(awesomeThings_) {
+      $http.get('/api/things', {params: {query: pageQuery}}).success(function(awesomeThings_) {
         $scope.awesomeThings = $scope.awesomeThings.concat(awesomeThings_);
         $scope.busy = false;
-        if(awesomeThings_.length == 0){
+        if(awesomeThings_.length === 0){
           $scope.noMoreData = true;
         }
       });

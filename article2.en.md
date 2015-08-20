@@ -385,11 +385,19 @@ client/app/main/main.html:
 ```
 
 #### Edit server-side test
+In this project, remove routing test.
+
+```shell
+% rm server/api/thing/index.spec.js
+```
+
 For APIs requiring authentication, before each test, login and set authentication information before the test. Also, remove a test for "PUT API" which we don't use.
 
 server/api/thing/thing.integration.js:
 
 ```javascipt
+var User = require('../user/user.model');
+...
 describe('Thing API:', function() {
   var user;
   before(function() {
@@ -426,6 +434,9 @@ describe('Thing API:', function() {
         .set('authorization', 'Bearer ' + token)
     ...
   describe('DELETE /api/things/:id', function() {
+    ...
+        .delete('/api/things/' + newThing._id)
+        .set('authorization', 'Bearer ' + token)
     ...
         .delete('/api/things/' + newThing._id)
         .set('authorization', 'Bearer ' + token)
@@ -583,10 +594,9 @@ We use a time formatting JavaScript library "momenjs" as a client-side library. 
 
 ```shell
 % bower install --save momentjs
-% grunt wiredep
 ```
 
-"--save" options saves the package name to "bowser.json", and "grunt wiredep" adds script tags to load the library to "index.html".
+"--save" options saves the package name to "bowser.json", and running "grunt" automatically adds script tags to load the library to "index.html".
 
 
 #### Create fromNow AngularJS filter
@@ -753,7 +763,7 @@ client/app/main/main.controller.js:
     };
     $scope.isMyStar = function(thing){
       return Auth.isLoggedIn() && thing.stars && thing.stars.indexOf(Auth.getCurrentUser()._id)!==-1;
-    }
+    };
 ```
 
 #### Edit HTML template file
@@ -821,7 +831,7 @@ angular.module('paizatterApp')
         controller: 'MainCtrl',
         resolve: {
           query: function($stateParams){
-            return {stars: $stateParams.userId}
+            return {stars: $stateParams.userId};
           }
         }
       })
@@ -831,7 +841,7 @@ angular.module('paizatterApp')
         controller: 'MainCtrl',
         resolve: {
           query: function($stateParams){
-            return {user: $stateParams.userId}
+            return {user: $stateParams.userId};
           }
         }
       })
@@ -886,7 +896,7 @@ client/components/navbar/navbar.controller.js:
       },
       {
         'title': 'Starred',
-        'link': function(){return '/users/' + Auth.getCurrentUser()._id + '/starred'},
+        'link': function(){return '/users/' + Auth.getCurrentUser()._id + '/starred';},
         'show': Auth.isLoggedIn,
       },
     ];
@@ -1002,7 +1012,7 @@ client/components/navbar/navbar.controller.js:
 ```javascript
   .controller('NavbarCtrl', function ($scope, $location, Auth, $state) {
     $scope.search = function(keyword) {
-      if ($state.current.controller == 'MainCtrl'){
+      if ($state.current.controller === 'MainCtrl'){
         $state.go($state.current.name, {keyword: keyword}, {reload: true});        
       }else{
         $state.go('main', {keyword: keyword}, {reload: true});        
@@ -1170,10 +1180,10 @@ client/app/main/main.controller.js:
       $scope.busy = true;
       var lastId = $scope.awesomeThings[$scope.awesomeThings.length-1]._id;
       var pageQuery = _.merge(query, {_id: {$lt: lastId}});
-      $http.get('/api/things', {params: {query: query}}).success(function(awesomeThings_) {
+      $http.get('/api/things', {params: {query: pageQuery}}).success(function(awesomeThings_) {
         $scope.awesomeThings = $scope.awesomeThings.concat(awesomeThings_);
         $scope.busy = false;
-        if(awesomeThings_.length == 0){
+        if(awesomeThings_.length === 0){
           $scope.noMoreData = true;
         }
       });

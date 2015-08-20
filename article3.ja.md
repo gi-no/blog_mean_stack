@@ -82,6 +82,19 @@ MEANスタックのインストール
 まだインストールしていない場合、MEANスタックの１つ、Angular Full-Stack generatorをインストールします。
 インストール手順は[第一回の手順](http://paiza.hatenablog.com/entry/2015/07/08/最新・最速！Webサービスが今すぐ作れる！_-_MEANスタッ)を参照してください。
 
+インストールしたAngularJS Full-stack generatorのバージョンが3.0.0以降であることを確認します。
+
+```shell
+$ npm ls -g generator-angular-fullstack
+/usr/local/lib
+└── generator-angular-fullstack@3.0.0-rc4 
+```
+
+古い場合、アップデートしてください。
+
+```shell
+$ sudo npm update -g generator-angular-fullstack
+```
 
 <div id="new_project"></div>
 
@@ -104,13 +117,15 @@ MEANスタックのインストール
 ❯◉ Twitter
 ```
 
+<!--
 npmのパッケージが少々古いので最新にしておきます。
 
-```shell
+#```shell
 % sudo npm install -g npm-check-updates
 % npm-check-updates -u
 % npm install
-```
+#```
+-->
 
 作成されたプロジェクトを実行してみましょう。
 
@@ -157,7 +172,7 @@ npmのパッケージが少々古いので最新にしておきます。
             |-- thing.controller.js       サーバ側コントローラ(API実装)
             |-- thing.model.js            サーバ側DBモデル
             |-- thing.socket.js           サーバ側WebSocket実装
-            `-- thing.spec.js             サーバ側テストコード
+            `-- thing.integration.js      サーバ側テストコード
 ```
 
 クライアント側のコードはclientに、サーバ側のコードはserverに配置されます。また、機能単位でコンポーネントとしてファイルをディレクトリにまとめることで、各コンポーネントが独立して全体の見通しがよくなっています。
@@ -180,12 +195,12 @@ npmのパッケージが少々古いので最新にしておきます。
 
 サーバ側で保持する質問データに関連するファイル(DBモデル、サーバ側APIコントローラなど)及び、それらをまとめたディレクトリをgeneratorで作成します。
 
+endpointが聞かれますので、デフォルト(/api/questions)にします。
+server/api/question ディレクトリに、question.controller.js, question.model.jsなどの雛形が作成され、"/api/questions"がAPIとして利用できます。
+
 ```shell
 % yo angular-fullstack:endpoint question
 ```
-
-endpointが聞かれますので、デフォルト(/api/questions)ににします。
-server/api/question ディレクトリに、question.controller.js, question.model.jsなどの雛形が作成され、"/api/questions"がAPIとして利用できます。
 
 DBモデルを編集して、質問タイトル、質問内容、回答一覧を保持します。MongoDBでは配列や連想配列を含むJSONオブジェクトをまとめて保持できます。MongoDB自体はスキーマ定義はありませんが、Angular Full-Stack generatorで利用しているmongooseではMongoDB上でスキーマ機能を利用して保存するフィールドを限定したりデータを検証したりできまるので、質問回答関連の情報をスキーマとして定義します。
 
@@ -197,6 +212,38 @@ var QuestionSchema = new Schema({
   content: String,
 });
 ```
+
+テストコードもモデルの変更にあわせておきます。すべての"name", "info"をそれぞれ"title", "content"に置換すればいいです。(5箇所)
+
+server/api/question/question.integration.js
+
+```javascript
+// name: ...
+title: ...
+// info: ...
+content: ...
+...
+// newQuestion.name....
+newQuestion.title....
+// question.info....
+newQuestion.content....
+...
+// question.name....
+question.title....
+// question.info....
+question.content....
+...
+// name: ...
+title: ...
+// info: ...
+content: ...
+...
+// updatedQuestion.name....
+updatedQuestion.title....
+// question.info....
+updatedQuestion.content....
+```
+
 
 <div id="generate_client_questions"></div>
 
@@ -243,6 +290,15 @@ generatorがルーティングを聞いてきますので、「What will the url
 ```
 
 生成された雛形を元に、クライアント側の各コントローラ/HTMLファイルの実装を行います。
+
+#### 質問一覧表示ルーティングの変更
+質問一覧ページがメインページになるように、質問一覧ページのstateを"main"に変更します。
+
+client/app/questionsIndex/questionsIndex.js:
+
+```
+      .state('main', {
+```
 
 #### 質問一覧表示コントローラの変更
 質問一覧表示コントローラでは、"GET /api/questions" APIを呼び出して質問一覧を取得します。取得した質問一覧はHTMLで参照できるように$scopeに保持します。$httpサービスを利用するので、コントローラ関数の引数に$httpを追加します。引数の名前に応じたサービスが自動的に引数に割り当てられます。
@@ -368,6 +424,7 @@ client/app/questionsCreate/questionsCreate.html
 </div>
 ```
 
+
 #### 質問表示コントローラの変更
 質問表示コントローラでは、質問の内容を取得して表示します。質問IDは指定したURL(/questions/show/:id)の":id"部分を$stateParams.idとして参照します。
 
@@ -472,8 +529,8 @@ server/api/question/question.controller.js
 ```javascript
 exports.createAnswer = function(req, res) {
   Question.update({_id: req.params.id}, {$push: {answers: req.body}}, function(err, num) {
-    if(err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
@@ -552,7 +609,6 @@ Markdownに対応するために、angular-pagedownモジュールをインス�
 
 ```shell
 % bower install angular-pagedown --save
-% grunt wiredep
 ...
 Unable to find a suitable version for angular, please choose one:
     1) angular#~1.2 which resolved to 1.2.28 and is required by angular-pagedown#0.4.3
@@ -568,6 +624,8 @@ Prefix the choice with ! to persist it to bower.json
 ```
 
 必要な依存ファイルも読み込まれるようにbower.jsonに追加します。
+
+bower.json
 
 ```javascript
 {
@@ -585,24 +643,6 @@ Prefix the choice with ! to persist it to bower.json
     }
   }
 }
-```
-
-依存ファイルを読み込みます。
-
-```shell
-% grunt wiredep
-```
-
-テスト(Karma)で読み込むライブラリにも追加します。
-
-karma.conf.js
-
-```javascript
-    files: [
-      ...
-      'client/bower_components/angular-pagedown/angular-pagedown.js',
-      ...
-    ]
 ```
 
 
@@ -632,7 +672,7 @@ client/app/questionsCreate/questionsCreate.html
 
 client/app/questionsShow/questionsShow.html
 
-```
+```html
 <!-- {{question.content}} -->
 <pagedown-viewer content="question.content"></pagedown-viewer>
 ...
@@ -673,19 +713,6 @@ var QuestionSchema = new Schema({
 
 ```shell
 % bower install ng-tags-input --save
-% grunt wiredep
-```
-
-テスト(Karma)で読み込むライブラリにも追加します。
-
-karma.conf.js
-
-```javascript
-    files: [
-      ...
-      'client/bower_components/ng-tags-input/ng-tags-input.min.js',
-      ...
-    ]
 ```
 
 #### アプリケーションの依存モジュールの追加
@@ -756,6 +783,9 @@ client/app/questionsShow/questionsShow.html
 
 ユーザIDを各質問、回答で保持するようにします。"ref: 'User'"として対応するスキーマを指定することで、pupulate()関数を通じてユーザIDからユーザオブジェクトに展開できるようになります。
 
+populate()は明示的に呼び出すこともできますが、クエリに対しては常に展開するように、pre()でfind(), findOne()関数をフックして、ハンドラからpopulate()を呼び出します。
+populate('user')でUserオブジェクトの全てのフィールドが展開されますが、必要なフィールド('name')のみ展開するように、populate('user','name')と記述します。
+
 server/api/question/question.model.js
 
 ```javascript
@@ -785,9 +815,17 @@ var QuestionSchema = new Schema({
     default: Date.now
   },
 });
+QuestionSchema.pre('find', function(next){
+  this.populate('user', 'name');
+  this.populate('answers.user', 'name');
+  next();
+});
+QuestionSchema.pre('findOne', function(next){
+  this.populate('user', 'name');
+  this.populate('answers.user', 'name');
+  next();
+});
 ```
-
-
 #### サーバ側APIルーティングの変更
 
 サーバ側APIルーティング設定で、認証が必要なURLリソースについてはauth.isAuthenticated()をExpressのミドルウェアとして追加します。これより、サーバ側コントローラではreq.userとして現在のログインユーザを取得できます。
@@ -811,27 +849,20 @@ router.delete('/:id/answers/:answerId', auth.isAuthenticated(), controller.destr
 ```
 
 #### サーバ側コントローラの変更
-質問一覧取得APIについては、ユーザIDをユーザオブジェクトに展開するようにpopulate()を呼び出します。populate('user','name')によりユーザオブジェクトのnameフィールドのみ展開されます。また、投稿日時の逆順で最後の20件のみ返すように変更します。sort({createdAt: -1})により、createdAtフィールドの逆順で表示します。limit(20)で最新の20件に制限します。クエリが構築できたら、exec()で実行を行い、結果をコールバック関数で受け取ります。
+投稿日時の逆順で最後の20件のみ返すように変更します。sort({createdAt: -1})により、createdAtフィールドの逆順で表示します。limit(20)で最新の20件に制限します。クエリが構築できたら、execAsync()で実行します。
 
 server/api/question/question.controller.js
 
 ```javascript
 exports.index = function(req, res) {
-  Question.find().sort({createdAt: -1}).limit(20).populate('user', 'name').exec(function (err, questions) {
+  Question.find().sort({createdAt: -1}).limit(20).execAsync()
     ...
 ```
 
-質問取得APIについても、ユーザオブジェクトを展開するようにします。
-
-server/api/question/question.controller.js
-
-```javascript
-exports.show = function(req, res) {
-  Question.findById(req.params.id).populate('user', 'name').exec(function (err, question) {
-    ...
-```
 
 質問作成APIでは、質問ユーザを質問の一部として保存します。質問ユーザは、req.userで参照します。
+
+server/api/question/question.controller.js
 
 ```javascript
 exports.create = function(req, res) {
@@ -841,20 +872,33 @@ exports.create = function(req, res) {
 
 質問更新・削除APIでは、現在のユーザIDが質問のユーザIDに一致するか確認することで、投稿ユーザのみ更新・削除できるようにします。
 
+server/api/question/question.controller.js
+
 ```javascript
-exports.update = function(req, res) {
-    ...
-    if(!question) { return res.status(404).send('Not Found'); }
-    if(question.user.toString() !== req.user._id.toString()){ return res.send(403); }
-    ...
-};
+function handleUnauthorized(req, res) {
+  return function(entity) {
+    if (!entity) {return null;}
+    if(entity.user._id.toString() !== req.user._id.toString()){
+      res.send(403).end();
+      return null;
+    }
+    return entity;
+  }
+}
 ...
+// Updates an existing Question in the DB
+exports.update = function(req, res) {
+  ...
+    .then(handleEntityNotFound(res))
+    .then(handleUnauthorized(req, res))
+    ...
+...
+// Deletes a Question from the DB
 exports.destroy = function(req, res) {
+  ...
+    .then(handleEntityNotFound(res))
+    .then(handleUnauthorized(req, res))
     ...
-    if(!question) { return res.status(404).send('Not Found'); }
-    if(question.user.toString() !== req.user._id.toString()){ return res.send(403); }
-    ...
-};
 ```
 
 回答削除APIも実装しておきます。MongoDBの'$pull'オペレータを使うことで、回答一覧配列から指定した回答ID、回答ユーザの回答を削除します。
@@ -862,8 +906,8 @@ exports.destroy = function(req, res) {
 ```javascript
 exports.destroyAnswer = function(req, res) {
   Question.update({_id: req.params.id}, {$pull: {answers: {_id: req.params.answerId , 'user': req.user._id}}}, function(err, num) {
-    if(err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
@@ -874,8 +918,8 @@ exports.destroyAnswer = function(req, res) {
 ```javascript
 exports.updateAnswer = function(req, res) {
   Question.update({_id: req.params.id, 'answers._id': req.params.answerId}, {'answers.$.content': req.body.content, 'answers.$.user': req.user.id}, function(err, num){
-    if(err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
@@ -976,12 +1020,12 @@ client/app/questionsShow/questionsShow.html
   <a ng-click="editting=!editting;" ng-show="isOwner(question) && !editting">Edit</a>
   ...
     <div class="answer">
+      ...
       <pagedown-viewer content="answer.content" ng-if="!editting"></pagedown-viewer>
       <pagedown-editor content="answer.content" ng-if=" editting"></pagedown-editor>
       <button type="submit" class="btn btn-primary" ng-click="editting=false;updateAnswer(answer)" ng-show=" editting">Save</button>
       <a ng-click="editting=!editting;" ng-show="isOwner(answer) && !editting">Edit</a>
-    </div>
-    ...
+      ...
 ```
 
 #### クライアント側質問作成コントローラ変更
@@ -999,6 +1043,71 @@ client/app/questionsCreate/questionsCreate.controller.js
     ...
 ```
 
+#### ◆サーバ側テストの変更
+ルーティングのテストは今回は削除しておきます。
+
+```shell
+% rm server/api/question/index.spec.js
+```
+
+また、認証が必要なAPIについては、"server/api/user/user.integration.js"を参考に、テスト前時にログインして認証情報を設定します。
+
+server/api/question/question.integration.js
+
+```javascipt
+var User = require('../user/user.model');
+...
+describe('Question API:', function() {
+  var user;
+  before(function() {
+    return User.removeAsync().then(function() {
+      user = new User({
+        name: 'Fake User',
+        email: 'test@test.com',
+        password: 'password'
+      });
+
+      return user.saveAsync();
+    });
+  });
+
+  var token;
+  before(function(done) {
+    request(app)
+      .post('/auth/local')
+      .send({
+        email: 'test@test.com',
+        password: 'password'
+      })
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end(function(err, res) {
+        token = res.body.token;
+        done();
+      });
+  });
+  ...    
+  describe('POST /api/questions', function() {
+    ...    
+        .post('/api/questions')
+        .set('authorization', 'Bearer ' + token)
+    ...
+  describe('PUT /api/questions/:id', function() {
+    ...
+        .put('/api/questions/' + newQuestion._id)
+        .set('authorization', 'Bearer ' + token)
+    ...
+  describe('DELETE /api/questions/:id', function() {
+    ...
+        .delete('/api/questions/' + newQuestion._id)
+        .set('authorization', 'Bearer ' + token)
+    ...
+        .delete('/api/questions/' + newQuestion._id)
+        .set('authorization', 'Bearer ' + token)
+    ...
+  /* describe('PUT /api/things/:id', function() {
+  }); */
+```
 
 <div id="validation"></div>
 
@@ -1013,21 +1122,7 @@ client/app/questionsCreate/questionsCreate.controller.js
 
 ```shell
 % bower install angular-messages --save
-% grunt wiredep
 ```
-
-テスト(Karma)で読み込むライブラリにも追加します。
-
-karma.conf.js
-
-```javascript
-    files: [
-      ...
-      'client/bower_components/angular-messages/angular-messages.js',
-      ...
-    ]
-```
-
 
 #### アプリケーション依存モジュールで、ngMessagesを追加
 入力検証に使う、ngMessages(AngularJSモジュール)をアプリケーションの依存モジュールに追加して、アプリケーションから利用できるようにします。
@@ -1062,7 +1157,10 @@ client/app/questionsCreate/questionsCreate.html
       <span ng-message="required">Required</span>
     </span>
     <span class="text-success" ng-show="form.question_content.$valid">OK</span>
-    ...
+    <h2>Tags:</h2>
+    <tags-input ng-model="question.tags">
+      <!-- <auto-complete source="loadTags($query)"></auto-complete> -->
+    </tags-input>
     <input type="submit" class="btn btn-primary" ng-disabled="form.$invalid" value="Post question">
   </form>
 ```
@@ -1071,7 +1169,7 @@ client/app/questionsCreate/questionsShow.html
 
 ```html
     <pagedown-editor content="newAnswer.content" ng-model="newAnswer.content" name="answerEditor" required></pagedown-editor>
-    <input type="submit" class="btn btn-primary" ng-disabled="answerForm.$invalid">Submit your answer</input>
+    <input type="submit" class="btn btn-primary" ng-disabled="answerForm.$invalid" value="Submit your answer">
 ```
 
 
@@ -1088,7 +1186,6 @@ client/app/questionsCreate/questionsShow.html
 
 ```shell
 % bower install --save momentjs
-% grunt wiredep
 ```
 
 日本語など、他言語対応できるようにライブラリを追加します。(英語のみなら不要)
@@ -1096,13 +1193,13 @@ client/app/questionsCreate/questionsShow.html
 client/index.html
 
 ```html
-<!-- build:js({client,node_modules}) app/vendor.js -->
-  <!-- bower:js -->
-  ...
-  <!-- endbower -->
-  <script src="bower_components/momentjs/min/moment-with-locales.min.js"></script>
-  <script src="socket.io-client/socket.io.js"></script>
-<!-- endbuild -->
+    <!-- build:js({client,node_modules}) app/vendor.js -->
+      <!-- bower:js -->
+      ...
+      <!-- endbower -->
+      <script src="bower_components/momentjs/min/moment-with-locales.min.js"></script>
+      <script src="socket.io-client/socket.io.js"></script>
+    <!-- endbuild -->
 ```
 
 #### フィルタの作成
@@ -1138,7 +1235,7 @@ client/app/questionsIndex/questionsIndex.html
 
 ```
 
-client/app/questionsCreate/questionsCreate.html
+client/app/questionsCreate/questionsShow.html
 
 ```html
 <!-- Old: {{question.createdAt}} -->
@@ -1153,18 +1250,7 @@ client/app/questionsCreate/questionsCreate.html
 
 #### テストコードの変更
 
-テストが失敗していますので修正しておきます。テスト実行時にもMoment.jsが読み込まれるように、karma.conf.jsにmoment.jsを追加します。
-
-karma.conf.js
-
-```javascript
-    files: [
-        ...
-      'client/bower_components/momentjs/moment.js',
-      ...
-    ],
-```
-
+テストが失敗していますので修正しておきます。
 テストコードで現在時刻(Date.now())に対して、fromNowフィルタが'a few seconds ago'を返すことを確認します。
 
 client/app/fromNow/fromNow.filter.spec.js
@@ -1218,6 +1304,21 @@ var QuestionSchema = new Schema({
     }
   }],
 });
+
+QuestionSchema.pre('find', function(next){
+  this.populate('user', 'name');
+  this.populate('comments.user', 'name');
+  this.populate('answers.user', 'name');
+  this.populate('answers.comments.user', 'name');
+  next();
+});
+QuestionSchema.pre('findOne', function(next){
+  this.populate('user', 'name');
+  this.populate('comments.user', 'name');
+  this.populate('answers.user', 'name');
+  this.populate('answers.comments.user', 'name');
+  next();
+});
 ```
 
 #### サーバ側ルーティングの変更
@@ -1247,17 +1348,8 @@ router.delete('/:id/answers/:answerId/comments/:commentId', auth.isAuthenticated
 
 #### サーバ側コントローラの変更
 
-質問表示APIで、コメントのユーザをユーザIDからユーザオブジェクトにpopulate()で展開します。
 
-server/api/question/question.controller.js
-
-```javascript
-exports.show = function(req, res) {
-  Question.findById(req.params.id).populate('user', 'name').populate('comments.user', 'name').populate('answers.user', 'name').populate('answers.comments.user', 'name').exec(function (err, question) {
-    ...
-```
-
-また、コメントの投稿・削除用・更新のAPIを実装します。投稿ではコメント配列に'$push'オペレータで追加し、削除ではコメント入れtから'$pull'オペレータで削除します。更新時は配列の条件一致インデックスを'$'で参照します。回答コメントの更新では、配列の配列については、インデックスを指定する'$'を複数使えませんので配列を１つずつ走査します。
+コメントの投稿・削除用・更新のAPIを実装します。投稿ではコメント配列に'$push'オペレータで追加し、削除ではコメント入れtから'$pull'オペレータで削除します。更新時は配列の条件一致インデックスを'$'で参照します。回答コメントの更新では、配列の配列については、インデックスを指定する'$'を複数使えませんので配列を１つずつ走査します。
 
 server/api/question/question.controller.js
 
@@ -1266,22 +1358,22 @@ server/api/question/question.controller.js
 exports.createComment = function(req, res) {
   req.body.user = req.user.id;
   Question.update({_id: req.params.id}, {$push: {comments: req.body}}, function(err, num){
-    if(err) {return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) {return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   })
 }
 exports.destroyComment = function(req, res) {
   Question.update({_id: req.params.id}, {$pull: {comments: {_id: req.params.commentId , 'user': req.user._id}}}, function(err, num) {
-    if(err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
 exports.updateComment = function(req, res) {
   Question.update({_id: req.params.id, 'comments._id': req.params.commentId}, {'comments.$.content': req.body.content, 'comments.$.user': req.user.id}, function(err, num){
-    if(err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
@@ -1290,22 +1382,22 @@ exports.updateComment = function(req, res) {
 exports.createAnswerComment = function(req, res) {
   req.body.user = req.user.id;
   Question.update({_id: req.params.id, 'answers._id': req.params.answerId}, {$push: {'answers.$.comments': req.body}}, function(err, num){
-    if(err) {return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) {return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   })
 }
 exports.destroyAnswerComment = function(req, res) {
   Question.update({_id: req.params.id, 'answers._id': req.params.answerId}, {$pull: {'answers.$.comments': {_id: req.params.commentId , 'user': req.user._id}}}, function(err, num) {
-    if(err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
 exports.updateAnswerComment = function(req, res) {
   Question.find({_id: req.params.id}).exec(function(err, questions){
-    if(err) { return handleError(res, err); }
-    if(questions.length === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(questions.length === 0) { return res.send(404).end(); }
     var question = questions[0];
     var found = false;
     for(var i=0; i < question.answers.length; i++){
@@ -1319,18 +1411,19 @@ exports.updateAnswerComment = function(req, res) {
         doc['answers.' + i + '.comments.$.content'] = req.body.content;
         /*jshint -W083 */
         Question.update(conditions, doc, function(err, num){
-          if(err) { return handleError(res, err); }
-          if(num === 0) { return res.send(404); }
+          if(err) { return handleError(res)(err); }
+          if(num === 0) { return res.send(404).end(); }
           exports.show(req, res);
           return;
         });
       }
     }
     if(!found){
-      return res.send(404);
+      return res.send(404).end();
     }
   });
 };
+
 ```
 
 
@@ -1543,55 +1636,59 @@ DBモデルで、質問、質問コメント、回答、回答コメントにつ
 server/api/question/question.controller.js
 
 ```javascript
+/* star/unstar question */
 exports.star = function(req, res) {
   Question.update({_id: req.params.id}, {$push: {stars: req.user.id}}, function(err, num){
-    if(err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
 exports.unstar = function(req, res) {
   Question.update({_id: req.params.id}, {$pull: {stars: req.user.id}}, function(err, num){
     if(err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
-...
+
+/* star/unstar answer */
 exports.starAnswer = function(req, res) {
   Question.update({_id: req.params.id, 'answers._id': req.params.answerId}, {$push: {'answers.$.stars': req.user.id}}, function(err, num){
-    if(err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
 exports.unstarAnswer = function(req, res) {
   Question.update({_id: req.params.id, 'answers._id': req.params.answerId}, {$pull: {'answers.$.stars': req.user.id}}, function(err, num){
-    if(err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
-...
+
+/* star/unstar question comment */
 exports.starComment = function(req, res) {
   Question.update({_id: req.params.id, 'comments._id': req.params.commentId}, {$push: {'comments.$.stars': req.user.id}}, function(err, num){
-    if(err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
 exports.unstarComment = function(req, res) {
   Question.update({_id: req.params.id, 'comments._id': req.params.commentId}, {$pull: {'comments.$.stars': req.user.id}}, function(err, num){
-    if(err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
-...
+
+/* star/unstar question answer comment */
 var pushOrPullStarAnswerComment = function(op, req, res) {
   Question.find({_id: req.params.id}).exec(function(err, questions){
-    if(err) { return handleError(res, err); }
-    if(questions.length === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(questions.length === 0) { return res.send(404).end(); }
     var question = questions[0];
     var found = false;
     for(var i=0; i < question.answers.length; i++){
@@ -1606,15 +1703,15 @@ var pushOrPullStarAnswerComment = function(op, req, res) {
         // Question.update({_id: req.params.id, 'answers.' + i + '.comments._id': req.params.commentId}, {op: {('answers.' + i + '.comments.$.stars'): req.user.id}}, function(err, num){
         /*jshint -W083 */
         Question.update(conditions, doc, function(err, num){
-          if(err) { return handleError(res, err); }
-          if(num === 0) { return res.send(404); }
+          if(err) { return handleError(res)(err); }
+          if(num === 0) { return res.send(404).end(); }
           exports.show(req, res);
           return;
         });
       }
     }
     if(!found){
-      return res.send(404);
+      return res.send(404).end();
     }
   });
 };
@@ -1673,6 +1770,8 @@ client/app/questionsShow/questionsShow.html
         <div ng-if="! editting">{{question.title}}</div>
 ```
 
+client/app/questionsShow/questionsShow.html
+
 ```html
       <div style="float: left;font-size: normal; padding: 0; width: 2em; text-align: center;">
         <button ng-if=" isStar(comment)" type="button" style="background: transparent; border: 0;" ng-click="unstar('/comments/' + comment._id)">
@@ -1687,6 +1786,8 @@ client/app/questionsShow/questionsShow.html
 
       <pagedown-viewer content="comment.content" ng-if="!editting"></pagedown-viewer>
 ```
+
+client/app/questionsShow/questionsShow.html
 
 ```html
     <div style="float: left;font-size: large; padding: 0; width: 2em; text-align: center;">
@@ -1809,7 +1910,7 @@ client/app/questionsIndex/questionsIndex.js
 ...
   .config(function ($stateProvider) {
     $stateProvider
-      .state('questionsIndex', {
+      .state('main', {
         url: '/',
         templateUrl: 'app/questionsIndex/questionsIndex.html',
         controller: 'QuestionsIndexCtrl',
@@ -1934,7 +2035,9 @@ MongoDBの全文検索機能を使って、質問タイトル・質問内容・�
 
 Navbarに検索ボックスを追加します。検索実行時はsearch()関数を呼びます。
 
-```javascript
+client/components/navbar/navbar.html
+
+```html
       <form class="navbar-form navbar-left" role="search" ng-submit="search(keyword)">
         <div class="input-group">
           <input type="text" class="form-control" placeholder="Search" ng-model="keyword">
@@ -1955,7 +2058,7 @@ client/components/navbar/navbar.controller.js
 
 ```javascript
     $scope.search = function(keyword) {
-      $state.go('questionsIndex', {keyword: keyword}, {reload: true});
+      $state.go('main', {keyword: keyword}, {reload: true});
     };
 ```
 
@@ -2000,7 +2103,7 @@ client/app/questionsIndex/questionsIndex.controller.js
 
 
 ```javascript
-  .controller('QuestionsIndexCtrl', function ($scope, $http, $location, query) {
+  .controller('QuestionsIndexCtrl', function ($scope, $http, $location, Auth, query) {
     ...
     var keyword = $location.search().keyword;
     if(keyword){
@@ -2163,20 +2266,8 @@ exports.updateAnswerComment = function(req, res) {
 
 ```shell
 % bower install --save ngInfiniteScroll
-% grunt wiredep
 ```
 
-テスト(Karma)で読み込むライブラリにも追加します。
-
-karma.conf.js
-
-```javascript
-    files: [
-      ...
-      'client/bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js',
-      ...
-    ]
-```
 
 #### アプリケーションの依存モジュール追加
 
@@ -2228,6 +2319,8 @@ client/app/questionsIndex/questionsIndex.controller.js
 #### クライアント側質問一覧HTMLの変更
 一番下までスクロールしたら次の質問を読み込むように、infinite-scroll属性でnextPage()関数を呼び出します。また、読み込み中やすべてを読み込み済みの場合は無限スクロールを無効にします。読み込み中は"Loading data"と表示するようにしておきます。ng-show='busy'と指定することでbusyがtrueの場合のみ要素が表示されます。
 
+client/app/questionsIndex/questionsIndex.html
+
 ```html
 <div class="container" infinite-scroll='nextPage()' infinite-scroll-disabled='busy || noMoreData'>
   ...
@@ -2241,17 +2334,19 @@ SNS認証
 =========
 SNS認証(Facebook, Twitter, Google)を利用する場合、APIキーとSECRETキーの登録を行います。登録手順は[第一回の手順](http://paiza.hatenablog.com/entry/2015/07/08/最新・最速！Webサービスが今すぐ作れる！_-_MEANスタッ#sns_link)を参照ください。
 
+<!--
 また、Facebook認証については、FacebookのAPIが変わった関係で以下のようにprofileFieldsを指定する必要があります。
 
 server/auth/facebook/passport.js
 
-```
+x```
 exports.setup = function (User, config) {
   passport.use(new FacebookStrategy({
       profileFields: ['displayName', 'name', 'profileUrl', 'id', 'email',  'photos', 'gender', 'locale', 'timezone', 'updated_time', 'verified'],
       clientID: ...
     ...
-```
+x```
+-->
 
 <div id="deploy"></div>
 

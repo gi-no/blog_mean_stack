@@ -84,6 +84,19 @@ If you have not installed, install a MEAN stack, Angular Full-Stack generator.
 See 
 [Installation section in the first article](http://paiza.hatenablog.com/entry/2015/07/08/最新・最速！Webサービスが今すぐ作れる！_-_MEANスタッ) for installation instruction.
 
+Confirm that installed AngularJS Full-Stack generator is ver3.0.0 or later.
+
+```shell
+$ npm ls -g generator-angular-fullstack
+/usr/local/lib
+└── generator-angular-fullstack@3.0.0-rc4 
+```
+
+If it is older than ver3.0.0, update to the latest version.
+
+```shell
+$ sudo npm update -g generator-angular-fullstack
+```
 
 <div id="new_project"></div>
 
@@ -160,7 +173,7 @@ The generated project has the following structure.
             |-- thing.controller.js       Server-side controller (API implementation)
             |-- thing.model.js            Server-side DB model
             |-- thing.socket.js           Server-side WebSocket implementation
-            `-- thing.spec.js             Server-side test code
+            `-- thing.integration.js      Server-side test code
 ```
 
 Client-side codes are deployed under a client directory, and server-side codes are deployed under a server directory. By packaging files into a directory for each feature as a component, components become independent of each other and the whole project is clean and easy to understand.
@@ -182,12 +195,13 @@ In this QA service, each question is stored as a document in a database.
 
 Generate server-side question-related directory and files (DB mode, server-side controller, etc.) using the generator.
 
+When prompted for a endpoint, set the default ("/api/questions").
+The generator generates "server/api/question" directory with files such as "question.controller.js", and "question.model.js". The "/api/question" API is prepared for use.
+
 ```shell
 % yo angular-fullstack:endpoint question
 ```
 
-When prompted for a endpoint, set the default ("/api/questions").
-The generator generates "server/api/question" directory with files such as "question.controller.js", and "question.model.js". The "/api/question" API is prepared for use.
 
 Next, we edit the database model to store question titles, question contents, and the list of answers. MongoDB can directly store arrays or associated arrays as a part of one JSON object. MongoDB itself is flexible schema and does not require pre-defined schemas. But mongoose driver used in Angular Full-Stack generator provides schema as an additional feature to limit or validate fields. So, we define question-related information as a schema.
 
@@ -200,6 +214,38 @@ var QuestionSchema = new Schema({
   content: String,
 });
 ```
+
+Also, edit test code to adjust edited model. Just replace all the "name" and "info" with "title" and "content", respectively (5 places).
+
+server/api/question/question.integration.js
+
+```javascript
+// name: ...
+title: ...
+// info: ...
+content: ...
+...
+// newQuestion.name....
+newQuestion.title....
+// question.info....
+newQuestion.content....
+...
+// question.name....
+question.title....
+// question.info....
+question.content....
+...
+// name: ...
+title: ...
+// info: ...
+content: ...
+...
+// updatedQuestion.name....
+updatedQuestion.title....
+// question.info....
+updatedQuestion.content....
+```
+
 
 <div id="generate_client_questions"></div>
 
@@ -244,6 +290,16 @@ When generator prompted for URL routing as "What will the url of your route be?"
 ```
 
 Directories and files are generated. Now, we implement client-side controllers and HTMLs by editing the files.
+
+#### Editting question-listing routing
+To make question-listing page main page, set state for the question-listing page to "main".
+
+client/app/questionsIndex/questionsIndex.js:
+
+```
+      .state('main', {
+```
+
 
 #### Editing question-listing controller
 On the question-listing controller, we retrieve question listing using "GET /api/questions" API.
@@ -482,8 +538,8 @@ server/api/question/question.controller.js
 ```javascript
 exports.createAnswer = function(req, res) {
   Question.update({_id: req.params.id}, {$push: {answers: req.body}}, function(err, num) {
-    if(err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
@@ -565,7 +621,6 @@ Install angular-pagedown module to support Markdown. When prompted for AngularJS
 
 ```shell
 % bower install angular-pagedown --save
-% grunt wiredep
 ...
 Unable to find a suitable version for angular, please choose one:
     1) angular#~1.2 which resolved to 1.2.28 and is required by angular-pagedown#0.4.3
@@ -581,6 +636,8 @@ Prefix the choice with ! to persist it to bower.json
 ```
 
 Add lines to "bower.json" to load depending files.
+
+bower.json
 
 ```javascript
 {
@@ -599,25 +656,6 @@ Add lines to "bower.json" to load depending files.
   }
 }
 ```
-
-Load depending files.
-
-```shell
-% grunt wiredep
-```
-
-Add the module to test (Karma) libraries.
-
-karma.conf.js
-
-```javascript
-    files: [
-      ...
-      'client/bower_components/angular-pagedown/angular-pagedown.js',
-      ...
-    ]
-```
-
 
 #### Adding angular-pagedown module to application
 
@@ -645,7 +683,7 @@ client/app/questionsCreate/questionsCreate.html
 
 client/app/questionsShow/questionsShow.html
 
-```
+```html
 <!-- {{question.content}} -->
 <pagedown-viewer content="question.content"></pagedown-viewer>
 ...
@@ -686,19 +724,6 @@ Install ngTagsInput module to make it easy to edit or show tags.
 
 ```shell
 % bower install ng-tags-input --save
-% grunt wiredep
-```
-
-Also, add the module to the test (Karma) libraries.
-
-karma.conf.js
-
-```javascript
-    files: [
-      ...
-      'client/bower_components/ng-tags-input/ng-tags-input.min.js',
-      ...
-    ]
 ```
 
 #### Adding ngTagsInput module to the application modules
@@ -771,6 +796,10 @@ Only submitted users can edit or remove the articles. Also, store the submission
 
 Store submitted user's object ID to questions and answers. Specify object's referring model as "ref: 'User'" so that "populate()" function can expand user IDs to User objects.
 
+Though we can manually call pupulate() from each query, in this project, to exapand User object for all the query, hook "find()" and "findOne()" call using "pre()" and call pupulate() in the handler.
+"populate('user')" can expands all the fields. But in this project, write "pupulate('user', 'name')" to exapand only 'name' field of the user object.
+
+
 server/api/question/question.model.js
 
 ```javascript
@@ -800,6 +829,16 @@ var QuestionSchema = new Schema({
     default: Date.now
   },
 });
+ThingSchema.pre('find', function(next){
+  this.populate('user', 'name');
+  this.populate('answers.user', 'name');
+  next();
+});
+ThingSchema.pre('findOne', function(next){
+  this.populate('user', 'name');
+  this.populate('answers.user', 'name');
+  next();
+});
 ```
 
 
@@ -826,31 +865,21 @@ router.delete('/:id/answers/:answerId', auth.isAuthenticated(), controller.destr
 ```
 
 #### Editing server-side controller
-On the question-listing API, call "populate()" to expand a user ID to a user object.
-Use "populate('user', 'name')" to expand the name field of each user object.
-Also, change the query to return the last 20 questions.
+Change the query to return the last 20 questions.
 "sort({createdAt: -1})" sort by created time in descending order and "limit(20)" returns the first 20 objects.
-After creating the query, call "exec()" to execute the query and receive the result in the callback function.
+After creating the query, call "execAsync()" to execute the query.
 
 server/api/question/question.controller.js
 
 ```javascript
 exports.index = function(req, res) {
-  Question.find().sort({createdAt: -1}).limit(20).populate('user', 'name').exec(function (err, questions) {
-    ...
-```
-
-Change the question-showing API to expand a user ID to a user object.
-
-server/api/question/question.controller.js
-
-```javascript
-exports.show = function(req, res) {
-  Question.findById(req.params.id).populate('user', 'name').exec(function (err, question) {
+  Question.find().sort({createdAt: -1}).limit(20).execAsync()
     ...
 ```
 
 Change the question-creating API to save a user as a part of question.
+
+server/api/question/question.controller.js
 
 ```javascript
 exports.create = function(req, res) {
@@ -861,20 +890,33 @@ exports.create = function(req, res) {
 On question-updating and question-destroying API, verify that current login user ID is the same as the question's user ID so that
 only submitted users can edit or delete the articles.
 
+server/api/question/question.controller.js
+
 ```javascript
-exports.update = function(req, res) {
-    ...
-    if(!question) { return res.status(404).send('Not Found'); }
-    if(question.user.toString() !== req.user._id.toString()){ return res.send(403); }
-    ...
-};
+function handleUnauthorized(req, res) {
+  return function(entity) {
+    if (!entity) {return null;}
+    if(entity.user._id.toString() !== req.user._id.toString()){
+      res.send(403).end();
+      return null;
+    }
+    return entity;
+  }
+}
 ...
+// Updates an existing Question in the DB
+exports.update = function(req, res) {
+  ...
+    .then(handleEntityNotFound(res))
+    .then(handleUnauthorized(req, res))
+    ...
+...
+// Deletes a Question from the DB
 exports.destroy = function(req, res) {
+  ...
+    .then(handleEntityNotFound(res))
+    .then(handleUnauthorized(req, res))
     ...
-    if(!question) { return res.status(404).send('Not Found'); }
-    if(question.user.toString() !== req.user._id.toString()){ return res.send(403); }
-    ...
-};
 ```
 
 Implement answer-destroying API. Delete the answer specified by answer's ID and answer's user ID using MongoDB '$pull' operator.
@@ -882,8 +924,8 @@ Implement answer-destroying API. Delete the answer specified by answer's ID and 
 ```javascript
 exports.destroyAnswer = function(req, res) {
   Question.update({_id: req.params.id}, {$pull: {answers: {_id: req.params.answerId , 'user': req.user._id}}}, function(err, num) {
-    if(err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
@@ -895,8 +937,8 @@ Add a condition to match current login user and answer's user ID so that only su
 ```javascript
 exports.updateAnswer = function(req, res) {
   Question.update({_id: req.params.id, 'answers._id': req.params.answerId}, {'answers.$.content': req.body.content, 'answers.$.user': req.user.id}, function(err, num){
-    if(err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
@@ -1001,11 +1043,11 @@ client/app/questionsShow/questionsShow.html
   <a ng-click="editing=!editing;" ng-show="isOwner(question) && !editing">Edit</a>
   ...
     <div class="answer">
+      ...
       <pagedown-viewer content="answer.content" ng-if="!editing"></pagedown-viewer>
       <pagedown-editor content="answer.content" ng-if=" editing"></pagedown-editor>
       <button type="submit" class="btn btn-primary" ng-click="editing=false;updateAnswer(answer)" ng-show=" editing">Save</button>
       <a ng-click="editing=!editing;" ng-show="isOwner(answer) && !editing">Edit</a>
-    </div>
     ...
 ```
 
@@ -1024,6 +1066,71 @@ client/app/questionsCreate/questionsCreate.controller.js
     ...
 ```
 
+#### Editing server-side test
+In this project, remove routing test.
+
+```shell
+% rm server/api/question/index.spec.js
+```
+
+For APIs requiring authentication, before each test, login and set authentication information before the test.
+
+server/api/question/question.integration.js
+
+```javascipt
+var User = require('../user/user.model');
+...
+describe('Question API:', function() {
+  var user;
+  before(function() {
+    return User.removeAsync().then(function() {
+      user = new User({
+        name: 'Fake User',
+        email: 'test@test.com',
+        password: 'password'
+      });
+
+      return user.saveAsync();
+    });
+  });
+
+  var token;
+  before(function(done) {
+    request(app)
+      .post('/auth/local')
+      .send({
+        email: 'test@test.com',
+        password: 'password'
+      })
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end(function(err, res) {
+        token = res.body.token;
+        done();
+      });
+  });
+  ...    
+  describe('POST /api/questions', function() {
+    ...    
+        .post('/api/questions')
+        .set('authorization', 'Bearer ' + token)
+    ...
+  describe('PUT /api/questions/:id', function() {
+    ...
+        .put('/api/questions/' + newQuestion._id)
+        .set('authorization', 'Bearer ' + token)
+    ...
+  describe('DELETE /api/questions/:id', function() {
+    ...
+        .delete('/api/questions/' + newQuestion._id)
+        .set('authorization', 'Bearer ' + token)
+    ...
+        .delete('/api/questions/' + newQuestion._id)
+        .set('authorization', 'Bearer ' + token)
+    ...
+  /* describe('PUT /api/things/:id', function() {
+  }); */
+```
 
 <div id="validation"></div>
 
@@ -1038,19 +1145,6 @@ Install ngMessage module for the validation as a client-side library.
 
 ```shell
 % bower install angular-messages --save
-% grunt wiredep
-```
-
-Also, add the ngMessage module to the test (Karma) libraries.
-
-karma.conf.js
-
-```javascript
-    files: [
-      ...
-      'client/bower_components/angular-messages/angular-messages.js',
-      ...
-    ]
 ```
 
 
@@ -1072,7 +1166,7 @@ Add validations (ex: "required") to the input fields. Also, to refer the validat
 client/app/questionsCreate/questionsCreate.html
 
 ```html
-  <form name="form">
+  <form name="form" ng-submit="submit()">
     <h2>Title:</h2>
     <input type="text" class="form-control" ng-model="question.title" name="question_title" required>
     <span class="text-danger" ng-messages="form.question_title.$error">
@@ -1086,7 +1180,10 @@ client/app/questionsCreate/questionsCreate.html
       <span ng-message="required">Required</span>
     </span>
     <span class="text-success" ng-show="form.question_content.$valid">OK</span>
-    ...
+    <h2>Tags:</h2>
+    <tags-input ng-model="question.tags">
+      <!-- <auto-complete source="loadTags($query)"></auto-complete> -->
+    </tags-input>
     <input type="submit" class="btn btn-primary" ng-disabled="form.$invalid" value="Post question">
   </form>
 ```
@@ -1095,7 +1192,7 @@ client/app/questionsCreate/questionsShow.html
 
 ```html
     <pagedown-editor content="newAnswer.content" ng-model="newAnswer.content" name="answerEditor" required></pagedown-editor>
-    <input type="submit" class="btn btn-primary" ng-disabled="answerForm.$invalid">Submit your answer</input>
+    <input type="submit" class="btn btn-primary" ng-disabled="answerForm.$invalid" value="Submit your answer">
 ```
 
 
@@ -1112,7 +1209,6 @@ Install Moment.js library for time formatting as a client-side library.
 
 ```shell
 % bower install --save momentjs
-% grunt wiredep
 ```
 
 Add a "moment-with-locales.min.js" file for I18N (no need for English).
@@ -1120,13 +1216,13 @@ Add a "moment-with-locales.min.js" file for I18N (no need for English).
 client/index.html
 
 ```html
-<!-- build:js({client,node_modules}) app/vendor.js -->
-  <!-- bower:js -->
-  ...
-  <!-- endbower -->
-  <script src="bower_components/momentjs/min/moment-with-locales.min.js"></script>
-  <script src="socket.io-client/socket.io.js"></script>
-<!-- endbuild -->
+    <!-- build:js({client,node_modules}) app/vendor.js -->
+      <!-- bower:js -->
+      ...
+      <!-- endbower -->
+      <script src="bower_components/momentjs/min/moment-with-locales.min.js"></script>
+      <script src="socket.io-client/socket.io.js"></script>
+    <!-- endbuild -->
 ```
 
 #### Generating filter
@@ -1162,7 +1258,7 @@ client/app/questionsIndex/questionsIndex.html
 
 ```
 
-client/app/questionsCreate/questionsCreate.html
+client/app/questionsCreate/questionsShow.html
 
 ```html
 <!-- Old: {{question.createdAt}} -->
@@ -1178,18 +1274,6 @@ client/app/questionsCreate/questionsCreate.html
 #### Changing test code
 
 Fix the failing test.
-
-To load Moment.js on test, add "moment.js" to karma.conf.js
-
-karma.conf.js
-
-```javascript
-    files: [
-        ...
-      'client/bower_components/momentjs/moment.js',
-      ...
-    ],
-```
 
 Change test code to test that the fromNow filter with the current time(Date.now()) returns 'a few seconds ago'.
 
@@ -1245,6 +1329,21 @@ var QuestionSchema = new Schema({
     }
   }],
 });
+
+QuestionSchema.pre('find', function(next){
+  this.populate('user', 'name');
+  this.populate('comments.user', 'name');
+  this.populate('answers.user', 'name');
+  this.populate('answers.comments.user', 'name');
+  next();
+});
+QuestionSchema.pre('findOne', function(next){
+  this.populate('user', 'name');
+  this.populate('comments.user', 'name');
+  this.populate('answers.user', 'name');
+  this.populate('answers.comments.user', 'name');
+  next();
+});
 ```
 
 #### Editing server-side routing
@@ -1294,22 +1393,22 @@ server/api/question/question.controller.js
 exports.createComment = function(req, res) {
   req.body.user = req.user.id;
   Question.update({_id: req.params.id}, {$push: {comments: req.body}}, function(err, num){
-    if(err) {return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) {return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   })
 }
 exports.destroyComment = function(req, res) {
   Question.update({_id: req.params.id}, {$pull: {comments: {_id: req.params.commentId , 'user': req.user._id}}}, function(err, num) {
-    if(err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
 exports.updateComment = function(req, res) {
   Question.update({_id: req.params.id, 'comments._id': req.params.commentId}, {'comments.$.content': req.body.content, 'comments.$.user': req.user.id}, function(err, num){
-    if(err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
@@ -1318,22 +1417,22 @@ exports.updateComment = function(req, res) {
 exports.createAnswerComment = function(req, res) {
   req.body.user = req.user.id;
   Question.update({_id: req.params.id, 'answers._id': req.params.answerId}, {$push: {'answers.$.comments': req.body}}, function(err, num){
-    if(err) {return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) {return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   })
 }
 exports.destroyAnswerComment = function(req, res) {
   Question.update({_id: req.params.id, 'answers._id': req.params.answerId}, {$pull: {'answers.$.comments': {_id: req.params.commentId , 'user': req.user._id}}}, function(err, num) {
-    if(err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
 exports.updateAnswerComment = function(req, res) {
   Question.find({_id: req.params.id}).exec(function(err, questions){
-    if(err) { return handleError(res, err); }
-    if(questions.length === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(questions.length === 0) { return res.send(404).end(); }
     var question = questions[0];
     var found = false;
     for(var i=0; i < question.answers.length; i++){
@@ -1347,15 +1446,15 @@ exports.updateAnswerComment = function(req, res) {
         doc['answers.' + i + '.comments.$.content'] = req.body.content;
         /*jshint -W083 */
         Question.update(conditions, doc, function(err, num){
-          if(err) { return handleError(res, err); }
-          if(num === 0) { return res.send(404); }
+          if(err) { return handleError(res)(err); }
+          if(num === 0) { return res.send(404).end(); }
           exports.show(req, res);
           return;
         });
       }
     }
     if(!found){
-      return res.send(404);
+      return res.send(404).end();
     }
   });
 };
@@ -1571,55 +1670,59 @@ On "update()" function, we can refer the matched index of an array using "$". Fo
 server/api/question/question.controller.js
 
 ```javascript
+/* star/unstar question */
 exports.star = function(req, res) {
   Question.update({_id: req.params.id}, {$push: {stars: req.user.id}}, function(err, num){
-    if(err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
 exports.unstar = function(req, res) {
   Question.update({_id: req.params.id}, {$pull: {stars: req.user.id}}, function(err, num){
     if(err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
-...
+
+/* star/unstar answer */
 exports.starAnswer = function(req, res) {
   Question.update({_id: req.params.id, 'answers._id': req.params.answerId}, {$push: {'answers.$.stars': req.user.id}}, function(err, num){
-    if(err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
 exports.unstarAnswer = function(req, res) {
   Question.update({_id: req.params.id, 'answers._id': req.params.answerId}, {$pull: {'answers.$.stars': req.user.id}}, function(err, num){
-    if(err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
-...
+
+/* star/unstar question comment */
 exports.starComment = function(req, res) {
   Question.update({_id: req.params.id, 'comments._id': req.params.commentId}, {$push: {'comments.$.stars': req.user.id}}, function(err, num){
-    if(err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
 exports.unstarComment = function(req, res) {
   Question.update({_id: req.params.id, 'comments._id': req.params.commentId}, {$pull: {'comments.$.stars': req.user.id}}, function(err, num){
-    if(err) { return handleError(res, err); }
-    if(num === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
 };
-...
+
+/* star/unstar question answer comment */
 var pushOrPullStarAnswerComment = function(op, req, res) {
   Question.find({_id: req.params.id}).exec(function(err, questions){
-    if(err) { return handleError(res, err); }
-    if(questions.length === 0) { return res.send(404); }
+    if(err) { return handleError(res)(err); }
+    if(questions.length === 0) { return res.send(404).end(); }
     var question = questions[0];
     var found = false;
     for(var i=0; i < question.answers.length; i++){
@@ -1634,15 +1737,15 @@ var pushOrPullStarAnswerComment = function(op, req, res) {
         // Question.update({_id: req.params.id, 'answers.' + i + '.comments._id': req.params.commentId}, {op: {('answers.' + i + '.comments.$.stars'): req.user.id}}, function(err, num){
         /*jshint -W083 */
         Question.update(conditions, doc, function(err, num){
-          if(err) { return handleError(res, err); }
-          if(num === 0) { return res.send(404); }
+          if(err) { return handleError(res)(err); }
+          if(num === 0) { return res.send(404).end(); }
           exports.show(req, res);
           return;
         });
       }
     }
     if(!found){
-      return res.send(404);
+      return res.send(404).end();
     }
   });
 };
@@ -1702,6 +1805,8 @@ client/app/questionsShow/questionsShow.html
         <div ng-if="! editing">{{question.title}}</div>
 ```
 
+client/app/questionsShow/questionsShow.html
+
 ```html
       <div style="float: left;font-size: normal; padding: 0; width: 2em; text-align: center;">
         <button ng-if=" isStar(comment)" type="button" style="background: transparent; border: 0;" ng-click="unstar('/comments/' + comment._id)">
@@ -1716,6 +1821,8 @@ client/app/questionsShow/questionsShow.html
 
       <pagedown-viewer content="comment.content" ng-if="!editing"></pagedown-viewer>
 ```
+
+client/app/questionsShow/questionsShow.html
 
 ```html
     <div style="float: left;font-size: large; padding: 0; width: 2em; text-align: center;">
@@ -1840,7 +1947,7 @@ client/app/questionsIndex/questionsIndex.js
 ...
   .config(function ($stateProvider) {
     $stateProvider
-      .state('questionsIndex', {
+      .state('main', {
         url: '/',
         templateUrl: 'app/questionsIndex/questionsIndex.html',
         controller: 'QuestionsIndexCtrl',
@@ -1967,7 +2074,9 @@ With MongoDB's full-text search, let's add a feature to search on question title
 
 Add serach box to Navbar. Call "search()" function on search.
 
-```javascript
+client/components/navbar/navbar.html:
+
+```html
       <form class="navbar-form navbar-left" role="search" ng-submit="search(keyword)">
         <div class="input-group">
           <input type="text" class="form-control" placeholder="Search" ng-model="keyword">
@@ -2198,20 +2307,8 @@ Install ngInfiniteScroll module for infinite scroll as a client-side library.
 
 ```shell
 % bower install --save ngInfiniteScroll
-% grunt wiredep
 ```
 
-Also, add the module to the test (Karma) library.
-
-karma.conf.js
-
-```javascript
-    files: [
-      ...
-      'client/bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js',
-      ...
-    ]
-```
 
 #### Adding ngInfiniteScroll to the application modules
 Add ngInfiniteScroll to the application depending modules to use.
@@ -2264,6 +2361,8 @@ To load older questions on scroll to the bottom, add "infinite-scroll" attribute
 Disable scroll when loading or when there is no more data.
 Show "Loading data" on loading by adding an element with "ng-show='busy'", so the element is shown only when the "busy" variable is "true". 
 
+client/app/questionsIndex/questionsIndex.html
+
 ```html
 <div class="container" infinite-scroll='nextPage()' infinite-scroll-disabled='busy || noMoreData'>
   ...
@@ -2280,15 +2379,17 @@ When using SNS authentication(Facebook, Twitter, Google), set API key and SECRET
 
 For Facebook authentication, because API specification changed on Graph API 2.4 (on July 9th, 2015), we need to explicitly specify fields to use on "profileFields" as follows.
 
+<!--
 server/auth/facebook/passport.js
 
-```
+x```
 exports.setup = function (User, config) {
   passport.use(new FacebookStrategy({
       profileFields: ['displayName', 'name', 'profileUrl', 'id', 'email',  'photos', 'gender', 'locale', 'timezone', 'updated_time', 'verified'],
       clientID: ...
     ...
-```
+x```
+-->
 
 <div id="deploy"></div>
 
