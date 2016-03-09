@@ -84,15 +84,15 @@ If you have not installed, install a MEAN stack, Angular Full-Stack generator.
 See 
 [Installation section in the first article](http://paiza.hatenablog.com/entry/2015/07/08/最新・最速！Webサービスが今すぐ作れる！_-_MEANスタッ) for installation instruction.
 
-Confirm that installed AngularJS Full-Stack generator is ver3.0.0 or later.
+Confirm that installed AngularJS Full-Stack generator is ver3.3.0 or later.
 
 ```shell
 $ npm ls -g generator-angular-fullstack
 /usr/local/lib
-└── generator-angular-fullstack@3.0.0-rc4 
+└── generator-angular-fullstack@3.3.0 
 ```
 
-If it is older than ver3.0.0, update to the latest version.
+If it is older than ver3.3.0, update to the latest version.
 
 ```shell
 $ sudo npm update -g generator-angular-fullstack
@@ -209,7 +209,7 @@ Next, we edit the database model to store question titles, question contents, an
 server/api/question/question.model.js
 
 ```javascript
-var QuestionSchema = new Schema({
+var QuestionSchema = new mongoose.Schema({
   title: String,
   content: String,
 });
@@ -322,8 +322,6 @@ Also, we can refer to "$scope" variable such as "{&#x7b;question.title&#x7d;}".
 client/app/questionIndex/questionIndex.html
 
 ```html
-<div ng-include="'components/navbar/navbar.html'"></div>
-
 <header class="hero-unit" id="banner">
   <div class="container">
     <h1>paizaQA</h1>
@@ -353,12 +351,6 @@ client/app/questionIndex/questionIndex.html
     </tbody>
   </table>
 </div>
-
-<footer class="footer">
-  <div class="container">
-      <p>paizaQA</p>
-  </div>
-</footer>
 ```
 
 client/app/questionIndex/questionIndex.scss
@@ -382,13 +374,6 @@ client/app/questionIndex/questionIndex.scss
     text-align: center;
     text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
     background: #4393B9;
-}
-
-.footer {
-    text-align: center;
-    padding: 30px 0;
-    margin-top: 70px;
-    border-top: 1px solid #E5E5E5;
 }
 ```
 
@@ -417,7 +402,6 @@ On the question-creating HTML file, add "ng-submit" attribute to call "submit()"
 client/app/questionsCreate/questionsCreate.html
 
 ```html
-<div ng-include="'components/navbar/navbar.html'"></div>
 <div class="container">
   <form name="form" ng-submit="submit()">
     <h2>Title:</h2>
@@ -455,7 +439,6 @@ We refer to $scope.question" variable set on controller as "question".
 client/app/questionsShow/questionsShow.html
 
 ```html
-<div ng-include="'components/navbar/navbar.html'"></div>
 <div class="container" id="question-show-container">
   <div>
     <div>
@@ -508,7 +491,7 @@ Edit QuestionSchema to store answers. MongoDB can store JSON object including ar
 server/api/question/question.model.js
 
 ```javascript
-var QuestionSchema = new Schema({
+var QuestionSchema = new mongoose.Schema({
   title: String,
   content: String,
   answers: [{
@@ -536,7 +519,7 @@ Implement answer submission API. We can add a value to an array by using MongoDB
 server/api/question/question.controller.js
 
 ```javascript
-exports.createAnswer = function(req, res) {
+function createAnswer(req, res) {
   Question.update({_id: req.params.id}, {$push: {answers: req.body}}, function(err, num) {
     if(err) { return handleError(res)(err); }
     if(num === 0) { return res.send(404).end(); }
@@ -678,7 +661,7 @@ client/app/questionsCreate/questionsCreate.html
 
 ```html
 <!-- <textarea ... ng-model="question.content">...</textarea> -->
-<pagedown-editor content="question.content"></pagedown-editor>
+<pagedown-editor ng-model="question.content"></pagedown-editor>
 ```
 
 client/app/questionsShow/questionsShow.html
@@ -691,7 +674,7 @@ client/app/questionsShow/questionsShow.html
 <pagedown-viewer content="answer.content"></pagedown-viewer>
 ...
 <!-- <textarea ... ng-model="newAnswer.content"></textarea> -->
-<pagedown-editor content="newAnswer.content"></pagedown-editor>
+<pagedown-editor ng-model="newAnswer.content"></pagedown-editor>
 ```
 
 <div id="tags"></div>
@@ -706,8 +689,10 @@ To make it easy to understand kinds of questions, let's add tags related to ques
 #### Editing database model
 Edit QuestionSchema to store tags as an array.
 
+server/api/question/question.model.js
+
 ```javascript
-var QuestionSchema = new Schema({
+var QuestionSchema = new mongoose.Schema({
   title: String,
   content: String,
   answers: [{
@@ -745,7 +730,7 @@ You can also add auto completion by adding "auto-complete" element inside "tags-
 client/questionsCreate/questionsCreate.html
 
 ```html
-    <pagedown-editor content="question.content"></pagedown-editor>
+    <pagedown-editor ng-model="question.content"></pagedown-editor>
     <h2>Tags:</h2>
     <tags-input ng-model="question.tags">
       <!-- <auto-complete source="loadTags($query)"></auto-complete> -->
@@ -803,13 +788,13 @@ Though we can manually call pupulate() from each query, in this project, to exap
 server/api/question/question.model.js
 
 ```javascript
-var QuestionSchema = new Schema({
+var QuestionSchema = new mongoose.Schema({
   title: String,
   content: String,
   answers: [{
     content: String,
     user: {
-      type: Schema.ObjectId,
+      type: mongoose.Schema.ObjectId,
       ref: 'User'
     },
     createdAt: {
@@ -821,7 +806,7 @@ var QuestionSchema = new Schema({
     text: String,
   }],
   user: {
-    type: Schema.ObjectId,
+    type: mongoose.Schema.ObjectId,
     ref: 'User'
   },
   createdAt: {
@@ -829,12 +814,12 @@ var QuestionSchema = new Schema({
     default: Date.now
   },
 });
-ThingSchema.pre('find', function(next){
+QuestionSchema.pre('find', function(next){
   this.populate('user', 'name');
   this.populate('answers.user', 'name');
   next();
 });
-ThingSchema.pre('findOne', function(next){
+QuestionSchema.pre('findOne', function(next){
   this.populate('user', 'name');
   this.populate('answers.user', 'name');
   next();
@@ -872,7 +857,7 @@ After creating the query, call "execAsync()" to execute the query.
 server/api/question/question.controller.js
 
 ```javascript
-exports.index = function(req, res) {
+export function index(req, res) {
   Question.find().sort({createdAt: -1}).limit(20).execAsync()
     ...
 ```
@@ -882,9 +867,13 @@ Change the question-creating API to save a user as a part of question.
 server/api/question/question.controller.js
 
 ```javascript
-exports.create = function(req, res) {
+export function create(req, res) {
   req.body.user = req.user;
   Question.create(req.body, ...
+...
+export function createAnswer(req, res) {
+  req.body.user = req.user;
+  Question.update(...
 ```
 
 On question-updating and question-destroying API, verify that current login user ID is the same as the question's user ID so that
@@ -905,14 +894,14 @@ function handleUnauthorized(req, res) {
 }
 ...
 // Updates an existing Question in the DB
-exports.update = function(req, res) {
+export function update(req, res) {
   ...
     .then(handleEntityNotFound(res))
     .then(handleUnauthorized(req, res))
     ...
 ...
 // Deletes a Question from the DB
-exports.destroy = function(req, res) {
+export function destroy(req, res) {
   ...
     .then(handleEntityNotFound(res))
     .then(handleUnauthorized(req, res))
@@ -922,7 +911,7 @@ exports.destroy = function(req, res) {
 Implement answer-destroying API. Delete the answer specified by answer's ID and answer's user ID using MongoDB '$pull' operator.
 
 ```javascript
-exports.destroyAnswer = function(req, res) {
+export function destroyAnswer(req, res) {
   Question.update({_id: req.params.id}, {$pull: {answers: {_id: req.params.answerId , 'user': req.user._id}}}, function(err, num) {
     if(err) { return handleError(res)(err); }
     if(num === 0) { return res.send(404).end(); }
@@ -935,7 +924,7 @@ Implement answer-updating API. On the MongoDB query, we can refer the matching i
 Add a condition to match current login user and answer's user ID so that only submitted user can update the answer.
 
 ```javascript
-exports.updateAnswer = function(req, res) {
+export function updateAnswer(req, res) {
   Question.update({_id: req.params.id, 'answers._id': req.params.answerId}, {'answers.$.content': req.body.content, 'answers.$.user': req.user.id}, function(err, num){
     if(err) { return handleError(res)(err); }
     if(num === 0) { return res.send(404).end(); }
@@ -1038,14 +1027,14 @@ client/app/questionsShow/questionsShow.html
       </h1>
       ...
   <pagedown-viewer content="question.content" ng-if="!editing"></pagedown-viewer>
-  <pagedown-editor content="question.content" ng-if=" editing"></pagedown-editor>
+  <pagedown-editor ng-model="question.content" ng-if=" editing"></pagedown-editor>
   <button type="submit" class="btn btn-primary" ng-click="editing=false;updateQuestion()" ng-show=" editing">Save</button>
   <a ng-click="editing=!editing;" ng-show="isOwner(question) && !editing">Edit</a>
   ...
     <div class="answer">
       ...
       <pagedown-viewer content="answer.content" ng-if="!editing"></pagedown-viewer>
-      <pagedown-editor content="answer.content" ng-if=" editing"></pagedown-editor>
+      <pagedown-editor ng-model="answer.content" ng-if=" editing"></pagedown-editor>
       <button type="submit" class="btn btn-primary" ng-click="editing=false;updateAnswer(answer)" ng-show=" editing">Save</button>
       <a ng-click="editing=!editing;" ng-show="isOwner(answer) && !editing">Edit</a>
     ...
@@ -1175,7 +1164,7 @@ client/app/questionsCreate/questionsCreate.html
     <span class="text-success" ng-show="form.question_title.$valid">OK</span>
     <br>
     <h2>Question:</h2>
-    <pagedown-editor content="question.content" ng-model="question.content" name="question_content" required></pagedown-editor>
+    <pagedown-editor ng-model="question.content" ng-model="question.content" name="question_content" required></pagedown-editor>
     <span class="text-danger" ng-messages="form.question_content.$error">
       <span ng-message="required">Required</span>
     </span>
@@ -1191,7 +1180,7 @@ client/app/questionsCreate/questionsCreate.html
 client/app/questionsCreate/questionsShow.html
 
 ```html
-    <pagedown-editor content="newAnswer.content" ng-model="newAnswer.content" name="answerEditor" required></pagedown-editor>
+    <pagedown-editor ng-model="newAnswer.content" name="answerEditor" required></pagedown-editor>
     <input type="submit" class="btn btn-primary" ng-disabled="answerForm.$invalid" value="Submit your answer">
 ```
 
@@ -1300,14 +1289,14 @@ On QuestionSchema, store comments as an array inside the each question and answe
 server/api/question/question.model.js
 
 ```javascript
-var QuestionSchema = new Schema({
+var QuestionSchema = new mongoose.Schema({
   ...
   answers: [{
     ...
     comments: [{
       content: String,
       user: {
-        type: Schema.ObjectId,
+        type: mongoose.Schema.ObjectId,
         ref: 'User'
       },
       createdAt: {
@@ -1320,7 +1309,7 @@ var QuestionSchema = new Schema({
   comments: [{
     content: String,
     user: {
-      type: Schema.ObjectId,
+      type: mongoose.Schema.ObjectId,
       ref: 'User'
     },
     createdAt: {
@@ -1390,7 +1379,7 @@ server/api/question/question.controller.js
 
 ```javascript
 /* comments APIs */
-exports.createComment = function(req, res) {
+export function createComment(req, res) {
   req.body.user = req.user.id;
   Question.update({_id: req.params.id}, {$push: {comments: req.body}}, function(err, num){
     if(err) {return handleError(res)(err); }
@@ -1398,23 +1387,23 @@ exports.createComment = function(req, res) {
     exports.show(req, res);
   })
 }
-exports.destroyComment = function(req, res) {
+export function destroyComment(req, res) {
   Question.update({_id: req.params.id}, {$pull: {comments: {_id: req.params.commentId , 'user': req.user._id}}}, function(err, num) {
     if(err) { return handleError(res)(err); }
     if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
-};
-exports.updateComment = function(req, res) {
+}
+export function updateComment(req, res) {
   Question.update({_id: req.params.id, 'comments._id': req.params.commentId}, {'comments.$.content': req.body.content, 'comments.$.user': req.user.id}, function(err, num){
     if(err) { return handleError(res)(err); }
     if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
-};
+}
 
 /* answersComments APIs */
-exports.createAnswerComment = function(req, res) {
+export function createAnswerComment(req, res) {
   req.body.user = req.user.id;
   Question.update({_id: req.params.id, 'answers._id': req.params.answerId}, {$push: {'answers.$.comments': req.body}}, function(err, num){
     if(err) {return handleError(res)(err); }
@@ -1422,14 +1411,14 @@ exports.createAnswerComment = function(req, res) {
     exports.show(req, res);
   })
 }
-exports.destroyAnswerComment = function(req, res) {
+export function destroyAnswerComment(req, res) {
   Question.update({_id: req.params.id, 'answers._id': req.params.answerId}, {$pull: {'answers.$.comments': {_id: req.params.commentId , 'user': req.user._id}}}, function(err, num) {
     if(err) { return handleError(res)(err); }
     if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
-};
-exports.updateAnswerComment = function(req, res) {
+}
+export function updateAnswerComment(req, res) {
   Question.find({_id: req.params.id}).exec(function(err, questions){
     if(err) { return handleError(res)(err); }
     if(questions.length === 0) { return res.send(404).end(); }
@@ -1457,7 +1446,7 @@ exports.updateAnswerComment = function(req, res) {
       return res.send(404).end();
     }
   });
-};
+}
 ```
 
 
@@ -1518,7 +1507,7 @@ client/app/questionsShow/questionsShow.html
       <button ng-if="isOwner(comment)" type="button" class="close" ng-click="deleteComment(comment)">&times;</button>
 
       <pagedown-viewer content="comment.content" ng-if="!editing"></pagedown-viewer>
-      <pagedown-editor content="comment.content" ng-if=" editing"></pagedown-editor>
+      <pagedown-editor ng-model="comment.content" ng-if=" editing"></pagedown-editor>
       <button type="submit" class="btn btn-primary" ng-click="editing=false;updateComment(comment)" ng-show=" editing">Save</button>
       <a ng-click="editing=!editing;" ng-show="isOwner(comment) && !editing">Edit</a>
 
@@ -1528,7 +1517,7 @@ client/app/questionsShow/questionsShow.html
     <hr/>
     <a ng-click="editNewComment=!editNewComment;">add a comment</a>
     <form ng-if="editNewComment" name="commentForm">
-      <pagedown-editor content="newComment.content" editor-class="'comment-wmd-input'"
+      <pagedown-editor ng-model="newComment.content" editor-class="'comment-wmd-input'"
         ng-model="newComment.content" name="commentEditor" required>
       </pagedown-editor>
       <button type="button" class="btn btn-primary" ng-click="submitComment(questionComment)" ng-disabled="commentForm.$invalid">Add Comment</button>
@@ -1545,7 +1534,7 @@ client/app/questionsShow/questionsShow.html
         <button ng-if="isOwner(comment)" type="button" class="close" ng-click="deleteAnswerComment(answer, comment)">&times;</button>
  
         <pagedown-viewer content="comment.content" ng-if="!editing"></pagedown-viewer>
-        <pagedown-editor content="comment.content" ng-if=" editing"></pagedown-editor>
+        <pagedown-editor ng-model="comment.content" ng-if=" editing"></pagedown-editor>
         <button type="submit" class="btn btn-primary" ng-click="editing=false;updateAnswerComment(answer, comment)" ng-show=" editing">Save</button>
         <a ng-click="editing=!editing;" ng-show="isOwner(comment) && !editing">Edit</a>
 
@@ -1556,7 +1545,7 @@ client/app/questionsShow/questionsShow.html
       <a ng-click="editNewAnswerComment=!editNewAnswerComment;answer.newAnswerComment={}">add a comment</a>
       <form ng-if="editNewAnswerComment" name="answer_{{answer.id}}_comment">
         <hr/>
-        <pagedown-editor content="answer.newAnswerComment.content" editor-class="'comment-wmd-input'"
+        <pagedown-editor ng-model="answer.newAnswerComment.content" editor-class="'comment-wmd-input'"
           ng-model="answer.newAnswerComment.content" required>
         </pagedown-editor>
         <button type="button" class="btn btn-primary" ng-click="submitAnswerComment(answer)" ng-disabled="answer_{{answer.id}}_comment.$invalid">Add Comment</button>
@@ -1595,20 +1584,20 @@ Store the list of starring users for a question, an answer, and a comment on a q
 server/api/question/question.model.js
 
 ```javascript
-var QuestionSchema = new Schema({
+var QuestionSchema = new mongoose.Schema({
   ...
   answers: [{
     ...
     comments: [{
       ...
       stars: [{
-        type: Schema.ObjectId,
+        type: mongoose.Schema.ObjectId,
         ref: 'User'
       }],
       ...
     }],
     stars: [{
-      type: Schema.ObjectId,
+      type: mongoose.Schema.ObjectId,
       ref: 'User'
     }],
     ...
@@ -1617,13 +1606,13 @@ var QuestionSchema = new Schema({
   comments: [{
     ...
     stars: [{
-      type: Schema.ObjectId,
+      type: mongoose.Schema.ObjectId,
       ref: 'User'
     }],
     ...
   }],
   stars: [{
-    type: Schema.ObjectId,
+    type: mongoose.Schema.ObjectId,
     ref: 'User'
   }],
   ...
@@ -1671,52 +1660,52 @@ server/api/question/question.controller.js
 
 ```javascript
 /* star/unstar question */
-exports.star = function(req, res) {
+export function star(req, res) {
   Question.update({_id: req.params.id}, {$push: {stars: req.user.id}}, function(err, num){
     if(err) { return handleError(res)(err); }
     if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
-};
-exports.unstar = function(req, res) {
+}
+export function unstar(req, res) {
   Question.update({_id: req.params.id}, {$pull: {stars: req.user.id}}, function(err, num){
     if(err) { return handleError(res, err); }
     if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
-};
+}
 
 /* star/unstar answer */
-exports.starAnswer = function(req, res) {
+export function starAnswer(req, res) {
   Question.update({_id: req.params.id, 'answers._id': req.params.answerId}, {$push: {'answers.$.stars': req.user.id}}, function(err, num){
     if(err) { return handleError(res)(err); }
     if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
-};
-exports.unstarAnswer = function(req, res) {
+}
+export function unstarAnswer(req, res) {
   Question.update({_id: req.params.id, 'answers._id': req.params.answerId}, {$pull: {'answers.$.stars': req.user.id}}, function(err, num){
     if(err) { return handleError(res)(err); }
     if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
-};
+}
 
 /* star/unstar question comment */
-exports.starComment = function(req, res) {
+export function starComment(req, res) {
   Question.update({_id: req.params.id, 'comments._id': req.params.commentId}, {$push: {'comments.$.stars': req.user.id}}, function(err, num){
     if(err) { return handleError(res)(err); }
     if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
-};
-exports.unstarComment = function(req, res) {
+}
+export function unstarComment(req, res) {
   Question.update({_id: req.params.id, 'comments._id': req.params.commentId}, {$pull: {'comments.$.stars': req.user.id}}, function(err, num){
     if(err) { return handleError(res)(err); }
     if(num === 0) { return res.send(404).end(); }
     exports.show(req, res);
   });
-};
+}
 
 /* star/unstar question answer comment */
 var pushOrPullStarAnswerComment = function(op, req, res) {
@@ -1749,12 +1738,12 @@ var pushOrPullStarAnswerComment = function(op, req, res) {
     }
   });
 };
-exports.starAnswerComment = function(req, res) {
+export function starAnswerComment(req, res) {
   pushOrPullStarAnswerComment('$push', req, res);
-};
-exports.unstarAnswerComment = function(req, res) {
+}
+export function unstarAnswerComment(req, res) {
   pushOrPullStarAnswerComment('$pull', req, res);
-};
+}
 ```
 
 #### Editing client-side question-showing controller
@@ -2014,7 +2003,7 @@ Send the received query to the database.
 server/api/question/question.controller.js
 
 ```javascript
-exports.index = function(req, res) {
+export function index(req, res) {
   var query = req.query.query && JSON.parse(req.query.query);
   Question.find(query).sort(...
 ```
@@ -2026,8 +2015,8 @@ Because we need to change the URL or enable/disable for links before login or lo
 client/components/navbar/navbar.controller.js
 
 ```javascript
-  .controller('NavbarCtrl', function ($scope, $location, Auth, $state) {
-    $scope.menu = [
+  constructor(Auth) {
+    this.menu = [
       {
         'title': 'All',
         'link': function(){return '/';},
@@ -2044,7 +2033,11 @@ client/components/navbar/navbar.controller.js
         'show': Auth.isLoggedIn,
       },
     ];
-    ...
+    this.isLoggedIn = Auth.isLoggedIn;
+    this.isAdmin = Auth.isAdmin;
+    this.getCurrentUser = Auth.getCurrentUser;
+  }
+  ...
 ```
 
 #### Editing client-side Navbar HTML
@@ -2056,7 +2049,7 @@ client/components/navbar/navbar.html
 
 ```html
       <ul class="nav navbar-nav">
-        <li ng-repeat="item in menu" ng-class="{active: isActive(item.link())}" ng-show="item.show()">
+        <li ng-repeat="item in nav.menu" ng-class="{active: isActive(item.link())}" ng-show="item.show()">
             <a ng-href="{{item.link()}}">{{item.title}}</a>
         </li>
       </ul>
@@ -2077,7 +2070,7 @@ Add serach box to Navbar. Call "search()" function on search.
 client/components/navbar/navbar.html:
 
 ```html
-      <form class="navbar-form navbar-left" role="search" ng-submit="search(keyword)">
+      <form class="navbar-form navbar-left" role="search" ng-submit="nav.search(keyword)">
         <div class="input-group">
           <input type="text" class="form-control" placeholder="Search" ng-model="keyword">
           <span class="input-group-btn">
@@ -2096,9 +2089,11 @@ client/components/navbar/navbar.html:
 client/components/navbar/navbar.controller.js
 
 ```javascript
-    $scope.search = function(keyword) {
-      $state.go('questionsIndex', {keyword: keyword}, {reload: true});
+  constructor(Auth, $state) {
+    this.search = function(keyword) {
+      $state.go('main', {keyword: keyword}, {reload: true});
     };
+    ...
 ```
 
 #### Editing server-side database model
@@ -2129,7 +2124,7 @@ To accept search keyword as "keyword" URL parameter, add "/?keyword" to the "url
 client/app/questionsIndex/questionsIndex.js
 
 ```javascript
-      .state('questionsIndex', {
+      .state('main', {
         url: '/?keyword',
         ...
 ```
@@ -2174,7 +2169,7 @@ On the server-side DB model, add "searchText" field to store tokenized text.
 server/api/question/question.model.js
 
 ```javascript
-var QuestionSchema = new Schema({
+var QuestionSchema = new mongoose.Schema({
   ...
   searchText: String,
 });
@@ -2194,6 +2189,8 @@ QuestionSchema.index({
 
 Add a function to tokenize, and call it before saving by using "pre('save')" hook.
 Also, add a static function to the question model by adding the function to "QuestionSchema.statics".
+
+server/api/question/question.model.js
 
 ```javascript
 var TinySegmenter = require('tiny-segmenter');
@@ -2236,63 +2233,74 @@ Because "pre('save')" hook is not called by "update()" call, explicitly call "up
 server/api/question/question.controller.js
 
 ```javascript
-exports.createAnswer = function(req, res) {
+export function createAnswer(req, res) {
     ...
     exports.show(req, res);
     Question.updateSearchText(req.params.id);
   });
 };
-exports.destroyAnswer = function(req, res) {
+export function destroyAnswer(req, res) {
   ...
     exports.show(req, res);
     Question.updateSearchText(req.params.id);
   });
 };
-exports.updateAnswer = function(req, res) {
+export function updateAnswer(req, res) {
     ...
     exports.show(req, res);
     Question.updateSearchText(req.params.id);
   });
 };
 ...
-exports.createComment = function(req, res) {
+/* comments APIs */
+export function createComment(req, res) {
     ...
     exports.show(req, res);
     Question.updateSearchText(req.params.id);
   })
 };
-exports.destroyComment = function(req, res) {
+export function destroyComment(req, res) {
     ...
     exports.show(req, res);
     Question.updateSearchText(req.params.id);
   });
 };
-exports.updateComment = function(req, res) {
+export function updateComment(req, res) {
     ...
     exports.show(req, res);
     Question.updateSearchText(req.params.id);
   });
 };
 ...
-exports.createAnswerComment = function(req, res) {
+/* answersComments APIs */
+export function createAnswerComment(req, res) {
     ...
     exports.show(req, res);
     Question.updateSearchText(req.params.id);
   })
 };
-exports.destroyAnswerComment = function(req, res) {
+export function destroyAnswerComment(req, res) {
     ...
     exports.show(req, res);
     Question.updateSearchText(req.params.id);
   });
 };
-exports.updateAnswerComment = function(req, res) {
+export function updateAnswerComment(req, res) {
   ...
           exports.show(req, res);
           Question.updateSearchText(req.params.id);
   ...
 };
 ```
+
+To re-create index, drop the question collection and restart the server(grunt serve).
+```
+% mongo
+> use paizaqa-dev
+> db.questions.drop()
+% grunt serve
+```
+
 
 <div id="infinite_scroll"></div>
 
