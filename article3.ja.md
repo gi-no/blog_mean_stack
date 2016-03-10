@@ -13,6 +13,10 @@ MEANスタックで今すぐ作る最新ウェブサービス:ジェネレータ
 -->
 <!--div class="paiza-custom-header"-->
 
+<iframe src="https://player.vimeo.com/video/135022783?autoplay=1&loop=1&title=0&byline=0&portrait=0" width="500" height="395" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+<div style="text-align:right">(English article is <a href="http://engineering.paiza.io/entry/2016/03/10/115345">here</a>.)</div>
+
 
 [f:id:paiza:20140712194904j:plain]こんにちは、吉岡([twitter:@yoshiokatsuneo])です。
 
@@ -23,7 +27,7 @@ MEANスタック(*)は、JavaScriptのみでフロントエンド、データベ
 
 今回は、具体的なウェブサービスとしてQAサービスを構築してみます。プログラミング関係では、Stack Overflow,teratail,Qiitaのようなサービスが思いつきます。さらに、ブログやFacebookのコメント欄のように、トピックごとに参加者がコメント・議論するような機能は、多くのサービスで参加者同士の交流の場として便利に使われており、QAサービス構築方法の応用範囲も広いです。
 
-<iframe src="https://player.vimeo.com/video/135022783?autoplay=1&loop=1&title=0&byline=0&portrait=0" width="500" height="395" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
 
 [2回目](http://paiza.hatenablog.com/entry/2015/07/09/1時間でTwitter風フルスタック・Webサービスを作る！-_MEANス)のTwitter風サービスでは1画面のみでしたが、今回はジェネレータを使って複数画面を構築したり、バリデーションを使ってみたりしてみます。
 
@@ -1186,7 +1190,7 @@ client/index.html
       <!-- bower:js -->
       ...
       <!-- endbower -->
-      <script src="bower_components/momentjs/min/moment-with-locales.min.js"></script>
+      <script src="bower_components/moment/min/moment-with-locales.min.js"></script>
       <script src="socket.io-client/socket.io.js"></script>
     <!-- endbuild -->
 ```
@@ -1422,6 +1426,8 @@ export function updateAnswerComment(req, res) {
 client/app/questionsShow/questionsShow.controller.js
 
 ```javascript
+
+    $scope.newComment = {};
     $scope.submitComment = function() {
       $http.post('/api/questions/' + $stateParams.id + '/comments', $scope.newComment).success(function(){
         loadQuestions();
@@ -1485,7 +1491,7 @@ client/app/questionsShow/questionsShow.html
       <pagedown-editor ng-model="newComment.content" editor-class="'comment-wmd-input'"
         name="commentEditor" required>
       </pagedown-editor>
-      <button type="button" class="btn btn-primary" ng-click="submitComment(questionComment)" ng-disabled="commentForm.$invalid">Add Comment</button>
+      <button type="button" class="btn btn-primary" ng-click="submitComment()" ng-disabled="commentForm.$invalid">Add Comment</button>
     </form>
   </div>
   ...
@@ -2424,18 +2430,15 @@ MEANスタックAngularJS Full-Stack generatorを用いてQAサイトを作成�
 </tbody>
 </table>
 
-<br><br>
+
 <hr>
 
 
 <a href="http://paiza.jp/">paiza</a>ではITエンジニアとしてのスキルレベル測定(9言語に対応)や、プログラミング問題による学習コンテンツ(<a href="https://paiza.jp/learning"  target="_blank">paiza Learning</a>)を提供(こちらは21言語に対応)しています。テストの結果によりS,A,B,C,D,Eの６段階でランクが分かります。自分のプログラミングスキルを客観的に知りたいという方は是非チャレンジしてみてください。
-
-<a href="https://paiza.jp/learning"  target="_blank">http://paiza.jp
-<img src="http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20140901/20140901151109.jpg"></a>
+<!--img src="http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20140901/20140901151109.jpg"></a-->
 <a href="http://paiza.jp"><img src="http://cdn-ak.f.st-hatena.com/images/fotolife/p/paiza/20130917/20130917190908.gif?1379412762"></a>
 
 <hr>
-<br><br>
 
 
 

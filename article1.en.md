@@ -1,9 +1,10 @@
 <!-- Title: Building full-stack web service - MEAN stack development(1) -->
 <!-- URL: http://engineering.paiza.io/entry/2015/07/08/153011 -->
 
+<div style="text-align:right">(Japanese article is <a href="http://paiza.hatenablog.com/entry/2015/07/08/最新・最速！Webサービスが今すぐ作れる！_-_MEANスタッ">here</a>.)</div>
+
 [f:id:paiza:20140712194904j:plain] (by Yoshioka Tsuneo, [twitter:@yoshiokatsuneo] at https://paiza.IO/)
 
-(Japanese article is available <a href="http://paiza.hatenablog.com/entry/2015/07/08/最新・最速！Webサービスが今すぐ作れる！_-_MEANスタッ">here</a>.)
 
 Nowadays, it is getting hard to build web services because we need to use full-stack environment: browser(client) code for interactive UI, server code for shared data or logic, and WebSockets for real-time communication.
 
@@ -423,6 +424,28 @@ AngularJS Full-Stack generator
 
 [https://github.com/DaftMonk/generator-angular-fullstack]
 
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<thead>
+  <tr>
+    <td colspan="2" style="background-color: darkblue; color: white;"><div style="font-size: small; font-weight: bold;">MEAN stack development articles</div></td>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td>*</td>
+    <td><ax href="http://engineering.paiza.io/entry/2015/07/08/153011">Building full-stack web service - MEAN stack development(1)</ax></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><a href="http://engineering.paiza.io/entry/2015/07/09/154028">Building Twitter-like full-stack web service in 1 hour - MEAN stack development (2)</a></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><a href="http://engineering.paiza.io/entry/2016/03/10/115345">Building a QA web service in an hour - MEAN stack development(3)</a></td>
+  </tr>
+
+</tbody>
+</table>
 
 
 <!--/div-->

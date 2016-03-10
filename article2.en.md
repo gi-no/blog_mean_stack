@@ -5,10 +5,11 @@
 
 <iframe src="https://player.vimeo.com/video/133009564?autoplay=1&title=0&byline=0&portrait=0" width="500" height="408" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
+<div style="text-align:right">(Japanese article is <a href="http://paiza.hatenablog.com/entry/2015/07/09/1時間でTwitter風フルスタック・Webサービスを作る！-_MEANス">here</a>.)</div>
+
 
 [f:id:paiza:20140712194904j:plain]  (by Yoshioka Tsuneo, [twitter:@yoshiokatsuneo] at https://paiza.IO/)
 
-(Japanese article is available <a href="http://paiza.hatenablog.com/entry/2015/07/09/1時間でTwitter風フルスタック・Webサービスを作る！-_MEANス">here</a>.)
 
 [In the previous article](http://engineering.paiza.io/entry/2015/07/08/153011), I introduced a MEAN stack, Yeoman-based AngularJS Full-Stack generator, and explained how to install, run, edit, debug, and deploy programs. MEAN stack is a web development package of MongoDB, Express, AngularJS, and Node.js. You can easily build interactive and intuitive full-stack web services by just using one language: JavaScript.
 
@@ -1240,3 +1241,28 @@ Let's come up with ideas and build your own web services!
 I welcome your feedback about the instruction.
 
 I'll continue writing articles about creating web services using MEAN stack.
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<thead>
+  <tr>
+    <td colspan="2" style="background-color: darkblue; color: white;"><div style="font-size: small; font-weight: bold;">MEAN stack development articles</div></td>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td></td>
+    <td><a href="http://engineering.paiza.io/entry/2015/07/08/153011">Building full-stack web service - MEAN stack development(1)</a></td>
+  </tr>
+  <tr>
+    <td>*</td>
+    <td><ax href="http://engineering.paiza.io/entry/2015/07/09/154028">Building Twitter-like full-stack web service in 1 hour - MEAN stack development (2)</ax></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><a href="http://engineering.paiza.io/entry/2016/03/10/115345">Building a QA web service in an hour - MEAN stack development(3)</a></td>
+  </tr>
+
+</tbody>
+</table>
+
+

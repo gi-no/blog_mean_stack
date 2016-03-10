@@ -12,6 +12,10 @@ MEANスタックで今すぐ作る最新ウェブサービス:ジェネレータ
 -->
 <!--div class="paiza-custom-header"-->
 
+<iframe src="https://player.vimeo.com/video/136183259?autoplay=1&loop=1&title=0&byline=0&portrait=0" width="500" height="350" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+<div style="text-align:right">(Japanese article is <a href="http://paiza.hatenablog.com/entry/meanstack_howto_3">here</a>.)</div>
+
 
 [f:id:paiza:20140712194904j:plain]  (by Yoshioka Tsuneo ([twitter:@yoshiokatsuneo]))
 
@@ -24,7 +28,7 @@ MEAN stack (*) is an all-in-one JavaScript-based web service development environ
 
 In this article, as an example of a more practical web service, I introduce how to build a QA service like Stack Overflow, Qiita, or even Reddit or HackerNews. The way can be used for features like Blog or SNS comments where users can comment, discuss, or communicate each other.
 
-<iframe src="https://player.vimeo.com/video/136183259?autoplay=1&loop=1&title=0&byline=0&portrait=0" width="500" height="350" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
 
 In the second article (Twitter-like service), we build a service with one page. In this QA service, we will build multiple pages using generator. We also use input validations using validators.
 
@@ -1209,7 +1213,7 @@ client/index.html
       <!-- bower:js -->
       ...
       <!-- endbower -->
-      <script src="bower_components/momentjs/min/moment-with-locales.min.js"></script>
+      <script src="bower_components/moment/min/moment-with-locales.min.js"></script>
       <script src="socket.io-client/socket.io.js"></script>
     <!-- endbuild -->
 ```
@@ -1457,6 +1461,7 @@ Add functions to add, update, or delete a comment that send the request to the s
 client/app/questionsShow/questionsShow.controller.js
 
 ```javascript
+    $scope.newComment = {};
     $scope.submitComment = function() {
       $http.post('/api/questions/' + $stateParams.id + '/comments', $scope.newComment).success(function(){
         loadQuestions();
@@ -1520,7 +1525,7 @@ client/app/questionsShow/questionsShow.html
       <pagedown-editor ng-model="newComment.content" editor-class="'comment-wmd-input'"
         ng-model="newComment.content" name="commentEditor" required>
       </pagedown-editor>
-      <button type="button" class="btn btn-primary" ng-click="submitComment(questionComment)" ng-disabled="commentForm.$invalid">Add Comment</button>
+      <button type="button" class="btn btn-primary" ng-click="submitComment()" ng-disabled="commentForm.$invalid">Add Comment</button>
     </form>
   </div>
   ...
@@ -2465,15 +2470,15 @@ I'll continue writing articles to build web services using MEAN stack.
 <tbody>
   <tr>
     <td></td>
-    <td><a href="#">Building full-stack web service - MEAN stack development(1)</a></td>
+    <td><a href="http://engineering.paiza.io/entry/2015/07/08/153011">Building full-stack web service - MEAN stack development(1)</a></td>
   </tr>
   <tr>
     <td></td>
-    <td><a href="#">Building Twitter-like full-stack web service in 1 hour - MEAN stack development (2)</a></td>
+    <td><a href="http://engineering.paiza.io/entry/2015/07/09/154028">Building Twitter-like full-stack web service in 1 hour - MEAN stack development (2)</a></td>
   </tr>
   <tr>
     <td>*</td>
-    <td>Building a QA web service in an hour - MEAN stack development(3)</td>
+    <td><ax href="http://engineering.paiza.io/entry/2016/03/10/115345">Building a QA web service in an hour - MEAN stack development(3)</ax></td>
   </tr>
 
 </tbody>
